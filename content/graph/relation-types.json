@@ -135,6 +135,26 @@
     "description": "An actor or company held a formal state contract."
   },
   {
+    "id": "director_of",
+    "label": "director of",
+    "description": "A person is formally listed as a director or executive officer of a company or legal entity."
+  },
+  {
+    "id": "beneficial_owner_reported",
+    "label": "beneficial owner reported",
+    "description": "A source reports a beneficial owner or controlling person for a company; admission requires strong provenance."
+  },
+  {
+    "id": "party_membership_reported",
+    "label": "party membership reported",
+    "description": "A source reports party membership or affiliation; weak or media-only cases remain claims until admitted."
+  },
+  {
+    "id": "municipal_roster_member",
+    "label": "municipal roster member",
+    "description": "A person is listed in a mayoral, municipal council, or local administration roster."
+  },
+  {
     "id": "involves",
     "label": "involves",
     "description": "An event directly involves a person, institution, organization, or project."

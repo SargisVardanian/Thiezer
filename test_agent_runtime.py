@@ -12,6 +12,9 @@ from scripts.living_graph.research_tools import claim_extractor
 from scripts.living_graph.research_tools.temporal_planner import build_role_queries, extract_year_range, month_windows, year_windows
 from scripts.living_graph.research_tools.search_provider import DeterministicOfficialSearchProvider
 from scripts.living_graph.research_tools.source_registry import load_source_registry_snapshot
+from scripts.living_graph.question_generator import generate_research_questions
+from scripts.living_graph.subgraph_builder import build_subgraph
+from scripts import national_graph_cycle
 from scripts import model_runtime
 from scripts.pipeline_common import (
     append_claim_records,
@@ -654,6 +657,114 @@ class AgentRuntimeTests(unittest.TestCase):
         self.assertGreaterEqual(len(trace["trace"]["extracted_claims"]), 1)
         self.assertTrue(trace["trace"]["graph_diff"]["new_nodes"] or trace["trace"]["accepted_changes"])
         self.assertTrue(self.latest_path.exists())
+
+    def test_question_generator_prioritizes_person_office_and_company_gaps(self):
+        graph = {
+            "entities": [
+                {"id": "person-nikol-pashinyan", "name": "Nikol Pashinyan", "category": "person", "profile": {}},
+                {"id": "office-prime-minister-armenia", "name": "Prime Minister of Armenia", "category": "office"},
+                {"id": "company-x", "name": "Company X LLC", "category": "company"},
+                {"id": "person-site-map", "name": "Site Map", "category": "person"},
+            ],
+            "relations": [],
+            "claims": [],
+        }
+        questions = generate_research_questions(graph, limit=20)
+        qtypes = {question["question_type"] for question in questions}
+        self.assertIn("biography_completion", qtypes)
+        self.assertIn("office_tenure_completion", qtypes)
+        self.assertIn("company_ownership_control", qtypes)
+        self.assertTrue(all(question["status"] == "queued" for question in questions))
+        self.assertTrue(any("Prime Minister of Armenia" in question["question"] for question in questions))
+        self.assertFalse(any("Site Map" in question["question"] for question in questions))
+
+    def test_question_generator_rechecks_disputed_claims(self):
+        graph = {
+            "entities": [
+                {"id": "person-a", "name": "Person A", "category": "person"},
+                {"id": "party-b", "name": "Party B", "category": "party"},
+            ],
+            "claims": [
+                {
+                    "id": "claim-1",
+                    "subject_vertex_id": "person-a",
+                    "object_vertex_id": "party-b",
+                    "claim_type": "MEMBER_OF",
+                    "statement": "Person A is reportedly affiliated with Party B",
+                    "status": "disputed",
+                }
+            ],
+            "relations": [],
+        }
+        questions = generate_research_questions(graph, limit=20)
+        disputed = [question for question in questions if question["question_type"] == "contradiction_resolution"]
+        self.assertEqual(len(disputed), 1)
+        self.assertEqual(disputed[0]["target_entities"], ["person-a", "party-b"])
+
+    def test_subgraph_builder_includes_claims_evidence_and_questions(self):
+        graph = {
+            "entities": [
+                {"id": "person-a", "name": "Person A", "category": "person", "profile": {}},
+                {"id": "office-b", "name": "Office B", "category": "office"},
+            ],
+            "relations": [
+                {
+                    "id": "edge-1",
+                    "from": "person-a",
+                    "to": "office-b",
+                    "type": "holds_office_in",
+                    "layer": "canonical",
+                    "status": "confirmed",
+                    "claim_ids": ["claim-1"],
+                    "evidence_ids": ["evidence-1"],
+                    "source_ids": ["source-1"],
+                }
+            ],
+            "claims": [
+                {
+                    "id": "claim-1",
+                    "subject_vertex_id": "person-a",
+                    "object_vertex_id": "office-b",
+                    "claim_type": "HOLDS_OFFICE",
+                    "statement": "Person A holds Office B",
+                    "status": "confirmed",
+                    "evidence_ids": ["evidence-1"],
+                }
+            ],
+            "evidence": [{"id": "evidence-1", "quote": "Person A holds Office B"}],
+        }
+        subgraph = build_subgraph(graph, "person-a")
+        self.assertEqual(subgraph["status"], "ready")
+        self.assertEqual(len(subgraph["nodes"]), 2)
+        self.assertEqual(len(subgraph["canonical_edges"]), 1)
+        self.assertEqual(len(subgraph["active_claims"]), 1)
+        self.assertEqual(len(subgraph["evidence"]), 1)
+        self.assertIn("biography", subgraph["missing_fields"])
+
+    def test_national_graph_cycle_report_has_operator_counters(self):
+        graph = {
+            "entities": [{"id": "person-a", "name": "Person A", "category": "person", "profile": {}}],
+            "relations": [],
+            "claims": [
+                {"id": "claim-ok", "status": "confirmed"},
+                {"id": "claim-bad", "status": "rejected"},
+                {"id": "claim-disputed", "status": "disputed"},
+                {"id": "claim-stale", "status": "stale"},
+            ],
+            "sources": [{"id": "source-1"}],
+            "evidence": [{"id": "evidence-1"}],
+        }
+        questions = generate_research_questions(graph, limit=10)
+        subgraphs = [build_subgraph(graph, "person-a")]
+        report = national_graph_cycle.build_operator_report(graph, questions=questions, subgraphs=subgraphs, dry_run=True)
+        self.assertEqual(report["sources_checked"], 1)
+        self.assertEqual(report["claims_extracted"], 4)
+        self.assertEqual(report["claims_admitted"], 1)
+        self.assertEqual(report["claims_rejected"], 1)
+        self.assertEqual(report["disputed_claims_stored"], 1)
+        self.assertEqual(report["stale_claims_detected"], 1)
+        self.assertGreaterEqual(report["questions_generated"], 1)
+        self.assertEqual(report["subgraphs_updated"], 1)
 
 
 class FrontendContractTests(unittest.TestCase):

@@ -10,6 +10,37 @@
       "armenia"
     ]
   },
+  "claim_admission_policy": {
+    "official": {
+      "reliability_floor": 0.9,
+      "admits_official_roster_facts": true,
+      "admits_financial_relations_without_secondary_confirmation": false
+    },
+    "legal": {
+      "reliability_floor": 0.92,
+      "admits_legal_case_status": true
+    },
+    "procurement": {
+      "reliability_floor": 0.9,
+      "admits_contract_facts": true,
+      "requires_exact_document_or_record": true
+    },
+    "watchdog": {
+      "reliability_floor": 0.75,
+      "admits_allegations_as_canonical": false,
+      "default_claim_status": "disputed"
+    },
+    "media": {
+      "reliability_floor": 0.55,
+      "admits_high_risk_relations_without_confirmation": false,
+      "default_claim_status": "proposed"
+    },
+    "social": {
+      "reliability_floor": 0.25,
+      "admits_canonical_edges": false,
+      "default_claim_status": "proposed"
+    }
+  },
   "sources": {
     "1lurer.am": {
       "fetch_mode": "rss",

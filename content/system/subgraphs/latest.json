@@ -1,0 +1,2625 @@
+{
+  "contract": "NationalSubgraphBundle.v1",
+  "generated_at": "2026-05-30T15:26:28+00:00",
+  "subgraph_count": 5,
+  "subgraphs": [
+    {
+      "id": "subgraph-9c26b6deafad51ae",
+      "seed_entity_id": "person-artur-hovsepyan",
+      "seed_label": "Artur Hovsepyan",
+      "status": "ready",
+      "generated_at": "2026-05-30T15:26:28+00:00",
+      "depth": 1,
+      "nodes": [
+        {
+          "id": "office-deputy-chiefs-of-prime-minister-staff",
+          "name": "Deputy Chiefs of Prime Minister Staff",
+          "category": "office",
+          "subtype": "state_office",
+          "aliases": [],
+          "tags": [],
+          "summary": "Official role or structure listed on the Prime Minister's staff page.",
+          "links": {},
+          "public_safe": true,
+          "notes": "",
+          "profile": {
+            "neutral_analytic_summary": "",
+            "history_or_biography": [],
+            "current_roles_or_functions": [],
+            "timeline": [],
+            "direct_network": [],
+            "indirect_network": [],
+            "evidence_summary": [],
+            "dispute_flags": []
+          },
+          "updated_at": "2026-05-20T12:30:48+00:00",
+          "last_changed_run_id": "run-230597dc37853d18",
+          "change_type": "updated",
+          "kind": "entity",
+          "label": "Deputy Chiefs of Prime Minister Staff",
+          "observed_at": "2026-05-20T12:30:48+00:00",
+          "valid_from": null,
+          "valid_to": null,
+          "confidence": 0.85
+        },
+        {
+          "id": "person-artur-hovsepyan",
+          "name": "Artur Hovsepyan",
+          "category": "person",
+          "subtype": "official",
+          "aliases": [],
+          "tags": [],
+          "summary": "Official staff member of the Prime Minister's office.",
+          "links": {
+            "official_profile": "https://www.gov.am/en/staff-structure/other/1042/"
+          },
+          "public_safe": true,
+          "notes": "",
+          "profile": {
+            "neutral_analytic_summary": "",
+            "history_or_biography": [],
+            "current_roles_or_functions": [
+              "Deputy Chiefs of Prime Minister Staff"
+            ],
+            "timeline": [
+              {
+                "date": "current",
+                "title": "Deputy Chiefs of Prime Minister Staff"
+              }
+            ],
+            "direct_network": [],
+            "indirect_network": [],
+            "evidence_summary": [],
+            "dispute_flags": [],
+            "overview": "Artur Hovsepyan serves in the Prime Minister's office.",
+            "source_links": [
+              {
+                "title": "Deputy Chiefs of Prime Minister Staff",
+                "url": "https://www.gov.am/en/staff-structure/other/1042/",
+                "source_type": "official"
+              }
+            ],
+            "last_changed_run_id": "run-230597dc37853d18",
+            "change_type": "updated"
+          },
+          "updated_at": "2026-05-20T12:30:48+00:00",
+          "last_changed_run_id": "run-230597dc37853d18",
+          "change_type": "updated",
+          "kind": "entity",
+          "label": "Artur Hovsepyan",
+          "observed_at": "2026-05-20T12:30:48+00:00",
+          "valid_from": null,
+          "valid_to": null,
+          "confidence": 0.85
+        }
+      ],
+      "canonical_edges": [
+        {
+          "id": "edge-fa9dac547ddb0d74",
+          "from": "person-artur-hovsepyan",
+          "to": "office-deputy-chiefs-of-prime-minister-staff",
+          "type": "holds_office_in",
+          "relation_type": "holds_office_in",
+          "layer": "canonical",
+          "status": "probable",
+          "confidence": 0.741,
+          "valid_from": null,
+          "valid_to": null,
+          "observed_at": "2026-05-20T12:30:48+00:00",
+          "claim_ids": [
+            "claim-6b6c57b3fb9e43a1",
+            "claim-b51ab7c6bcad3fa2",
+            "claim-70d52af59302d7f3",
+            "claim-aa5c3d2ecc8f51c5"
+          ],
+          "evidence_ids": [
+            "evidence-6ee35f8373648196",
+            "evidence-775ebbd07f9fae96",
+            "evidence-b2e997a46243701a",
+            "evidence-c09f37bcc52a6a37"
+          ],
+          "source_ids": [
+            "source-14185a831723984a",
+            "source-4fb403f1bfdad9c5",
+            "source-82730214c579714a",
+            "source-58546f9e54ae79cd"
+          ],
+          "public_safe": true,
+          "updated_at": "2026-05-20T12:30:48+00:00",
+          "last_changed_run_id": "run-230597dc37853d18",
+          "change_type": "new"
+        }
+      ],
+      "active_claims": [
+        {
+          "id": "claim-e66fa76a84a48694",
+          "subject_vertex_id": "person-armenak-khachatryan",
+          "object_vertex_id": "office-deputy-chiefs-of-prime-minister-staff",
+          "claim_type": "holds_office_in",
+          "statement": "Armenak Khachatryan — Deputy Chiefs of Prime Minister Staff",
+          "polarity": "positive",
+          "source_ids": [
+            "source-14185a831723984a"
+          ],
+          "evidence_ids": [
+            "evidence-d2bcbdaf707a484e"
+          ],
+          "observed_at": "2026-05-20T12:30:47+00:00",
+          "valid_from": null,
+          "valid_to": null,
+          "status": "confirmed",
+          "interpretive_degree": 0.2,
+          "publication_risk": 0.3,
+          "extraction_confidence": 0.96,
+          "source_reliability": 0.96,
+          "cross_source_confirmation": 0.333,
+          "entity_linking_confidence": 0.9,
+          "temporal_consistency_confidence": 0.65,
+          "graph_consistency_confidence": 0.78,
+          "source_independence_score": 0.0,
+          "claim_hash": "1f73bfccbeae2ae1",
+          "raw_relation_id": "rel-7e781532f87c0fff",
+          "updated_at": "2026-05-20T12:30:47+00:00",
+          "created_by_run_id": "run-230597dc37853d18",
+          "last_changed_run_id": "run-230597dc37853d18"
+        },
+        {
+          "id": "claim-6b6c57b3fb9e43a1",
+          "subject_vertex_id": "person-artur-hovsepyan",
+          "object_vertex_id": "office-deputy-chiefs-of-prime-minister-staff",
+          "claim_type": "holds_office_in",
+          "statement": "Artur Hovsepyan — Deputy Chiefs of Prime Minister Staff",
+          "polarity": "positive",
+          "source_ids": [
+            "source-14185a831723984a"
+          ],
+          "evidence_ids": [
+            "evidence-6ee35f8373648196"
+          ],
+          "observed_at": "2026-05-20T12:30:47+00:00",
+          "valid_from": null,
+          "valid_to": null,
+          "status": "confirmed",
+          "interpretive_degree": 0.2,
+          "publication_risk": 0.3,
+          "extraction_confidence": 0.96,
+          "source_reliability": 0.96,
+          "cross_source_confirmation": 0.333,
+          "entity_linking_confidence": 0.9,
+          "temporal_consistency_confidence": 0.65,
+          "graph_consistency_confidence": 0.78,
+          "source_independence_score": 0.0,
+          "claim_hash": "b7b2c9d1f937badc",
+          "raw_relation_id": "rel-898a7cb0d32446c0",
+          "updated_at": "2026-05-20T12:30:47+00:00",
+          "created_by_run_id": "run-230597dc37853d18",
+          "last_changed_run_id": "run-230597dc37853d18"
+        },
+        {
+          "id": "claim-5aa549c198fa8d7c",
+          "subject_vertex_id": "person-sargis-torosyan",
+          "object_vertex_id": "office-deputy-chiefs-of-prime-minister-staff",
+          "claim_type": "holds_office_in",
+          "statement": "Sargis Torosyan — Deputy Chiefs of Prime Minister Staff",
+          "polarity": "positive",
+          "source_ids": [
+            "source-14185a831723984a"
+          ],
+          "evidence_ids": [
+            "evidence-773fc6d011529106"
+          ],
+          "observed_at": "2026-05-09T09:27:57+00:00",
+          "valid_from": null,
+          "valid_to": null,
+          "status": "confirmed",
+          "interpretive_degree": 0.2,
+          "publication_risk": 0.3,
+          "extraction_confidence": 0.96,
+          "source_reliability": 0.96,
+          "cross_source_confirmation": 0.333,
+          "entity_linking_confidence": 0.9,
+          "temporal_consistency_confidence": 0.65,
+          "graph_consistency_confidence": 0.78,
+          "source_independence_score": 0.0,
+          "claim_hash": "40cef35f6b683654",
+          "raw_relation_id": "rel-af2c0cd8a137e27d",
+          "updated_at": "2026-05-09T09:27:57+00:00",
+          "created_by_run_id": "run-ff274ffcac5f6a21",
+          "last_changed_run_id": "run-ff274ffcac5f6a21"
+        },
+        {
+          "id": "claim-dd15127946fd8973",
+          "subject_vertex_id": "person-taron-chakhoyan",
+          "object_vertex_id": "office-deputy-chiefs-of-prime-minister-staff",
+          "claim_type": "holds_office_in",
+          "statement": "Taron Chakhoyan — Deputy Chiefs of Prime Minister Staff",
+          "polarity": "positive",
+          "source_ids": [
+            "source-14185a831723984a"
+          ],
+          "evidence_ids": [
+            "evidence-1311e1cb4882b2f2"
+          ],
+          "observed_at": "2026-05-09T09:27:57+00:00",
+          "valid_from": null,
+          "valid_to": null,
+          "status": "confirmed",
+          "interpretive_degree": 0.2,
+          "publication_risk": 0.3,
+          "extraction_confidence": 0.96,
+          "source_reliability": 0.96,
+          "cross_source_confirmation": 0.333,
+          "entity_linking_confidence": 0.9,
+          "temporal_consistency_confidence": 0.65,
+          "graph_consistency_confidence": 0.78,
+          "source_independence_score": 0.0,
+          "claim_hash": "8cd4ce8527691f2b",
+          "raw_relation_id": "rel-4f625100017668b8",
+          "updated_at": "2026-05-09T09:27:57+00:00",
+          "created_by_run_id": "run-ff274ffcac5f6a21",
+          "last_changed_run_id": "run-ff274ffcac5f6a21"
+        },
+        {
+          "id": "claim-7a92f806bbc48b49",
+          "subject_vertex_id": "person-zaruhi-matevosyan",
+          "object_vertex_id": "office-deputy-chiefs-of-prime-minister-staff",
+          "claim_type": "holds_office_in",
+          "statement": "Zaruhi Matevosyan — Deputy Chiefs of Prime Minister Staff",
+          "polarity": "positive",
+          "source_ids": [
+            "source-14185a831723984a"
+          ],
+          "evidence_ids": [
+            "evidence-16bfda34d108141b"
+          ],
+          "observed_at": "2026-05-09T09:27:57+00:00",
+          "valid_from": null,
+          "valid_to": null,
+          "status": "confirmed",
+          "interpretive_degree": 0.2,
+          "publication_risk": 0.3,
+          "extraction_confidence": 0.96,
+          "source_reliability": 0.96,
+          "cross_source_confirmation": 0.333,
+          "entity_linking_confidence": 0.9,
+          "temporal_consistency_confidence": 0.65,
+          "graph_consistency_confidence": 0.78,
+          "source_independence_score": 0.0,
+          "claim_hash": "2cc3701982c57b5c",
+          "raw_relation_id": "rel-d49c862ca49d3b28",
+          "updated_at": "2026-05-09T09:27:57+00:00",
+          "created_by_run_id": "run-ff274ffcac5f6a21",
+          "last_changed_run_id": "run-ff274ffcac5f6a21"
+        },
+        {
+          "id": "claim-a56eb6f4c5aac2ab",
+          "subject_vertex_id": "person-armenak-khachatryan",
+          "object_vertex_id": "office-deputy-chiefs-of-prime-minister-staff",
+          "claim_type": "holds_office_in",
+          "statement": "Armenak Khachatryan — Deputy Chiefs of Prime Minister Staff",
+          "polarity": "positive",
+          "source_ids": [
+            "source-4fb403f1bfdad9c5"
+          ],
+          "evidence_ids": [
+            "evidence-dd98840e1558cd4e"
+          ],
+          "observed_at": "2026-05-20T12:30:48+00:00",
+          "valid_from": null,
+          "valid_to": null,
+          "status": "confirmed",
+          "interpretive_degree": 0.2,
+          "publication_risk": 0.3,
+          "extraction_confidence": 0.96,
+          "source_reliability": 0.96,
+          "cross_source_confirmation": 0.333,
+          "entity_linking_confidence": 0.9,
+          "temporal_consistency_confidence": 0.65,
+          "graph_consistency_confidence": 0.78,
+          "source_independence_score": 0.0,
+          "claim_hash": "6519e252c2dac226",
+          "raw_relation_id": "rel-2d28062d96f851e7",
+          "updated_at": "2026-05-20T12:30:48+00:00",
+          "created_by_run_id": "run-230597dc37853d18",
+          "last_changed_run_id": "run-230597dc37853d18"
+        },
+        {
+          "id": "claim-b51ab7c6bcad3fa2",
+          "subject_vertex_id": "person-artur-hovsepyan",
+          "object_vertex_id": "office-deputy-chiefs-of-prime-minister-staff",
+          "claim_type": "holds_office_in",
+          "statement": "Artur Hovsepyan — Deputy Chiefs of Prime Minister Staff",
+          "polarity": "positive",
+          "source_ids": [
+            "source-4fb403f1bfdad9c5"
+          ],
+          "evidence_ids": [
+            "evidence-775ebbd07f9fae96"
+          ],
+          "observed_at": "2026-05-20T12:30:48+00:00",
+          "valid_from": null,
+          "valid_to": null,
+          "status": "confirmed",
+          "interpretive_degree": 0.2,
+          "publication_risk": 0.3,
+          "extraction_confidence": 0.96,
+          "source_reliability": 0.96,
+          "cross_source_confirmation": 0.333,
+          "entity_linking_confidence": 0.9,
+          "temporal_consistency_confidence": 0.65,
+          "graph_consistency_confidence": 0.78,
+          "source_independence_score": 0.0,
+          "claim_hash": "b14210b5c4209929",
+          "raw_relation_id": "rel-bc386b698efb81d7",
+          "updated_at": "2026-05-20T12:30:48+00:00",
+          "created_by_run_id": "run-230597dc37853d18",
+          "last_changed_run_id": "run-230597dc37853d18"
+        },
+        {
+          "id": "claim-939e0f6793860f96",
+          "subject_vertex_id": "person-arayik-harutyunyan",
+          "object_vertex_id": "office-deputy-chiefs-of-prime-minister-staff",
+          "claim_type": "holds_office_in",
+          "statement": "Arayik Harutyunyan — Chief of Staff",
+          "polarity": "positive",
+          "source_ids": [
+            "source-82730214c579714a"
+          ],
+          "evidence_ids": [
+            "evidence-c76a5092709a1596"
+          ],
+          "observed_at": "2026-05-20T12:30:48+00:00",
+          "valid_from": null,
+          "valid_to": null,
+          "status": "confirmed",
+          "interpretive_degree": 0.2,
+          "publication_risk": 0.3,
+          "extraction_confidence": 0.96,
+          "source_reliability": 0.96,
+          "cross_source_confirmation": 0.333,
+          "entity_linking_confidence": 0.9,
+          "temporal_consistency_confidence": 0.65,
+          "graph_consistency_confidence": 0.78,
+          "source_independence_score": 0.0,
+          "claim_hash": "670db265ce4e3167",
+          "raw_relation_id": "rel-cd1e0ea9d294ff2e",
+          "updated_at": "2026-05-20T12:30:48+00:00",
+          "created_by_run_id": "run-230597dc37853d18",
+          "last_changed_run_id": "run-230597dc37853d18"
+        },
+        {
+          "id": "claim-c11491d1622892a4",
+          "subject_vertex_id": "person-armenak-khachatryan",
+          "object_vertex_id": "office-deputy-chiefs-of-prime-minister-staff",
+          "claim_type": "holds_office_in",
+          "statement": "Armenak Khachatryan — Deputy Chiefs of Prime Minister Staff",
+          "polarity": "positive",
+          "source_ids": [
+            "source-82730214c579714a"
+          ],
+          "evidence_ids": [
+            "evidence-89986e4dc0abff3e"
+          ],
+          "observed_at": "2026-05-20T12:30:48+00:00",
+          "valid_from": null,
+          "valid_to": null,
+          "status": "confirmed",
+          "interpretive_degree": 0.2,
+          "publication_risk": 0.3,
+          "extraction_confidence": 0.96,
+          "source_reliability": 0.96,
+          "cross_source_confirmation": 0.333,
+          "entity_linking_confidence": 0.9,
+          "temporal_consistency_confidence": 0.65,
+          "graph_consistency_confidence": 0.78,
+          "source_independence_score": 0.0,
+          "claim_hash": "8dba38994e544a56",
+          "raw_relation_id": "rel-0b50e1e5b6df27b5",
+          "updated_at": "2026-05-20T12:30:48+00:00",
+          "created_by_run_id": "run-230597dc37853d18",
+          "last_changed_run_id": "run-230597dc37853d18"
+        },
+        {
+          "id": "claim-70d52af59302d7f3",
+          "subject_vertex_id": "person-artur-hovsepyan",
+          "object_vertex_id": "office-deputy-chiefs-of-prime-minister-staff",
+          "claim_type": "holds_office_in",
+          "statement": "Artur Hovsepyan — Deputy Chiefs of Prime Minister Staff",
+          "polarity": "positive",
+          "source_ids": [
+            "source-82730214c579714a"
+          ],
+          "evidence_ids": [
+            "evidence-b2e997a46243701a"
+          ],
+          "observed_at": "2026-05-20T12:30:48+00:00",
+          "valid_from": null,
+          "valid_to": null,
+          "status": "confirmed",
+          "interpretive_degree": 0.2,
+          "publication_risk": 0.3,
+          "extraction_confidence": 0.96,
+          "source_reliability": 0.96,
+          "cross_source_confirmation": 0.333,
+          "entity_linking_confidence": 0.9,
+          "temporal_consistency_confidence": 0.65,
+          "graph_consistency_confidence": 0.78,
+          "source_independence_score": 0.0,
+          "claim_hash": "fe3e18f727642765",
+          "raw_relation_id": "rel-b5eb903c103e38b1",
+          "updated_at": "2026-05-20T12:30:48+00:00",
+          "created_by_run_id": "run-230597dc37853d18",
+          "last_changed_run_id": "run-230597dc37853d18"
+        },
+        {
+          "id": "claim-b7c950eabacf6c72",
+          "subject_vertex_id": "person-arayik-harutyunyan",
+          "object_vertex_id": "office-deputy-chiefs-of-prime-minister-staff",
+          "claim_type": "holds_office_in",
+          "statement": "Arayik Harutyunyan — Chief of Staff",
+          "polarity": "positive",
+          "source_ids": [
+            "source-58546f9e54ae79cd"
+          ],
+          "evidence_ids": [
+            "evidence-cf1da14f8008a401"
+          ],
+          "observed_at": "2026-05-20T12:30:48+00:00",
+          "valid_from": null,
+          "valid_to": null,
+          "status": "confirmed",
+          "interpretive_degree": 0.2,
+          "publication_risk": 0.3,
+          "extraction_confidence": 0.96,
+          "source_reliability": 0.96,
+          "cross_source_confirmation": 0.333,
+          "entity_linking_confidence": 0.9,
+          "temporal_consistency_confidence": 0.65,
+          "graph_consistency_confidence": 0.78,
+          "source_independence_score": 0.0,
+          "claim_hash": "39bd89845e9ce2b6",
+          "raw_relation_id": "rel-53d5940f38ac0d9e",
+          "updated_at": "2026-05-20T12:30:48+00:00",
+          "created_by_run_id": "run-230597dc37853d18",
+          "last_changed_run_id": "run-230597dc37853d18"
+        },
+        {
+          "id": "claim-45448dc207542870",
+          "subject_vertex_id": "person-armenak-khachatryan",
+          "object_vertex_id": "office-deputy-chiefs-of-prime-minister-staff",
+          "claim_type": "holds_office_in",
+          "statement": "Armenak Khachatryan — Deputy Chiefs of Prime Minister Staff",
+          "polarity": "positive",
+          "source_ids": [
+            "source-58546f9e54ae79cd"
+          ],
+          "evidence_ids": [
+            "evidence-9e8b63631f592c6e"
+          ],
+          "observed_at": "2026-05-20T12:30:48+00:00",
+          "valid_from": null,
+          "valid_to": null,
+          "status": "confirmed",
+          "interpretive_degree": 0.2,
+          "publication_risk": 0.3,
+          "extraction_confidence": 0.96,
+          "source_reliability": 0.96,
+          "cross_source_confirmation": 0.333,
+          "entity_linking_confidence": 0.9,
+          "temporal_consistency_confidence": 0.65,
+          "graph_consistency_confidence": 0.78,
+          "source_independence_score": 0.0,
+          "claim_hash": "0f03857c48dc7cc4",
+          "raw_relation_id": "rel-3f58c9503e8b4936",
+          "updated_at": "2026-05-20T12:30:48+00:00",
+          "created_by_run_id": "run-230597dc37853d18",
+          "last_changed_run_id": "run-230597dc37853d18"
+        },
+        {
+          "id": "claim-aa5c3d2ecc8f51c5",
+          "subject_vertex_id": "person-artur-hovsepyan",
+          "object_vertex_id": "office-deputy-chiefs-of-prime-minister-staff",
+          "claim_type": "holds_office_in",
+          "statement": "Artur Hovsepyan — Deputy Chiefs of Prime Minister Staff",
+          "polarity": "positive",
+          "source_ids": [
+            "source-58546f9e54ae79cd"
+          ],
+          "evidence_ids": [
+            "evidence-c09f37bcc52a6a37"
+          ],
+          "observed_at": "2026-05-20T12:30:48+00:00",
+          "valid_from": null,
+          "valid_to": null,
+          "status": "confirmed",
+          "interpretive_degree": 0.2,
+          "publication_risk": 0.3,
+          "extraction_confidence": 0.96,
+          "source_reliability": 0.96,
+          "cross_source_confirmation": 0.333,
+          "entity_linking_confidence": 0.9,
+          "temporal_consistency_confidence": 0.65,
+          "graph_consistency_confidence": 0.78,
+          "source_independence_score": 0.0,
+          "claim_hash": "5f1d881fa49e6a37",
+          "raw_relation_id": "rel-5f5df373fb149d0b",
+          "updated_at": "2026-05-20T12:30:48+00:00",
+          "created_by_run_id": "run-230597dc37853d18",
+          "last_changed_run_id": "run-230597dc37853d18"
+        }
+      ],
+      "disputed_claims": [],
+      "evidence": [
+        {
+          "id": "evidence-d2bcbdaf707a484e",
+          "source_id": "source-14185a831723984a",
+          "url": "https://www.gov.am/en/staff-structure/",
+          "title": "https://www.gov.am/en/staff-structure/",
+          "publisher": "gov.am",
+          "source_class": "official",
+          "language": "eng",
+          "published_at": "",
+          "retrieved_at": "2026-05-20T12:30:47+00:00",
+          "snippet": "Armenak Khachatryan — Deputy Chiefs of Prime Minister Staff",
+          "quote": "Armenak Khachatryan — Deputy Chiefs of Prime Minister Staff",
+          "stance": "supporting",
+          "supports_claim_ids": [],
+          "contradicts_claim_ids": []
+        },
+        {
+          "id": "evidence-6ee35f8373648196",
+          "source_id": "source-14185a831723984a",
+          "url": "https://www.gov.am/en/staff-structure/",
+          "title": "https://www.gov.am/en/staff-structure/",
+          "publisher": "gov.am",
+          "source_class": "official",
+          "language": "eng",
+          "published_at": "",
+          "retrieved_at": "2026-05-20T12:30:47+00:00",
+          "snippet": "Artur Hovsepyan — Deputy Chiefs of Prime Minister Staff",
+          "quote": "Artur Hovsepyan — Deputy Chiefs of Prime Minister Staff",
+          "stance": "supporting",
+          "supports_claim_ids": [],
+          "contradicts_claim_ids": []
+        },
+        {
+          "id": "evidence-773fc6d011529106",
+          "source_id": "source-14185a831723984a",
+          "url": "https://www.gov.am/en/staff-structure/",
+          "title": "https://www.gov.am/en/staff-structure/",
+          "publisher": "gov.am",
+          "source_class": "official",
+          "language": "eng",
+          "published_at": "",
+          "retrieved_at": "2026-05-09T09:27:57+00:00",
+          "snippet": "Sargis Torosyan — Deputy Chiefs of Prime Minister Staff",
+          "quote": "Sargis Torosyan — Deputy Chiefs of Prime Minister Staff",
+          "stance": "supporting",
+          "supports_claim_ids": [],
+          "contradicts_claim_ids": []
+        },
+        {
+          "id": "evidence-1311e1cb4882b2f2",
+          "source_id": "source-14185a831723984a",
+          "url": "https://www.gov.am/en/staff-structure/",
+          "title": "https://www.gov.am/en/staff-structure/",
+          "publisher": "gov.am",
+          "source_class": "official",
+          "language": "eng",
+          "published_at": "",
+          "retrieved_at": "2026-05-09T09:27:57+00:00",
+          "snippet": "Taron Chakhoyan — Deputy Chiefs of Prime Minister Staff",
+          "quote": "Taron Chakhoyan — Deputy Chiefs of Prime Minister Staff",
+          "stance": "supporting",
+          "supports_claim_ids": [],
+          "contradicts_claim_ids": []
+        },
+        {
+          "id": "evidence-16bfda34d108141b",
+          "source_id": "source-14185a831723984a",
+          "url": "https://www.gov.am/en/staff-structure/",
+          "title": "https://www.gov.am/en/staff-structure/",
+          "publisher": "gov.am",
+          "source_class": "official",
+          "language": "eng",
+          "published_at": "",
+          "retrieved_at": "2026-05-09T09:27:57+00:00",
+          "snippet": "Zaruhi Matevosyan — Deputy Chiefs of Prime Minister Staff",
+          "quote": "Zaruhi Matevosyan — Deputy Chiefs of Prime Minister Staff",
+          "stance": "supporting",
+          "supports_claim_ids": [],
+          "contradicts_claim_ids": []
+        },
+        {
+          "id": "evidence-dd98840e1558cd4e",
+          "source_id": "source-4fb403f1bfdad9c5",
+          "url": "https://www.gov.am/en/staff-structure/other/788/",
+          "title": "https://www.gov.am/en/staff-structure/other/788/",
+          "publisher": "gov.am",
+          "source_class": "official",
+          "language": "eng",
+          "published_at": "",
+          "retrieved_at": "2026-05-20T12:30:48+00:00",
+          "snippet": "Armenak Khachatryan — Deputy Chiefs of Prime Minister Staff",
+          "quote": "Armenak Khachatryan — Deputy Chiefs of Prime Minister Staff",
+          "stance": "supporting",
+          "supports_claim_ids": [],
+          "contradicts_claim_ids": []
+        },
+        {
+          "id": "evidence-775ebbd07f9fae96",
+          "source_id": "source-4fb403f1bfdad9c5",
+          "url": "https://www.gov.am/en/staff-structure/other/788/",
+          "title": "https://www.gov.am/en/staff-structure/other/788/",
+          "publisher": "gov.am",
+          "source_class": "official",
+          "language": "eng",
+          "published_at": "",
+          "retrieved_at": "2026-05-20T12:30:48+00:00",
+          "snippet": "Artur Hovsepyan — Deputy Chiefs of Prime Minister Staff",
+          "quote": "Artur Hovsepyan — Deputy Chiefs of Prime Minister Staff",
+          "stance": "supporting",
+          "supports_claim_ids": [],
+          "contradicts_claim_ids": []
+        },
+        {
+          "id": "evidence-c76a5092709a1596",
+          "source_id": "source-82730214c579714a",
+          "url": "https://www.gov.am/en/staff-structure/other/956/",
+          "title": "https://www.gov.am/en/staff-structure/other/956/",
+          "publisher": "gov.am",
+          "source_class": "official",
+          "language": "eng",
+          "published_at": "",
+          "retrieved_at": "2026-05-20T12:30:48+00:00",
+          "snippet": "Arayik Harutyunyan — Chief of Staff",
+          "quote": "Arayik Harutyunyan — Chief of Staff",
+          "stance": "supporting",
+          "supports_claim_ids": [],
+          "contradicts_claim_ids": []
+        },
+        {
+          "id": "evidence-89986e4dc0abff3e",
+          "source_id": "source-82730214c579714a",
+          "url": "https://www.gov.am/en/staff-structure/other/956/",
+          "title": "https://www.gov.am/en/staff-structure/other/956/",
+          "publisher": "gov.am",
+          "source_class": "official",
+          "language": "eng",
+          "published_at": "",
+          "retrieved_at": "2026-05-20T12:30:48+00:00",
+          "snippet": "Armenak Khachatryan — Deputy Chiefs of Prime Minister Staff",
+          "quote": "Armenak Khachatryan — Deputy Chiefs of Prime Minister Staff",
+          "stance": "supporting",
+          "supports_claim_ids": [],
+          "contradicts_claim_ids": []
+        },
+        {
+          "id": "evidence-b2e997a46243701a",
+          "source_id": "source-82730214c579714a",
+          "url": "https://www.gov.am/en/staff-structure/other/956/",
+          "title": "https://www.gov.am/en/staff-structure/other/956/",
+          "publisher": "gov.am",
+          "source_class": "official",
+          "language": "eng",
+          "published_at": "",
+          "retrieved_at": "2026-05-20T12:30:48+00:00",
+          "snippet": "Artur Hovsepyan — Deputy Chiefs of Prime Minister Staff",
+          "quote": "Artur Hovsepyan — Deputy Chiefs of Prime Minister Staff",
+          "stance": "supporting",
+          "supports_claim_ids": [],
+          "contradicts_claim_ids": []
+        },
+        {
+          "id": "evidence-cf1da14f8008a401",
+          "source_id": "source-58546f9e54ae79cd",
+          "url": "https://www.gov.am/en/staff-structure/other/1042/",
+          "title": "https://www.gov.am/en/staff-structure/other/1042/",
+          "publisher": "gov.am",
+          "source_class": "official",
+          "language": "eng",
+          "published_at": "",
+          "retrieved_at": "2026-05-20T12:30:48+00:00",
+          "snippet": "Arayik Harutyunyan — Chief of Staff",
+          "quote": "Arayik Harutyunyan — Chief of Staff",
+          "stance": "supporting",
+          "supports_claim_ids": [],
+          "contradicts_claim_ids": []
+        },
+        {
+          "id": "evidence-9e8b63631f592c6e",
+          "source_id": "source-58546f9e54ae79cd",
+          "url": "https://www.gov.am/en/staff-structure/other/1042/",
+          "title": "https://www.gov.am/en/staff-structure/other/1042/",
+          "publisher": "gov.am",
+          "source_class": "official",
+          "language": "eng",
+          "published_at": "",
+          "retrieved_at": "2026-05-20T12:30:48+00:00",
+          "snippet": "Armenak Khachatryan — Deputy Chiefs of Prime Minister Staff",
+          "quote": "Armenak Khachatryan — Deputy Chiefs of Prime Minister Staff",
+          "stance": "supporting",
+          "supports_claim_ids": [],
+          "contradicts_claim_ids": []
+        },
+        {
+          "id": "evidence-c09f37bcc52a6a37",
+          "source_id": "source-58546f9e54ae79cd",
+          "url": "https://www.gov.am/en/staff-structure/other/1042/",
+          "title": "https://www.gov.am/en/staff-structure/other/1042/",
+          "publisher": "gov.am",
+          "source_class": "official",
+          "language": "eng",
+          "published_at": "",
+          "retrieved_at": "2026-05-20T12:30:48+00:00",
+          "snippet": "Artur Hovsepyan — Deputy Chiefs of Prime Minister Staff",
+          "quote": "Artur Hovsepyan — Deputy Chiefs of Prime Minister Staff",
+          "stance": "supporting",
+          "supports_claim_ids": [],
+          "contradicts_claim_ids": []
+        }
+      ],
+      "missing_fields": [
+        "biography",
+        "party_or_faction_membership"
+      ],
+      "expansion_questions": [
+        {
+          "id": "q-0f161188e7f0e69f",
+          "question_type": "biography_completion",
+          "question": "Complete a source-backed biography profile for Artur Hovsepyan.",
+          "target_entities": [
+            "person-artur-hovsepyan"
+          ],
+          "expected_claim_types": [
+            "biography_fact",
+            "education",
+            "career_role",
+            "party_membership"
+          ],
+          "priority_score": 0.72,
+          "reason": "Person vertex has a thin or missing biography profile.",
+          "suggested_source_types": [
+            "official",
+            "legal",
+            "media"
+          ],
+          "search_queries": {
+            "hy": [
+              "Artur Hovsepyan կենսագրություն պաշտոն կուսակցություն"
+            ],
+            "ru": [
+              "Artur Hovsepyan биография должность партия Армения"
+            ],
+            "en": [
+              "Artur Hovsepyan biography office party Armenia"
+            ]
+          },
+          "budget_estimate": {
+            "pages": 6,
+            "max_depth": 2
+          },
+          "status": "queued",
+          "created_at": "2026-05-30T15:26:28+00:00"
+        },
+        {
+          "id": "q-bda7dbe8d161270a",
+          "question_type": "party_membership",
+          "question": "Determine party and parliamentary faction membership history for Artur Hovsepyan.",
+          "target_entities": [
+            "person-artur-hovsepyan"
+          ],
+          "expected_claim_types": [
+            "MEMBER_OF",
+            "LEADS",
+            "LEFT_PARTY"
+          ],
+          "priority_score": 0.7,
+          "reason": "Political affiliation is a high-value gap for national graph traversal.",
+          "suggested_source_types": [
+            "official",
+            "party",
+            "media"
+          ],
+          "search_queries": {
+            "hy": [
+              "Artur Hovsepyan կենսագրություն պաշտոն կուսակցություն"
+            ],
+            "ru": [
+              "Artur Hovsepyan биография должность партия Армения"
+            ],
+            "en": [
+              "Artur Hovsepyan biography office party Armenia"
+            ]
+          },
+          "budget_estimate": {
+            "pages": 6,
+            "max_depth": 2
+          },
+          "status": "queued",
+          "created_at": "2026-05-30T15:26:28+00:00"
+        }
+      ]
+    },
+    {
+      "id": "subgraph-5f4bac0eb33ab57f",
+      "seed_entity_id": "person-ester-sahakyan",
+      "seed_label": "Ester Sahakyan",
+      "status": "ready",
+      "generated_at": "2026-05-30T15:26:28+00:00",
+      "depth": 1,
+      "nodes": [
+        {
+          "id": "office-chief-protocol-officer-for-the-prime-minister",
+          "name": "Chief Protocol Officer for the Prime Minister",
+          "category": "office",
+          "subtype": "state_office",
+          "aliases": [],
+          "tags": [],
+          "summary": "Official role or structure listed on the Prime Minister's staff page.",
+          "links": {},
+          "public_safe": true,
+          "notes": "",
+          "profile": {
+            "neutral_analytic_summary": "",
+            "history_or_biography": [],
+            "current_roles_or_functions": [],
+            "timeline": [],
+            "direct_network": [],
+            "indirect_network": [],
+            "evidence_summary": [],
+            "dispute_flags": []
+          },
+          "updated_at": "2026-05-09T09:27:57+00:00",
+          "last_changed_run_id": "run-ff274ffcac5f6a21",
+          "change_type": "updated",
+          "kind": "entity",
+          "label": "Chief Protocol Officer for the Prime Minister",
+          "observed_at": "2026-05-09T09:27:57+00:00",
+          "valid_from": null,
+          "valid_to": null,
+          "confidence": 0.85
+        },
+        {
+          "id": "person-ester-sahakyan",
+          "name": "Ester Sahakyan",
+          "category": "person",
+          "subtype": "official",
+          "aliases": [],
+          "tags": [],
+          "summary": "Official staff member of the Prime Minister's office.",
+          "links": {
+            "official_profile": "https://www.gov.am/en/staff-structure/other/1139/"
+          },
+          "public_safe": true,
+          "notes": "",
+          "profile": {
+            "neutral_analytic_summary": "",
+            "history_or_biography": [],
+            "current_roles_or_functions": [
+              "Chief Protocol Officer for the Prime Minister"
+            ],
+            "timeline": [
+              {
+                "date": "current",
+                "title": "Chief Protocol Officer for the Prime Minister"
+              }
+            ],
+            "direct_network": [],
+            "indirect_network": [],
+            "evidence_summary": [],
+            "dispute_flags": [],
+            "overview": "Ester Sahakyan serves in the Prime Minister's office.",
+            "source_links": [
+              {
+                "title": "Chief Protocol Officer for the Prime Minister",
+                "url": "https://www.gov.am/en/staff-structure/other/1139/",
+                "source_type": "official"
+              }
+            ],
+            "last_changed_run_id": "run-ff274ffcac5f6a21",
+            "change_type": "updated"
+          },
+          "updated_at": "2026-05-09T09:27:57+00:00",
+          "last_changed_run_id": "run-ff274ffcac5f6a21",
+          "change_type": "updated",
+          "kind": "entity",
+          "label": "Ester Sahakyan",
+          "observed_at": "2026-05-09T09:27:57+00:00",
+          "valid_from": null,
+          "valid_to": null,
+          "confidence": 0.85
+        }
+      ],
+      "canonical_edges": [
+        {
+          "id": "edge-cd148b70072bc16f",
+          "from": "person-ester-sahakyan",
+          "to": "office-chief-protocol-officer-for-the-prime-minister",
+          "type": "holds_office_in",
+          "relation_type": "holds_office_in",
+          "layer": "canonical",
+          "status": "probable",
+          "confidence": 0.741,
+          "valid_from": null,
+          "valid_to": null,
+          "observed_at": "2026-05-09T09:27:57+00:00",
+          "claim_ids": [
+            "claim-6235d3bf7a3106d8"
+          ],
+          "evidence_ids": [
+            "evidence-bd4040e1ef71d80b"
+          ],
+          "source_ids": [
+            "source-14185a831723984a"
+          ],
+          "public_safe": true,
+          "updated_at": "2026-05-09T09:27:57+00:00",
+          "last_changed_run_id": "run-ff274ffcac5f6a21",
+          "change_type": "updated"
+        }
+      ],
+      "active_claims": [
+        {
+          "id": "claim-6235d3bf7a3106d8",
+          "subject_vertex_id": "person-ester-sahakyan",
+          "object_vertex_id": "office-chief-protocol-officer-for-the-prime-minister",
+          "claim_type": "holds_office_in",
+          "statement": "Ester Sahakyan — Chief Protocol Officer for the Prime Minister",
+          "polarity": "positive",
+          "source_ids": [
+            "source-14185a831723984a"
+          ],
+          "evidence_ids": [
+            "evidence-bd4040e1ef71d80b"
+          ],
+          "observed_at": "2026-05-09T09:27:57+00:00",
+          "valid_from": null,
+          "valid_to": null,
+          "status": "confirmed",
+          "interpretive_degree": 0.2,
+          "publication_risk": 0.3,
+          "extraction_confidence": 0.96,
+          "source_reliability": 0.96,
+          "cross_source_confirmation": 0.333,
+          "entity_linking_confidence": 0.9,
+          "temporal_consistency_confidence": 0.65,
+          "graph_consistency_confidence": 0.78,
+          "source_independence_score": 0.0,
+          "claim_hash": "50090669725ccf53",
+          "raw_relation_id": "rel-951df369ac863b59",
+          "updated_at": "2026-05-09T09:27:57+00:00",
+          "created_by_run_id": "run-ff274ffcac5f6a21",
+          "last_changed_run_id": "run-ff274ffcac5f6a21"
+        }
+      ],
+      "disputed_claims": [],
+      "evidence": [
+        {
+          "id": "evidence-bd4040e1ef71d80b",
+          "source_id": "source-14185a831723984a",
+          "url": "https://www.gov.am/en/staff-structure/",
+          "title": "https://www.gov.am/en/staff-structure/",
+          "publisher": "gov.am",
+          "source_class": "official",
+          "language": "eng",
+          "published_at": "",
+          "retrieved_at": "2026-05-09T09:27:57+00:00",
+          "snippet": "Ester Sahakyan — Chief Protocol Officer for the Prime Minister",
+          "quote": "Ester Sahakyan — Chief Protocol Officer for the Prime Minister",
+          "stance": "supporting",
+          "supports_claim_ids": [],
+          "contradicts_claim_ids": []
+        }
+      ],
+      "missing_fields": [
+        "biography",
+        "party_or_faction_membership"
+      ],
+      "expansion_questions": [
+        {
+          "id": "q-16038bcfbdc9e9d8",
+          "question_type": "biography_completion",
+          "question": "Complete a source-backed biography profile for Ester Sahakyan.",
+          "target_entities": [
+            "person-ester-sahakyan"
+          ],
+          "expected_claim_types": [
+            "biography_fact",
+            "education",
+            "career_role",
+            "party_membership"
+          ],
+          "priority_score": 0.72,
+          "reason": "Person vertex has a thin or missing biography profile.",
+          "suggested_source_types": [
+            "official",
+            "legal",
+            "media"
+          ],
+          "search_queries": {
+            "hy": [
+              "Ester Sahakyan կենսագրություն պաշտոն կուսակցություն"
+            ],
+            "ru": [
+              "Ester Sahakyan биография должность партия Армения"
+            ],
+            "en": [
+              "Ester Sahakyan biography office party Armenia"
+            ]
+          },
+          "budget_estimate": {
+            "pages": 6,
+            "max_depth": 2
+          },
+          "status": "queued",
+          "created_at": "2026-05-30T15:26:28+00:00"
+        },
+        {
+          "id": "q-100f4f428e6ec145",
+          "question_type": "party_membership",
+          "question": "Determine party and parliamentary faction membership history for Ester Sahakyan.",
+          "target_entities": [
+            "person-ester-sahakyan"
+          ],
+          "expected_claim_types": [
+            "MEMBER_OF",
+            "LEADS",
+            "LEFT_PARTY"
+          ],
+          "priority_score": 0.7,
+          "reason": "Political affiliation is a high-value gap for national graph traversal.",
+          "suggested_source_types": [
+            "official",
+            "party",
+            "media"
+          ],
+          "search_queries": {
+            "hy": [
+              "Ester Sahakyan կենսագրություն պաշտոն կուսակցություն"
+            ],
+            "ru": [
+              "Ester Sahakyan биография должность партия Армения"
+            ],
+            "en": [
+              "Ester Sahakyan biography office party Armenia"
+            ]
+          },
+          "budget_estimate": {
+            "pages": 6,
+            "max_depth": 2
+          },
+          "status": "queued",
+          "created_at": "2026-05-30T15:26:28+00:00"
+        }
+      ]
+    },
+    {
+      "id": "subgraph-9928ea66e67078e3",
+      "seed_entity_id": "person-karine-davoyan",
+      "seed_label": "Karine Davoyan",
+      "status": "ready",
+      "generated_at": "2026-05-30T15:26:28+00:00",
+      "depth": 1,
+      "nodes": [
+        {
+          "id": "institution-assistants-to-the-prime-minister",
+          "name": "Assistants to the Prime Minister",
+          "category": "organization",
+          "subtype": "institution",
+          "aliases": [],
+          "tags": [],
+          "summary": "Official role or structure listed on the Prime Minister's staff page.",
+          "links": {},
+          "public_safe": true,
+          "notes": "",
+          "profile": {
+            "neutral_analytic_summary": "",
+            "history_or_biography": [],
+            "current_roles_or_functions": [],
+            "timeline": [],
+            "direct_network": [],
+            "indirect_network": [],
+            "evidence_summary": [],
+            "dispute_flags": []
+          },
+          "updated_at": "2026-05-09T09:27:58+00:00",
+          "last_changed_run_id": "run-ff274ffcac5f6a21",
+          "change_type": "updated",
+          "kind": "entity",
+          "label": "Assistants to the Prime Minister",
+          "observed_at": "2026-05-09T09:27:58+00:00",
+          "valid_from": null,
+          "valid_to": null,
+          "confidence": 0.85
+        },
+        {
+          "id": "person-karine-davoyan",
+          "name": "Karine Davoyan",
+          "category": "person",
+          "subtype": "official",
+          "aliases": [],
+          "tags": [],
+          "summary": "Official staff member of the Prime Minister's office.",
+          "links": {
+            "official_profile": "https://www.gov.am/en/staff-structure/other/1119/"
+          },
+          "public_safe": true,
+          "notes": "",
+          "profile": {
+            "neutral_analytic_summary": "",
+            "history_or_biography": [],
+            "current_roles_or_functions": [
+              "Assistants to the Prime Minister"
+            ],
+            "timeline": [
+              {
+                "date": "current",
+                "title": "Assistants to the Prime Minister"
+              }
+            ],
+            "direct_network": [],
+            "indirect_network": [],
+            "evidence_summary": [],
+            "dispute_flags": [],
+            "overview": "Karine Davoyan serves in the Prime Minister's office.",
+            "source_links": [
+              {
+                "title": "Assistants to the Prime Minister",
+                "url": "https://www.gov.am/en/staff-structure/other/1119/",
+                "source_type": "official"
+              }
+            ],
+            "last_changed_run_id": "run-ff274ffcac5f6a21",
+            "change_type": "updated"
+          },
+          "updated_at": "2026-05-09T09:27:58+00:00",
+          "last_changed_run_id": "run-ff274ffcac5f6a21",
+          "change_type": "updated",
+          "kind": "entity",
+          "label": "Karine Davoyan",
+          "observed_at": "2026-05-09T09:27:58+00:00",
+          "valid_from": null,
+          "valid_to": null,
+          "confidence": 0.85
+        }
+      ],
+      "canonical_edges": [
+        {
+          "id": "edge-08628307c7acbc64",
+          "from": "person-karine-davoyan",
+          "to": "institution-assistants-to-the-prime-minister",
+          "type": "holds_office_in",
+          "relation_type": "holds_office_in",
+          "layer": "canonical",
+          "status": "probable",
+          "confidence": 0.741,
+          "valid_from": null,
+          "valid_to": null,
+          "observed_at": "2026-05-09T09:27:58+00:00",
+          "claim_ids": [
+            "claim-cda486044251f22f"
+          ],
+          "evidence_ids": [
+            "evidence-b2ff838fa3a81e51"
+          ],
+          "source_ids": [
+            "source-14185a831723984a"
+          ],
+          "public_safe": true,
+          "updated_at": "2026-05-09T09:27:58+00:00",
+          "last_changed_run_id": "run-ff274ffcac5f6a21",
+          "change_type": "updated"
+        }
+      ],
+      "active_claims": [
+        {
+          "id": "claim-b43a72711e555495",
+          "subject_vertex_id": "person-arsen-mikhaylov",
+          "object_vertex_id": "institution-assistants-to-the-prime-minister",
+          "claim_type": "holds_office_in",
+          "statement": "Arsen Mikhaylov — Assistants to the Prime Minister",
+          "polarity": "positive",
+          "source_ids": [
+            "source-14185a831723984a"
+          ],
+          "evidence_ids": [
+            "evidence-623b9482a4004702"
+          ],
+          "observed_at": "2026-05-09T09:27:58+00:00",
+          "valid_from": null,
+          "valid_to": null,
+          "status": "confirmed",
+          "interpretive_degree": 0.2,
+          "publication_risk": 0.3,
+          "extraction_confidence": 0.96,
+          "source_reliability": 0.96,
+          "cross_source_confirmation": 0.333,
+          "entity_linking_confidence": 0.9,
+          "temporal_consistency_confidence": 0.65,
+          "graph_consistency_confidence": 0.78,
+          "source_independence_score": 0.0,
+          "claim_hash": "cd121f10c3a5b709",
+          "raw_relation_id": "rel-b3114b40f4f017d8",
+          "updated_at": "2026-05-09T09:27:58+00:00",
+          "created_by_run_id": "run-ff274ffcac5f6a21",
+          "last_changed_run_id": "run-ff274ffcac5f6a21"
+        },
+        {
+          "id": "claim-de0ae73e9b8d1100",
+          "subject_vertex_id": "person-david-gevorgyan",
+          "object_vertex_id": "institution-assistants-to-the-prime-minister",
+          "claim_type": "holds_office_in",
+          "statement": "David Gevorgyan — Assistants to the Prime Minister",
+          "polarity": "positive",
+          "source_ids": [
+            "source-14185a831723984a"
+          ],
+          "evidence_ids": [
+            "evidence-7812413ae00a3606"
+          ],
+          "observed_at": "2026-05-09T09:27:58+00:00",
+          "valid_from": null,
+          "valid_to": null,
+          "status": "confirmed",
+          "interpretive_degree": 0.2,
+          "publication_risk": 0.3,
+          "extraction_confidence": 0.96,
+          "source_reliability": 0.96,
+          "cross_source_confirmation": 0.333,
+          "entity_linking_confidence": 0.9,
+          "temporal_consistency_confidence": 0.65,
+          "graph_consistency_confidence": 0.78,
+          "source_independence_score": 0.0,
+          "claim_hash": "c44c635b48e4edca",
+          "raw_relation_id": "rel-d87b3bb948beb0bb",
+          "updated_at": "2026-05-09T09:27:58+00:00",
+          "created_by_run_id": "run-ff274ffcac5f6a21",
+          "last_changed_run_id": "run-ff274ffcac5f6a21"
+        },
+        {
+          "id": "claim-eaef101a4860fcf1",
+          "subject_vertex_id": "person-gagik-isakhanyan",
+          "object_vertex_id": "institution-assistants-to-the-prime-minister",
+          "claim_type": "holds_office_in",
+          "statement": "Gagik Isakhanyan — Assistants to the Prime Minister",
+          "polarity": "positive",
+          "source_ids": [
+            "source-14185a831723984a"
+          ],
+          "evidence_ids": [
+            "evidence-973cb8881f2c23ac"
+          ],
+          "observed_at": "2026-05-09T09:27:58+00:00",
+          "valid_from": null,
+          "valid_to": null,
+          "status": "confirmed",
+          "interpretive_degree": 0.2,
+          "publication_risk": 0.3,
+          "extraction_confidence": 0.96,
+          "source_reliability": 0.96,
+          "cross_source_confirmation": 0.333,
+          "entity_linking_confidence": 0.9,
+          "temporal_consistency_confidence": 0.65,
+          "graph_consistency_confidence": 0.78,
+          "source_independence_score": 0.0,
+          "claim_hash": "7df2ee9c217cc560",
+          "raw_relation_id": "rel-9b7e4646dac52cb5",
+          "updated_at": "2026-05-09T09:27:58+00:00",
+          "created_by_run_id": "run-ff274ffcac5f6a21",
+          "last_changed_run_id": "run-ff274ffcac5f6a21"
+        },
+        {
+          "id": "claim-cda486044251f22f",
+          "subject_vertex_id": "person-karine-davoyan",
+          "object_vertex_id": "institution-assistants-to-the-prime-minister",
+          "claim_type": "holds_office_in",
+          "statement": "Karine Davoyan — Assistants to the Prime Minister",
+          "polarity": "positive",
+          "source_ids": [
+            "source-14185a831723984a"
+          ],
+          "evidence_ids": [
+            "evidence-b2ff838fa3a81e51"
+          ],
+          "observed_at": "2026-05-09T09:27:58+00:00",
+          "valid_from": null,
+          "valid_to": null,
+          "status": "confirmed",
+          "interpretive_degree": 0.2,
+          "publication_risk": 0.3,
+          "extraction_confidence": 0.96,
+          "source_reliability": 0.96,
+          "cross_source_confirmation": 0.333,
+          "entity_linking_confidence": 0.9,
+          "temporal_consistency_confidence": 0.65,
+          "graph_consistency_confidence": 0.78,
+          "source_independence_score": 0.0,
+          "claim_hash": "7ec955e14bfa0586",
+          "raw_relation_id": "rel-f3c4086c92e7dfd2",
+          "updated_at": "2026-05-09T09:27:58+00:00",
+          "created_by_run_id": "run-ff274ffcac5f6a21",
+          "last_changed_run_id": "run-ff274ffcac5f6a21"
+        }
+      ],
+      "disputed_claims": [],
+      "evidence": [
+        {
+          "id": "evidence-623b9482a4004702",
+          "source_id": "source-14185a831723984a",
+          "url": "https://www.gov.am/en/staff-structure/",
+          "title": "https://www.gov.am/en/staff-structure/",
+          "publisher": "gov.am",
+          "source_class": "official",
+          "language": "eng",
+          "published_at": "",
+          "retrieved_at": "2026-05-09T09:27:58+00:00",
+          "snippet": "Arsen Mikhaylov — Assistants to the Prime Minister",
+          "quote": "Arsen Mikhaylov — Assistants to the Prime Minister",
+          "stance": "supporting",
+          "supports_claim_ids": [],
+          "contradicts_claim_ids": []
+        },
+        {
+          "id": "evidence-7812413ae00a3606",
+          "source_id": "source-14185a831723984a",
+          "url": "https://www.gov.am/en/staff-structure/",
+          "title": "https://www.gov.am/en/staff-structure/",
+          "publisher": "gov.am",
+          "source_class": "official",
+          "language": "eng",
+          "published_at": "",
+          "retrieved_at": "2026-05-09T09:27:58+00:00",
+          "snippet": "David Gevorgyan — Assistants to the Prime Minister",
+          "quote": "David Gevorgyan — Assistants to the Prime Minister",
+          "stance": "supporting",
+          "supports_claim_ids": [],
+          "contradicts_claim_ids": []
+        },
+        {
+          "id": "evidence-973cb8881f2c23ac",
+          "source_id": "source-14185a831723984a",
+          "url": "https://www.gov.am/en/staff-structure/",
+          "title": "https://www.gov.am/en/staff-structure/",
+          "publisher": "gov.am",
+          "source_class": "official",
+          "language": "eng",
+          "published_at": "",
+          "retrieved_at": "2026-05-09T09:27:58+00:00",
+          "snippet": "Gagik Isakhanyan — Assistants to the Prime Minister",
+          "quote": "Gagik Isakhanyan — Assistants to the Prime Minister",
+          "stance": "supporting",
+          "supports_claim_ids": [],
+          "contradicts_claim_ids": []
+        },
+        {
+          "id": "evidence-b2ff838fa3a81e51",
+          "source_id": "source-14185a831723984a",
+          "url": "https://www.gov.am/en/staff-structure/",
+          "title": "https://www.gov.am/en/staff-structure/",
+          "publisher": "gov.am",
+          "source_class": "official",
+          "language": "eng",
+          "published_at": "",
+          "retrieved_at": "2026-05-09T09:27:58+00:00",
+          "snippet": "Karine Davoyan — Assistants to the Prime Minister",
+          "quote": "Karine Davoyan — Assistants to the Prime Minister",
+          "stance": "supporting",
+          "supports_claim_ids": [],
+          "contradicts_claim_ids": []
+        }
+      ],
+      "missing_fields": [
+        "biography",
+        "party_or_faction_membership"
+      ],
+      "expansion_questions": [
+        {
+          "id": "q-27e352065b1cdcce",
+          "question_type": "biography_completion",
+          "question": "Complete a source-backed biography profile for Karine Davoyan.",
+          "target_entities": [
+            "person-karine-davoyan"
+          ],
+          "expected_claim_types": [
+            "biography_fact",
+            "education",
+            "career_role",
+            "party_membership"
+          ],
+          "priority_score": 0.72,
+          "reason": "Person vertex has a thin or missing biography profile.",
+          "suggested_source_types": [
+            "official",
+            "legal",
+            "media"
+          ],
+          "search_queries": {
+            "hy": [
+              "Karine Davoyan կենսագրություն պաշտոն կուսակցություն"
+            ],
+            "ru": [
+              "Karine Davoyan биография должность партия Армения"
+            ],
+            "en": [
+              "Karine Davoyan biography office party Armenia"
+            ]
+          },
+          "budget_estimate": {
+            "pages": 6,
+            "max_depth": 2
+          },
+          "status": "queued",
+          "created_at": "2026-05-30T15:26:28+00:00"
+        },
+        {
+          "id": "q-464b41544f883bf1",
+          "question_type": "party_membership",
+          "question": "Determine party and parliamentary faction membership history for Karine Davoyan.",
+          "target_entities": [
+            "person-karine-davoyan"
+          ],
+          "expected_claim_types": [
+            "MEMBER_OF",
+            "LEADS",
+            "LEFT_PARTY"
+          ],
+          "priority_score": 0.7,
+          "reason": "Political affiliation is a high-value gap for national graph traversal.",
+          "suggested_source_types": [
+            "official",
+            "party",
+            "media"
+          ],
+          "search_queries": {
+            "hy": [
+              "Karine Davoyan կենսագրություն պաշտոն կուսակցություն"
+            ],
+            "ru": [
+              "Karine Davoyan биография должность партия Армения"
+            ],
+            "en": [
+              "Karine Davoyan biography office party Armenia"
+            ]
+          },
+          "budget_estimate": {
+            "pages": 6,
+            "max_depth": 2
+          },
+          "status": "queued",
+          "created_at": "2026-05-30T15:26:28+00:00"
+        }
+      ]
+    },
+    {
+      "id": "subgraph-552bdbbe2aa0fc37",
+      "seed_entity_id": "person-artak-kamalyan",
+      "seed_label": "Artak Kamalyan",
+      "status": "ready",
+      "generated_at": "2026-05-30T15:26:28+00:00",
+      "depth": 1,
+      "nodes": [
+        {
+          "id": "institution-chief-adviser-to-the-prime-minister",
+          "name": "Chief Adviser to the Prime Minister",
+          "category": "organization",
+          "subtype": "institution",
+          "aliases": [],
+          "tags": [],
+          "summary": "Official role or structure listed on the Prime Minister's staff page.",
+          "links": {},
+          "public_safe": true,
+          "notes": "",
+          "profile": {
+            "neutral_analytic_summary": "",
+            "history_or_biography": [],
+            "current_roles_or_functions": [],
+            "timeline": [],
+            "direct_network": [],
+            "indirect_network": [],
+            "evidence_summary": [],
+            "dispute_flags": []
+          },
+          "updated_at": "2026-05-09T09:27:57+00:00",
+          "last_changed_run_id": "run-ff274ffcac5f6a21",
+          "change_type": "updated",
+          "kind": "entity",
+          "label": "Chief Adviser to the Prime Minister",
+          "observed_at": "2026-05-09T09:27:57+00:00",
+          "valid_from": null,
+          "valid_to": null,
+          "confidence": 0.85
+        },
+        {
+          "id": "person-artak-kamalyan",
+          "name": "Artak Kamalyan",
+          "category": "person",
+          "subtype": "official",
+          "aliases": [],
+          "tags": [],
+          "summary": "Official staff member of the Prime Minister's office.",
+          "links": {
+            "official_profile": "https://www.gov.am/en/staff-structure/other/1146/"
+          },
+          "public_safe": true,
+          "notes": "",
+          "profile": {
+            "neutral_analytic_summary": "",
+            "history_or_biography": [],
+            "current_roles_or_functions": [
+              "Chief Adviser to the Prime Minister"
+            ],
+            "timeline": [
+              {
+                "date": "current",
+                "title": "Chief Adviser to the Prime Minister"
+              }
+            ],
+            "direct_network": [],
+            "indirect_network": [],
+            "evidence_summary": [],
+            "dispute_flags": [],
+            "overview": "Artak Kamalyan serves in the Prime Minister's office.",
+            "source_links": [
+              {
+                "title": "Chief Adviser to the Prime Minister",
+                "url": "https://www.gov.am/en/staff-structure/other/1146/",
+                "source_type": "official"
+              }
+            ],
+            "last_changed_run_id": "run-ff274ffcac5f6a21",
+            "change_type": "updated"
+          },
+          "updated_at": "2026-05-09T09:27:57+00:00",
+          "last_changed_run_id": "run-ff274ffcac5f6a21",
+          "change_type": "updated",
+          "kind": "entity",
+          "label": "Artak Kamalyan",
+          "observed_at": "2026-05-09T09:27:57+00:00",
+          "valid_from": null,
+          "valid_to": null,
+          "confidence": 0.85
+        }
+      ],
+      "canonical_edges": [
+        {
+          "id": "edge-6a6adadf237c9dc6",
+          "from": "person-artak-kamalyan",
+          "to": "institution-chief-adviser-to-the-prime-minister",
+          "type": "holds_office_in",
+          "relation_type": "holds_office_in",
+          "layer": "canonical",
+          "status": "probable",
+          "confidence": 0.741,
+          "valid_from": null,
+          "valid_to": null,
+          "observed_at": "2026-05-09T09:27:57+00:00",
+          "claim_ids": [
+            "claim-9c3de8eb3c5d88c0"
+          ],
+          "evidence_ids": [
+            "evidence-946f64bd10f9c9c8"
+          ],
+          "source_ids": [
+            "source-14185a831723984a"
+          ],
+          "public_safe": true,
+          "updated_at": "2026-05-09T09:27:57+00:00",
+          "last_changed_run_id": "run-ff274ffcac5f6a21",
+          "change_type": "updated"
+        }
+      ],
+      "active_claims": [
+        {
+          "id": "claim-9c3de8eb3c5d88c0",
+          "subject_vertex_id": "person-artak-kamalyan",
+          "object_vertex_id": "institution-chief-adviser-to-the-prime-minister",
+          "claim_type": "holds_office_in",
+          "statement": "Artak Kamalyan — Chief Adviser to the Prime Minister",
+          "polarity": "positive",
+          "source_ids": [
+            "source-14185a831723984a"
+          ],
+          "evidence_ids": [
+            "evidence-946f64bd10f9c9c8"
+          ],
+          "observed_at": "2026-05-09T09:27:57+00:00",
+          "valid_from": null,
+          "valid_to": null,
+          "status": "confirmed",
+          "interpretive_degree": 0.2,
+          "publication_risk": 0.3,
+          "extraction_confidence": 0.96,
+          "source_reliability": 0.96,
+          "cross_source_confirmation": 0.333,
+          "entity_linking_confidence": 0.9,
+          "temporal_consistency_confidence": 0.65,
+          "graph_consistency_confidence": 0.78,
+          "source_independence_score": 0.0,
+          "claim_hash": "d59cbad251a7337c",
+          "raw_relation_id": "rel-86f211514fd3e143",
+          "updated_at": "2026-05-09T09:27:57+00:00",
+          "created_by_run_id": "run-ff274ffcac5f6a21",
+          "last_changed_run_id": "run-ff274ffcac5f6a21"
+        },
+        {
+          "id": "claim-b72ad99790adcb98",
+          "subject_vertex_id": "person-lilit-makunts",
+          "object_vertex_id": "institution-chief-adviser-to-the-prime-minister",
+          "claim_type": "holds_office_in",
+          "statement": "Lilit Makunts — Chief Adviser to the Prime Minister",
+          "polarity": "positive",
+          "source_ids": [
+            "source-14185a831723984a"
+          ],
+          "evidence_ids": [
+            "evidence-5d6b3e92b2208012"
+          ],
+          "observed_at": "2026-05-09T09:27:57+00:00",
+          "valid_from": null,
+          "valid_to": null,
+          "status": "confirmed",
+          "interpretive_degree": 0.2,
+          "publication_risk": 0.3,
+          "extraction_confidence": 0.96,
+          "source_reliability": 0.96,
+          "cross_source_confirmation": 0.333,
+          "entity_linking_confidence": 0.9,
+          "temporal_consistency_confidence": 0.65,
+          "graph_consistency_confidence": 0.78,
+          "source_independence_score": 0.0,
+          "claim_hash": "681025c91085b1bc",
+          "raw_relation_id": "rel-6191528e4889fe55",
+          "updated_at": "2026-05-09T09:27:57+00:00",
+          "created_by_run_id": "run-ff274ffcac5f6a21",
+          "last_changed_run_id": "run-ff274ffcac5f6a21"
+        }
+      ],
+      "disputed_claims": [],
+      "evidence": [
+        {
+          "id": "evidence-946f64bd10f9c9c8",
+          "source_id": "source-14185a831723984a",
+          "url": "https://www.gov.am/en/staff-structure/",
+          "title": "https://www.gov.am/en/staff-structure/",
+          "publisher": "gov.am",
+          "source_class": "official",
+          "language": "eng",
+          "published_at": "",
+          "retrieved_at": "2026-05-09T09:27:57+00:00",
+          "snippet": "Artak Kamalyan — Chief Adviser to the Prime Minister",
+          "quote": "Artak Kamalyan — Chief Adviser to the Prime Minister",
+          "stance": "supporting",
+          "supports_claim_ids": [],
+          "contradicts_claim_ids": []
+        },
+        {
+          "id": "evidence-5d6b3e92b2208012",
+          "source_id": "source-14185a831723984a",
+          "url": "https://www.gov.am/en/staff-structure/",
+          "title": "https://www.gov.am/en/staff-structure/",
+          "publisher": "gov.am",
+          "source_class": "official",
+          "language": "eng",
+          "published_at": "",
+          "retrieved_at": "2026-05-09T09:27:57+00:00",
+          "snippet": "Lilit Makunts — Chief Adviser to the Prime Minister",
+          "quote": "Lilit Makunts — Chief Adviser to the Prime Minister",
+          "stance": "supporting",
+          "supports_claim_ids": [],
+          "contradicts_claim_ids": []
+        }
+      ],
+      "missing_fields": [
+        "biography",
+        "party_or_faction_membership"
+      ],
+      "expansion_questions": [
+        {
+          "id": "q-2b811d5f87673852",
+          "question_type": "biography_completion",
+          "question": "Complete a source-backed biography profile for Artak Kamalyan.",
+          "target_entities": [
+            "person-artak-kamalyan"
+          ],
+          "expected_claim_types": [
+            "biography_fact",
+            "education",
+            "career_role",
+            "party_membership"
+          ],
+          "priority_score": 0.72,
+          "reason": "Person vertex has a thin or missing biography profile.",
+          "suggested_source_types": [
+            "official",
+            "legal",
+            "media"
+          ],
+          "search_queries": {
+            "hy": [
+              "Artak Kamalyan կենսագրություն պաշտոն կուսակցություն"
+            ],
+            "ru": [
+              "Artak Kamalyan биография должность партия Армения"
+            ],
+            "en": [
+              "Artak Kamalyan biography office party Armenia"
+            ]
+          },
+          "budget_estimate": {
+            "pages": 6,
+            "max_depth": 2
+          },
+          "status": "queued",
+          "created_at": "2026-05-30T15:26:28+00:00"
+        },
+        {
+          "id": "q-218812719eb35096",
+          "question_type": "party_membership",
+          "question": "Determine party and parliamentary faction membership history for Artak Kamalyan.",
+          "target_entities": [
+            "person-artak-kamalyan"
+          ],
+          "expected_claim_types": [
+            "MEMBER_OF",
+            "LEADS",
+            "LEFT_PARTY"
+          ],
+          "priority_score": 0.7,
+          "reason": "Political affiliation is a high-value gap for national graph traversal.",
+          "suggested_source_types": [
+            "official",
+            "party",
+            "media"
+          ],
+          "search_queries": {
+            "hy": [
+              "Artak Kamalyan կենսագրություն պաշտոն կուսակցություն"
+            ],
+            "ru": [
+              "Artak Kamalyan биография должность партия Армения"
+            ],
+            "en": [
+              "Artak Kamalyan biography office party Armenia"
+            ]
+          },
+          "budget_estimate": {
+            "pages": 6,
+            "max_depth": 2
+          },
+          "status": "queued",
+          "created_at": "2026-05-30T15:26:28+00:00"
+        }
+      ]
+    },
+    {
+      "id": "subgraph-2ae7ee6cbdb33f70",
+      "seed_entity_id": "person-sargis-torosyan",
+      "seed_label": "Sargis Torosyan",
+      "status": "ready",
+      "generated_at": "2026-05-30T15:26:28+00:00",
+      "depth": 1,
+      "nodes": [
+        {
+          "id": "office-deputy-chiefs-of-prime-minister-staff",
+          "name": "Deputy Chiefs of Prime Minister Staff",
+          "category": "office",
+          "subtype": "state_office",
+          "aliases": [],
+          "tags": [],
+          "summary": "Official role or structure listed on the Prime Minister's staff page.",
+          "links": {},
+          "public_safe": true,
+          "notes": "",
+          "profile": {
+            "neutral_analytic_summary": "",
+            "history_or_biography": [],
+            "current_roles_or_functions": [],
+            "timeline": [],
+            "direct_network": [],
+            "indirect_network": [],
+            "evidence_summary": [],
+            "dispute_flags": []
+          },
+          "updated_at": "2026-05-20T12:30:48+00:00",
+          "last_changed_run_id": "run-230597dc37853d18",
+          "change_type": "updated",
+          "kind": "entity",
+          "label": "Deputy Chiefs of Prime Minister Staff",
+          "observed_at": "2026-05-20T12:30:48+00:00",
+          "valid_from": null,
+          "valid_to": null,
+          "confidence": 0.85
+        },
+        {
+          "id": "person-sargis-torosyan",
+          "name": "Sargis Torosyan",
+          "category": "person",
+          "subtype": "official",
+          "aliases": [],
+          "tags": [],
+          "summary": "Official staff member of the Prime Minister's office.",
+          "links": {
+            "official_profile": "https://www.gov.am/en/staff-structure/other/760/"
+          },
+          "public_safe": true,
+          "notes": "",
+          "profile": {
+            "neutral_analytic_summary": "",
+            "history_or_biography": [],
+            "current_roles_or_functions": [
+              "Deputy Chiefs of Prime Minister Staff"
+            ],
+            "timeline": [
+              {
+                "date": "current",
+                "title": "Deputy Chiefs of Prime Minister Staff"
+              }
+            ],
+            "direct_network": [],
+            "indirect_network": [],
+            "evidence_summary": [],
+            "dispute_flags": [],
+            "overview": "Sargis Torosyan serves in the Prime Minister's office.",
+            "source_links": [
+              {
+                "title": "Deputy Chiefs of Prime Minister Staff",
+                "url": "https://www.gov.am/en/staff-structure/other/760/",
+                "source_type": "official"
+              }
+            ],
+            "last_changed_run_id": "run-ff274ffcac5f6a21",
+            "change_type": "updated"
+          },
+          "updated_at": "2026-05-09T09:27:57+00:00",
+          "last_changed_run_id": "run-ff274ffcac5f6a21",
+          "change_type": "updated",
+          "kind": "entity",
+          "label": "Sargis Torosyan",
+          "observed_at": "2026-05-09T09:27:57+00:00",
+          "valid_from": null,
+          "valid_to": null,
+          "confidence": 0.85
+        }
+      ],
+      "canonical_edges": [
+        {
+          "id": "edge-943e7d4344549a2e",
+          "from": "person-sargis-torosyan",
+          "to": "office-deputy-chiefs-of-prime-minister-staff",
+          "type": "holds_office_in",
+          "relation_type": "holds_office_in",
+          "layer": "canonical",
+          "status": "probable",
+          "confidence": 0.741,
+          "valid_from": null,
+          "valid_to": null,
+          "observed_at": "2026-05-09T09:27:57+00:00",
+          "claim_ids": [
+            "claim-5aa549c198fa8d7c"
+          ],
+          "evidence_ids": [
+            "evidence-773fc6d011529106"
+          ],
+          "source_ids": [
+            "source-14185a831723984a"
+          ],
+          "public_safe": true,
+          "updated_at": "2026-05-09T09:27:57+00:00",
+          "last_changed_run_id": "run-ff274ffcac5f6a21",
+          "change_type": "updated"
+        }
+      ],
+      "active_claims": [
+        {
+          "id": "claim-e66fa76a84a48694",
+          "subject_vertex_id": "person-armenak-khachatryan",
+          "object_vertex_id": "office-deputy-chiefs-of-prime-minister-staff",
+          "claim_type": "holds_office_in",
+          "statement": "Armenak Khachatryan — Deputy Chiefs of Prime Minister Staff",
+          "polarity": "positive",
+          "source_ids": [
+            "source-14185a831723984a"
+          ],
+          "evidence_ids": [
+            "evidence-d2bcbdaf707a484e"
+          ],
+          "observed_at": "2026-05-20T12:30:47+00:00",
+          "valid_from": null,
+          "valid_to": null,
+          "status": "confirmed",
+          "interpretive_degree": 0.2,
+          "publication_risk": 0.3,
+          "extraction_confidence": 0.96,
+          "source_reliability": 0.96,
+          "cross_source_confirmation": 0.333,
+          "entity_linking_confidence": 0.9,
+          "temporal_consistency_confidence": 0.65,
+          "graph_consistency_confidence": 0.78,
+          "source_independence_score": 0.0,
+          "claim_hash": "1f73bfccbeae2ae1",
+          "raw_relation_id": "rel-7e781532f87c0fff",
+          "updated_at": "2026-05-20T12:30:47+00:00",
+          "created_by_run_id": "run-230597dc37853d18",
+          "last_changed_run_id": "run-230597dc37853d18"
+        },
+        {
+          "id": "claim-6b6c57b3fb9e43a1",
+          "subject_vertex_id": "person-artur-hovsepyan",
+          "object_vertex_id": "office-deputy-chiefs-of-prime-minister-staff",
+          "claim_type": "holds_office_in",
+          "statement": "Artur Hovsepyan — Deputy Chiefs of Prime Minister Staff",
+          "polarity": "positive",
+          "source_ids": [
+            "source-14185a831723984a"
+          ],
+          "evidence_ids": [
+            "evidence-6ee35f8373648196"
+          ],
+          "observed_at": "2026-05-20T12:30:47+00:00",
+          "valid_from": null,
+          "valid_to": null,
+          "status": "confirmed",
+          "interpretive_degree": 0.2,
+          "publication_risk": 0.3,
+          "extraction_confidence": 0.96,
+          "source_reliability": 0.96,
+          "cross_source_confirmation": 0.333,
+          "entity_linking_confidence": 0.9,
+          "temporal_consistency_confidence": 0.65,
+          "graph_consistency_confidence": 0.78,
+          "source_independence_score": 0.0,
+          "claim_hash": "b7b2c9d1f937badc",
+          "raw_relation_id": "rel-898a7cb0d32446c0",
+          "updated_at": "2026-05-20T12:30:47+00:00",
+          "created_by_run_id": "run-230597dc37853d18",
+          "last_changed_run_id": "run-230597dc37853d18"
+        },
+        {
+          "id": "claim-5aa549c198fa8d7c",
+          "subject_vertex_id": "person-sargis-torosyan",
+          "object_vertex_id": "office-deputy-chiefs-of-prime-minister-staff",
+          "claim_type": "holds_office_in",
+          "statement": "Sargis Torosyan — Deputy Chiefs of Prime Minister Staff",
+          "polarity": "positive",
+          "source_ids": [
+            "source-14185a831723984a"
+          ],
+          "evidence_ids": [
+            "evidence-773fc6d011529106"
+          ],
+          "observed_at": "2026-05-09T09:27:57+00:00",
+          "valid_from": null,
+          "valid_to": null,
+          "status": "confirmed",
+          "interpretive_degree": 0.2,
+          "publication_risk": 0.3,
+          "extraction_confidence": 0.96,
+          "source_reliability": 0.96,
+          "cross_source_confirmation": 0.333,
+          "entity_linking_confidence": 0.9,
+          "temporal_consistency_confidence": 0.65,
+          "graph_consistency_confidence": 0.78,
+          "source_independence_score": 0.0,
+          "claim_hash": "40cef35f6b683654",
+          "raw_relation_id": "rel-af2c0cd8a137e27d",
+          "updated_at": "2026-05-09T09:27:57+00:00",
+          "created_by_run_id": "run-ff274ffcac5f6a21",
+          "last_changed_run_id": "run-ff274ffcac5f6a21"
+        },
+        {
+          "id": "claim-dd15127946fd8973",
+          "subject_vertex_id": "person-taron-chakhoyan",
+          "object_vertex_id": "office-deputy-chiefs-of-prime-minister-staff",
+          "claim_type": "holds_office_in",
+          "statement": "Taron Chakhoyan — Deputy Chiefs of Prime Minister Staff",
+          "polarity": "positive",
+          "source_ids": [
+            "source-14185a831723984a"
+          ],
+          "evidence_ids": [
+            "evidence-1311e1cb4882b2f2"
+          ],
+          "observed_at": "2026-05-09T09:27:57+00:00",
+          "valid_from": null,
+          "valid_to": null,
+          "status": "confirmed",
+          "interpretive_degree": 0.2,
+          "publication_risk": 0.3,
+          "extraction_confidence": 0.96,
+          "source_reliability": 0.96,
+          "cross_source_confirmation": 0.333,
+          "entity_linking_confidence": 0.9,
+          "temporal_consistency_confidence": 0.65,
+          "graph_consistency_confidence": 0.78,
+          "source_independence_score": 0.0,
+          "claim_hash": "8cd4ce8527691f2b",
+          "raw_relation_id": "rel-4f625100017668b8",
+          "updated_at": "2026-05-09T09:27:57+00:00",
+          "created_by_run_id": "run-ff274ffcac5f6a21",
+          "last_changed_run_id": "run-ff274ffcac5f6a21"
+        },
+        {
+          "id": "claim-7a92f806bbc48b49",
+          "subject_vertex_id": "person-zaruhi-matevosyan",
+          "object_vertex_id": "office-deputy-chiefs-of-prime-minister-staff",
+          "claim_type": "holds_office_in",
+          "statement": "Zaruhi Matevosyan — Deputy Chiefs of Prime Minister Staff",
+          "polarity": "positive",
+          "source_ids": [
+            "source-14185a831723984a"
+          ],
+          "evidence_ids": [
+            "evidence-16bfda34d108141b"
+          ],
+          "observed_at": "2026-05-09T09:27:57+00:00",
+          "valid_from": null,
+          "valid_to": null,
+          "status": "confirmed",
+          "interpretive_degree": 0.2,
+          "publication_risk": 0.3,
+          "extraction_confidence": 0.96,
+          "source_reliability": 0.96,
+          "cross_source_confirmation": 0.333,
+          "entity_linking_confidence": 0.9,
+          "temporal_consistency_confidence": 0.65,
+          "graph_consistency_confidence": 0.78,
+          "source_independence_score": 0.0,
+          "claim_hash": "2cc3701982c57b5c",
+          "raw_relation_id": "rel-d49c862ca49d3b28",
+          "updated_at": "2026-05-09T09:27:57+00:00",
+          "created_by_run_id": "run-ff274ffcac5f6a21",
+          "last_changed_run_id": "run-ff274ffcac5f6a21"
+        },
+        {
+          "id": "claim-a56eb6f4c5aac2ab",
+          "subject_vertex_id": "person-armenak-khachatryan",
+          "object_vertex_id": "office-deputy-chiefs-of-prime-minister-staff",
+          "claim_type": "holds_office_in",
+          "statement": "Armenak Khachatryan — Deputy Chiefs of Prime Minister Staff",
+          "polarity": "positive",
+          "source_ids": [
+            "source-4fb403f1bfdad9c5"
+          ],
+          "evidence_ids": [
+            "evidence-dd98840e1558cd4e"
+          ],
+          "observed_at": "2026-05-20T12:30:48+00:00",
+          "valid_from": null,
+          "valid_to": null,
+          "status": "confirmed",
+          "interpretive_degree": 0.2,
+          "publication_risk": 0.3,
+          "extraction_confidence": 0.96,
+          "source_reliability": 0.96,
+          "cross_source_confirmation": 0.333,
+          "entity_linking_confidence": 0.9,
+          "temporal_consistency_confidence": 0.65,
+          "graph_consistency_confidence": 0.78,
+          "source_independence_score": 0.0,
+          "claim_hash": "6519e252c2dac226",
+          "raw_relation_id": "rel-2d28062d96f851e7",
+          "updated_at": "2026-05-20T12:30:48+00:00",
+          "created_by_run_id": "run-230597dc37853d18",
+          "last_changed_run_id": "run-230597dc37853d18"
+        },
+        {
+          "id": "claim-b51ab7c6bcad3fa2",
+          "subject_vertex_id": "person-artur-hovsepyan",
+          "object_vertex_id": "office-deputy-chiefs-of-prime-minister-staff",
+          "claim_type": "holds_office_in",
+          "statement": "Artur Hovsepyan — Deputy Chiefs of Prime Minister Staff",
+          "polarity": "positive",
+          "source_ids": [
+            "source-4fb403f1bfdad9c5"
+          ],
+          "evidence_ids": [
+            "evidence-775ebbd07f9fae96"
+          ],
+          "observed_at": "2026-05-20T12:30:48+00:00",
+          "valid_from": null,
+          "valid_to": null,
+          "status": "confirmed",
+          "interpretive_degree": 0.2,
+          "publication_risk": 0.3,
+          "extraction_confidence": 0.96,
+          "source_reliability": 0.96,
+          "cross_source_confirmation": 0.333,
+          "entity_linking_confidence": 0.9,
+          "temporal_consistency_confidence": 0.65,
+          "graph_consistency_confidence": 0.78,
+          "source_independence_score": 0.0,
+          "claim_hash": "b14210b5c4209929",
+          "raw_relation_id": "rel-bc386b698efb81d7",
+          "updated_at": "2026-05-20T12:30:48+00:00",
+          "created_by_run_id": "run-230597dc37853d18",
+          "last_changed_run_id": "run-230597dc37853d18"
+        },
+        {
+          "id": "claim-939e0f6793860f96",
+          "subject_vertex_id": "person-arayik-harutyunyan",
+          "object_vertex_id": "office-deputy-chiefs-of-prime-minister-staff",
+          "claim_type": "holds_office_in",
+          "statement": "Arayik Harutyunyan — Chief of Staff",
+          "polarity": "positive",
+          "source_ids": [
+            "source-82730214c579714a"
+          ],
+          "evidence_ids": [
+            "evidence-c76a5092709a1596"
+          ],
+          "observed_at": "2026-05-20T12:30:48+00:00",
+          "valid_from": null,
+          "valid_to": null,
+          "status": "confirmed",
+          "interpretive_degree": 0.2,
+          "publication_risk": 0.3,
+          "extraction_confidence": 0.96,
+          "source_reliability": 0.96,
+          "cross_source_confirmation": 0.333,
+          "entity_linking_confidence": 0.9,
+          "temporal_consistency_confidence": 0.65,
+          "graph_consistency_confidence": 0.78,
+          "source_independence_score": 0.0,
+          "claim_hash": "670db265ce4e3167",
+          "raw_relation_id": "rel-cd1e0ea9d294ff2e",
+          "updated_at": "2026-05-20T12:30:48+00:00",
+          "created_by_run_id": "run-230597dc37853d18",
+          "last_changed_run_id": "run-230597dc37853d18"
+        },
+        {
+          "id": "claim-c11491d1622892a4",
+          "subject_vertex_id": "person-armenak-khachatryan",
+          "object_vertex_id": "office-deputy-chiefs-of-prime-minister-staff",
+          "claim_type": "holds_office_in",
+          "statement": "Armenak Khachatryan — Deputy Chiefs of Prime Minister Staff",
+          "polarity": "positive",
+          "source_ids": [
+            "source-82730214c579714a"
+          ],
+          "evidence_ids": [
+            "evidence-89986e4dc0abff3e"
+          ],
+          "observed_at": "2026-05-20T12:30:48+00:00",
+          "valid_from": null,
+          "valid_to": null,
+          "status": "confirmed",
+          "interpretive_degree": 0.2,
+          "publication_risk": 0.3,
+          "extraction_confidence": 0.96,
+          "source_reliability": 0.96,
+          "cross_source_confirmation": 0.333,
+          "entity_linking_confidence": 0.9,
+          "temporal_consistency_confidence": 0.65,
+          "graph_consistency_confidence": 0.78,
+          "source_independence_score": 0.0,
+          "claim_hash": "8dba38994e544a56",
+          "raw_relation_id": "rel-0b50e1e5b6df27b5",
+          "updated_at": "2026-05-20T12:30:48+00:00",
+          "created_by_run_id": "run-230597dc37853d18",
+          "last_changed_run_id": "run-230597dc37853d18"
+        },
+        {
+          "id": "claim-70d52af59302d7f3",
+          "subject_vertex_id": "person-artur-hovsepyan",
+          "object_vertex_id": "office-deputy-chiefs-of-prime-minister-staff",
+          "claim_type": "holds_office_in",
+          "statement": "Artur Hovsepyan — Deputy Chiefs of Prime Minister Staff",
+          "polarity": "positive",
+          "source_ids": [
+            "source-82730214c579714a"
+          ],
+          "evidence_ids": [
+            "evidence-b2e997a46243701a"
+          ],
+          "observed_at": "2026-05-20T12:30:48+00:00",
+          "valid_from": null,
+          "valid_to": null,
+          "status": "confirmed",
+          "interpretive_degree": 0.2,
+          "publication_risk": 0.3,
+          "extraction_confidence": 0.96,
+          "source_reliability": 0.96,
+          "cross_source_confirmation": 0.333,
+          "entity_linking_confidence": 0.9,
+          "temporal_consistency_confidence": 0.65,
+          "graph_consistency_confidence": 0.78,
+          "source_independence_score": 0.0,
+          "claim_hash": "fe3e18f727642765",
+          "raw_relation_id": "rel-b5eb903c103e38b1",
+          "updated_at": "2026-05-20T12:30:48+00:00",
+          "created_by_run_id": "run-230597dc37853d18",
+          "last_changed_run_id": "run-230597dc37853d18"
+        },
+        {
+          "id": "claim-b7c950eabacf6c72",
+          "subject_vertex_id": "person-arayik-harutyunyan",
+          "object_vertex_id": "office-deputy-chiefs-of-prime-minister-staff",
+          "claim_type": "holds_office_in",
+          "statement": "Arayik Harutyunyan — Chief of Staff",
+          "polarity": "positive",
+          "source_ids": [
+            "source-58546f9e54ae79cd"
+          ],
+          "evidence_ids": [
+            "evidence-cf1da14f8008a401"
+          ],
+          "observed_at": "2026-05-20T12:30:48+00:00",
+          "valid_from": null,
+          "valid_to": null,
+          "status": "confirmed",
+          "interpretive_degree": 0.2,
+          "publication_risk": 0.3,
+          "extraction_confidence": 0.96,
+          "source_reliability": 0.96,
+          "cross_source_confirmation": 0.333,
+          "entity_linking_confidence": 0.9,
+          "temporal_consistency_confidence": 0.65,
+          "graph_consistency_confidence": 0.78,
+          "source_independence_score": 0.0,
+          "claim_hash": "39bd89845e9ce2b6",
+          "raw_relation_id": "rel-53d5940f38ac0d9e",
+          "updated_at": "2026-05-20T12:30:48+00:00",
+          "created_by_run_id": "run-230597dc37853d18",
+          "last_changed_run_id": "run-230597dc37853d18"
+        },
+        {
+          "id": "claim-45448dc207542870",
+          "subject_vertex_id": "person-armenak-khachatryan",
+          "object_vertex_id": "office-deputy-chiefs-of-prime-minister-staff",
+          "claim_type": "holds_office_in",
+          "statement": "Armenak Khachatryan — Deputy Chiefs of Prime Minister Staff",
+          "polarity": "positive",
+          "source_ids": [
+            "source-58546f9e54ae79cd"
+          ],
+          "evidence_ids": [
+            "evidence-9e8b63631f592c6e"
+          ],
+          "observed_at": "2026-05-20T12:30:48+00:00",
+          "valid_from": null,
+          "valid_to": null,
+          "status": "confirmed",
+          "interpretive_degree": 0.2,
+          "publication_risk": 0.3,
+          "extraction_confidence": 0.96,
+          "source_reliability": 0.96,
+          "cross_source_confirmation": 0.333,
+          "entity_linking_confidence": 0.9,
+          "temporal_consistency_confidence": 0.65,
+          "graph_consistency_confidence": 0.78,
+          "source_independence_score": 0.0,
+          "claim_hash": "0f03857c48dc7cc4",
+          "raw_relation_id": "rel-3f58c9503e8b4936",
+          "updated_at": "2026-05-20T12:30:48+00:00",
+          "created_by_run_id": "run-230597dc37853d18",
+          "last_changed_run_id": "run-230597dc37853d18"
+        },
+        {
+          "id": "claim-aa5c3d2ecc8f51c5",
+          "subject_vertex_id": "person-artur-hovsepyan",
+          "object_vertex_id": "office-deputy-chiefs-of-prime-minister-staff",
+          "claim_type": "holds_office_in",
+          "statement": "Artur Hovsepyan — Deputy Chiefs of Prime Minister Staff",
+          "polarity": "positive",
+          "source_ids": [
+            "source-58546f9e54ae79cd"
+          ],
+          "evidence_ids": [
+            "evidence-c09f37bcc52a6a37"
+          ],
+          "observed_at": "2026-05-20T12:30:48+00:00",
+          "valid_from": null,
+          "valid_to": null,
+          "status": "confirmed",
+          "interpretive_degree": 0.2,
+          "publication_risk": 0.3,
+          "extraction_confidence": 0.96,
+          "source_reliability": 0.96,
+          "cross_source_confirmation": 0.333,
+          "entity_linking_confidence": 0.9,
+          "temporal_consistency_confidence": 0.65,
+          "graph_consistency_confidence": 0.78,
+          "source_independence_score": 0.0,
+          "claim_hash": "5f1d881fa49e6a37",
+          "raw_relation_id": "rel-5f5df373fb149d0b",
+          "updated_at": "2026-05-20T12:30:48+00:00",
+          "created_by_run_id": "run-230597dc37853d18",
+          "last_changed_run_id": "run-230597dc37853d18"
+        }
+      ],
+      "disputed_claims": [],
+      "evidence": [
+        {
+          "id": "evidence-d2bcbdaf707a484e",
+          "source_id": "source-14185a831723984a",
+          "url": "https://www.gov.am/en/staff-structure/",
+          "title": "https://www.gov.am/en/staff-structure/",
+          "publisher": "gov.am",
+          "source_class": "official",
+          "language": "eng",
+          "published_at": "",
+          "retrieved_at": "2026-05-20T12:30:47+00:00",
+          "snippet": "Armenak Khachatryan — Deputy Chiefs of Prime Minister Staff",
+          "quote": "Armenak Khachatryan — Deputy Chiefs of Prime Minister Staff",
+          "stance": "supporting",
+          "supports_claim_ids": [],
+          "contradicts_claim_ids": []
+        },
+        {
+          "id": "evidence-6ee35f8373648196",
+          "source_id": "source-14185a831723984a",
+          "url": "https://www.gov.am/en/staff-structure/",
+          "title": "https://www.gov.am/en/staff-structure/",
+          "publisher": "gov.am",
+          "source_class": "official",
+          "language": "eng",
+          "published_at": "",
+          "retrieved_at": "2026-05-20T12:30:47+00:00",
+          "snippet": "Artur Hovsepyan — Deputy Chiefs of Prime Minister Staff",
+          "quote": "Artur Hovsepyan — Deputy Chiefs of Prime Minister Staff",
+          "stance": "supporting",
+          "supports_claim_ids": [],
+          "contradicts_claim_ids": []
+        },
+        {
+          "id": "evidence-773fc6d011529106",
+          "source_id": "source-14185a831723984a",
+          "url": "https://www.gov.am/en/staff-structure/",
+          "title": "https://www.gov.am/en/staff-structure/",
+          "publisher": "gov.am",
+          "source_class": "official",
+          "language": "eng",
+          "published_at": "",
+          "retrieved_at": "2026-05-09T09:27:57+00:00",
+          "snippet": "Sargis Torosyan — Deputy Chiefs of Prime Minister Staff",
+          "quote": "Sargis Torosyan — Deputy Chiefs of Prime Minister Staff",
+          "stance": "supporting",
+          "supports_claim_ids": [],
+          "contradicts_claim_ids": []
+        },
+        {
+          "id": "evidence-1311e1cb4882b2f2",
+          "source_id": "source-14185a831723984a",
+          "url": "https://www.gov.am/en/staff-structure/",
+          "title": "https://www.gov.am/en/staff-structure/",
+          "publisher": "gov.am",
+          "source_class": "official",
+          "language": "eng",
+          "published_at": "",
+          "retrieved_at": "2026-05-09T09:27:57+00:00",
+          "snippet": "Taron Chakhoyan — Deputy Chiefs of Prime Minister Staff",
+          "quote": "Taron Chakhoyan — Deputy Chiefs of Prime Minister Staff",
+          "stance": "supporting",
+          "supports_claim_ids": [],
+          "contradicts_claim_ids": []
+        },
+        {
+          "id": "evidence-16bfda34d108141b",
+          "source_id": "source-14185a831723984a",
+          "url": "https://www.gov.am/en/staff-structure/",
+          "title": "https://www.gov.am/en/staff-structure/",
+          "publisher": "gov.am",
+          "source_class": "official",
+          "language": "eng",
+          "published_at": "",
+          "retrieved_at": "2026-05-09T09:27:57+00:00",
+          "snippet": "Zaruhi Matevosyan — Deputy Chiefs of Prime Minister Staff",
+          "quote": "Zaruhi Matevosyan — Deputy Chiefs of Prime Minister Staff",
+          "stance": "supporting",
+          "supports_claim_ids": [],
+          "contradicts_claim_ids": []
+        },
+        {
+          "id": "evidence-dd98840e1558cd4e",
+          "source_id": "source-4fb403f1bfdad9c5",
+          "url": "https://www.gov.am/en/staff-structure/other/788/",
+          "title": "https://www.gov.am/en/staff-structure/other/788/",
+          "publisher": "gov.am",
+          "source_class": "official",
+          "language": "eng",
+          "published_at": "",
+          "retrieved_at": "2026-05-20T12:30:48+00:00",
+          "snippet": "Armenak Khachatryan — Deputy Chiefs of Prime Minister Staff",
+          "quote": "Armenak Khachatryan — Deputy Chiefs of Prime Minister Staff",
+          "stance": "supporting",
+          "supports_claim_ids": [],
+          "contradicts_claim_ids": []
+        },
+        {
+          "id": "evidence-775ebbd07f9fae96",
+          "source_id": "source-4fb403f1bfdad9c5",
+          "url": "https://www.gov.am/en/staff-structure/other/788/",
+          "title": "https://www.gov.am/en/staff-structure/other/788/",
+          "publisher": "gov.am",
+          "source_class": "official",
+          "language": "eng",
+          "published_at": "",
+          "retrieved_at": "2026-05-20T12:30:48+00:00",
+          "snippet": "Artur Hovsepyan — Deputy Chiefs of Prime Minister Staff",
+          "quote": "Artur Hovsepyan — Deputy Chiefs of Prime Minister Staff",
+          "stance": "supporting",
+          "supports_claim_ids": [],
+          "contradicts_claim_ids": []
+        },
+        {
+          "id": "evidence-c76a5092709a1596",
+          "source_id": "source-82730214c579714a",
+          "url": "https://www.gov.am/en/staff-structure/other/956/",
+          "title": "https://www.gov.am/en/staff-structure/other/956/",
+          "publisher": "gov.am",
+          "source_class": "official",
+          "language": "eng",
+          "published_at": "",
+          "retrieved_at": "2026-05-20T12:30:48+00:00",
+          "snippet": "Arayik Harutyunyan — Chief of Staff",
+          "quote": "Arayik Harutyunyan — Chief of Staff",
+          "stance": "supporting",
+          "supports_claim_ids": [],
+          "contradicts_claim_ids": []
+        },
+        {
+          "id": "evidence-89986e4dc0abff3e",
+          "source_id": "source-82730214c579714a",
+          "url": "https://www.gov.am/en/staff-structure/other/956/",
+          "title": "https://www.gov.am/en/staff-structure/other/956/",
+          "publisher": "gov.am",
+          "source_class": "official",
+          "language": "eng",
+          "published_at": "",
+          "retrieved_at": "2026-05-20T12:30:48+00:00",
+          "snippet": "Armenak Khachatryan — Deputy Chiefs of Prime Minister Staff",
+          "quote": "Armenak Khachatryan — Deputy Chiefs of Prime Minister Staff",
+          "stance": "supporting",
+          "supports_claim_ids": [],
+          "contradicts_claim_ids": []
+        },
+        {
+          "id": "evidence-b2e997a46243701a",
+          "source_id": "source-82730214c579714a",
+          "url": "https://www.gov.am/en/staff-structure/other/956/",
+          "title": "https://www.gov.am/en/staff-structure/other/956/",
+          "publisher": "gov.am",
+          "source_class": "official",
+          "language": "eng",
+          "published_at": "",
+          "retrieved_at": "2026-05-20T12:30:48+00:00",
+          "snippet": "Artur Hovsepyan — Deputy Chiefs of Prime Minister Staff",
+          "quote": "Artur Hovsepyan — Deputy Chiefs of Prime Minister Staff",
+          "stance": "supporting",
+          "supports_claim_ids": [],
+          "contradicts_claim_ids": []
+        },
+        {
+          "id": "evidence-cf1da14f8008a401",
+          "source_id": "source-58546f9e54ae79cd",
+          "url": "https://www.gov.am/en/staff-structure/other/1042/",
+          "title": "https://www.gov.am/en/staff-structure/other/1042/",
+          "publisher": "gov.am",
+          "source_class": "official",
+          "language": "eng",
+          "published_at": "",
+          "retrieved_at": "2026-05-20T12:30:48+00:00",
+          "snippet": "Arayik Harutyunyan — Chief of Staff",
+          "quote": "Arayik Harutyunyan — Chief of Staff",
+          "stance": "supporting",
+          "supports_claim_ids": [],
+          "contradicts_claim_ids": []
+        },
+        {
+          "id": "evidence-9e8b63631f592c6e",
+          "source_id": "source-58546f9e54ae79cd",
+          "url": "https://www.gov.am/en/staff-structure/other/1042/",
+          "title": "https://www.gov.am/en/staff-structure/other/1042/",
+          "publisher": "gov.am",
+          "source_class": "official",
+          "language": "eng",
+          "published_at": "",
+          "retrieved_at": "2026-05-20T12:30:48+00:00",
+          "snippet": "Armenak Khachatryan — Deputy Chiefs of Prime Minister Staff",
+          "quote": "Armenak Khachatryan — Deputy Chiefs of Prime Minister Staff",
+          "stance": "supporting",
+          "supports_claim_ids": [],
+          "contradicts_claim_ids": []
+        },
+        {
+          "id": "evidence-c09f37bcc52a6a37",
+          "source_id": "source-58546f9e54ae79cd",
+          "url": "https://www.gov.am/en/staff-structure/other/1042/",
+          "title": "https://www.gov.am/en/staff-structure/other/1042/",
+          "publisher": "gov.am",
+          "source_class": "official",
+          "language": "eng",
+          "published_at": "",
+          "retrieved_at": "2026-05-20T12:30:48+00:00",
+          "snippet": "Artur Hovsepyan — Deputy Chiefs of Prime Minister Staff",
+          "quote": "Artur Hovsepyan — Deputy Chiefs of Prime Minister Staff",
+          "stance": "supporting",
+          "supports_claim_ids": [],
+          "contradicts_claim_ids": []
+        }
+      ],
+      "missing_fields": [
+        "biography",
+        "party_or_faction_membership"
+      ],
+      "expansion_questions": [
+        {
+          "id": "q-3306a389af560a5e",
+          "question_type": "biography_completion",
+          "question": "Complete a source-backed biography profile for Sargis Torosyan.",
+          "target_entities": [
+            "person-sargis-torosyan"
+          ],
+          "expected_claim_types": [
+            "biography_fact",
+            "education",
+            "career_role",
+            "party_membership"
+          ],
+          "priority_score": 0.72,
+          "reason": "Person vertex has a thin or missing biography profile.",
+          "suggested_source_types": [
+            "official",
+            "legal",
+            "media"
+          ],
+          "search_queries": {
+            "hy": [
+              "Sargis Torosyan կենսագրություն պաշտոն կուսակցություն"
+            ],
+            "ru": [
+              "Sargis Torosyan биография должность партия Армения"
+            ],
+            "en": [
+              "Sargis Torosyan biography office party Armenia"
+            ]
+          },
+          "budget_estimate": {
+            "pages": 6,
+            "max_depth": 2
+          },
+          "status": "queued",
+          "created_at": "2026-05-30T15:26:28+00:00"
+        },
+        {
+          "id": "q-5712726e566ab35a",
+          "question_type": "party_membership",
+          "question": "Determine party and parliamentary faction membership history for Sargis Torosyan.",
+          "target_entities": [
+            "person-sargis-torosyan"
+          ],
+          "expected_claim_types": [
+            "MEMBER_OF",
+            "LEADS",
+            "LEFT_PARTY"
+          ],
+          "priority_score": 0.7,
+          "reason": "Political affiliation is a high-value gap for national graph traversal.",
+          "suggested_source_types": [
+            "official",
+            "party",
+            "media"
+          ],
+          "search_queries": {
+            "hy": [
+              "Sargis Torosyan կենսագրություն պաշտոն կուսակցություն"
+            ],
+            "ru": [
+              "Sargis Torosyan биография должность партия Армения"
+            ],
+            "en": [
+              "Sargis Torosyan biography office party Armenia"
+            ]
+          },
+          "budget_estimate": {
+            "pages": 6,
+            "max_depth": 2
+          },
+          "status": "queued",
+          "created_at": "2026-05-30T15:26:28+00:00"
+        }
+      ]
+    }
+  ]
+}

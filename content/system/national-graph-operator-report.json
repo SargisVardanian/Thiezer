@@ -1,0 +1,402 @@
+{
+  "contract": "NationalGraphOperatorReport.v1",
+  "generated_at": "2026-05-30T15:26:28+00:00",
+  "dry_run": false,
+  "sources_checked": 22,
+  "urls_fetched": 0,
+  "claims_extracted": 53,
+  "claims_admitted": 53,
+  "claims_rejected": 0,
+  "disputed_claims_stored": 0,
+  "vertices_created": 32,
+  "vertices_merged": 0,
+  "edges_created_or_updated": 24,
+  "stale_claims_detected": 0,
+  "evidence_items": 52,
+  "questions_generated": 43,
+  "subgraphs_updated": 5,
+  "errors": [],
+  "failures": [],
+  "next_recommended_research_tasks": [
+    {
+      "id": "q-0f161188e7f0e69f",
+      "question_type": "biography_completion",
+      "question": "Complete a source-backed biography profile for Artur Hovsepyan.",
+      "target_entities": [
+        "person-artur-hovsepyan"
+      ],
+      "expected_claim_types": [
+        "biography_fact",
+        "education",
+        "career_role",
+        "party_membership"
+      ],
+      "priority_score": 0.72,
+      "reason": "Person vertex has a thin or missing biography profile.",
+      "suggested_source_types": [
+        "official",
+        "legal",
+        "media"
+      ],
+      "search_queries": {
+        "hy": [
+          "Artur Hovsepyan կենսագրություն պաշտոն կուսակցություն"
+        ],
+        "ru": [
+          "Artur Hovsepyan биография должность партия Армения"
+        ],
+        "en": [
+          "Artur Hovsepyan biography office party Armenia"
+        ]
+      },
+      "budget_estimate": {
+        "pages": 6,
+        "max_depth": 2
+      },
+      "status": "queued",
+      "created_at": "2026-05-30T15:26:28+00:00"
+    },
+    {
+      "id": "q-16038bcfbdc9e9d8",
+      "question_type": "biography_completion",
+      "question": "Complete a source-backed biography profile for Ester Sahakyan.",
+      "target_entities": [
+        "person-ester-sahakyan"
+      ],
+      "expected_claim_types": [
+        "biography_fact",
+        "education",
+        "career_role",
+        "party_membership"
+      ],
+      "priority_score": 0.72,
+      "reason": "Person vertex has a thin or missing biography profile.",
+      "suggested_source_types": [
+        "official",
+        "legal",
+        "media"
+      ],
+      "search_queries": {
+        "hy": [
+          "Ester Sahakyan կենսագրություն պաշտոն կուսակցություն"
+        ],
+        "ru": [
+          "Ester Sahakyan биография должность партия Армения"
+        ],
+        "en": [
+          "Ester Sahakyan biography office party Armenia"
+        ]
+      },
+      "budget_estimate": {
+        "pages": 6,
+        "max_depth": 2
+      },
+      "status": "queued",
+      "created_at": "2026-05-30T15:26:28+00:00"
+    },
+    {
+      "id": "q-27e352065b1cdcce",
+      "question_type": "biography_completion",
+      "question": "Complete a source-backed biography profile for Karine Davoyan.",
+      "target_entities": [
+        "person-karine-davoyan"
+      ],
+      "expected_claim_types": [
+        "biography_fact",
+        "education",
+        "career_role",
+        "party_membership"
+      ],
+      "priority_score": 0.72,
+      "reason": "Person vertex has a thin or missing biography profile.",
+      "suggested_source_types": [
+        "official",
+        "legal",
+        "media"
+      ],
+      "search_queries": {
+        "hy": [
+          "Karine Davoyan կենսագրություն պաշտոն կուսակցություն"
+        ],
+        "ru": [
+          "Karine Davoyan биография должность партия Армения"
+        ],
+        "en": [
+          "Karine Davoyan biography office party Armenia"
+        ]
+      },
+      "budget_estimate": {
+        "pages": 6,
+        "max_depth": 2
+      },
+      "status": "queued",
+      "created_at": "2026-05-30T15:26:28+00:00"
+    },
+    {
+      "id": "q-2b811d5f87673852",
+      "question_type": "biography_completion",
+      "question": "Complete a source-backed biography profile for Artak Kamalyan.",
+      "target_entities": [
+        "person-artak-kamalyan"
+      ],
+      "expected_claim_types": [
+        "biography_fact",
+        "education",
+        "career_role",
+        "party_membership"
+      ],
+      "priority_score": 0.72,
+      "reason": "Person vertex has a thin or missing biography profile.",
+      "suggested_source_types": [
+        "official",
+        "legal",
+        "media"
+      ],
+      "search_queries": {
+        "hy": [
+          "Artak Kamalyan կենսագրություն պաշտոն կուսակցություն"
+        ],
+        "ru": [
+          "Artak Kamalyan биография должность партия Армения"
+        ],
+        "en": [
+          "Artak Kamalyan biography office party Armenia"
+        ]
+      },
+      "budget_estimate": {
+        "pages": 6,
+        "max_depth": 2
+      },
+      "status": "queued",
+      "created_at": "2026-05-30T15:26:28+00:00"
+    },
+    {
+      "id": "q-3306a389af560a5e",
+      "question_type": "biography_completion",
+      "question": "Complete a source-backed biography profile for Sargis Torosyan.",
+      "target_entities": [
+        "person-sargis-torosyan"
+      ],
+      "expected_claim_types": [
+        "biography_fact",
+        "education",
+        "career_role",
+        "party_membership"
+      ],
+      "priority_score": 0.72,
+      "reason": "Person vertex has a thin or missing biography profile.",
+      "suggested_source_types": [
+        "official",
+        "legal",
+        "media"
+      ],
+      "search_queries": {
+        "hy": [
+          "Sargis Torosyan կենսագրություն պաշտոն կուսակցություն"
+        ],
+        "ru": [
+          "Sargis Torosyan биография должность партия Армения"
+        ],
+        "en": [
+          "Sargis Torosyan biography office party Armenia"
+        ]
+      },
+      "budget_estimate": {
+        "pages": 6,
+        "max_depth": 2
+      },
+      "status": "queued",
+      "created_at": "2026-05-30T15:26:28+00:00"
+    },
+    {
+      "id": "q-3e29f2163f526272",
+      "question_type": "biography_completion",
+      "question": "Complete a source-backed biography profile for Anzhela Kzhdryan.",
+      "target_entities": [
+        "person-anzhela-kzhdryan"
+      ],
+      "expected_claim_types": [
+        "biography_fact",
+        "education",
+        "career_role",
+        "party_membership"
+      ],
+      "priority_score": 0.72,
+      "reason": "Person vertex has a thin or missing biography profile.",
+      "suggested_source_types": [
+        "official",
+        "legal",
+        "media"
+      ],
+      "search_queries": {
+        "hy": [
+          "Anzhela Kzhdryan կենսագրություն պաշտոն կուսակցություն"
+        ],
+        "ru": [
+          "Anzhela Kzhdryan биография должность партия Армения"
+        ],
+        "en": [
+          "Anzhela Kzhdryan biography office party Armenia"
+        ]
+      },
+      "budget_estimate": {
+        "pages": 6,
+        "max_depth": 2
+      },
+      "status": "queued",
+      "created_at": "2026-05-30T15:26:28+00:00"
+    },
+    {
+      "id": "q-42be01e0365c3157",
+      "question_type": "biography_completion",
+      "question": "Complete a source-backed biography profile for Aram Khachatryan.",
+      "target_entities": [
+        "person-aram-khachatryan"
+      ],
+      "expected_claim_types": [
+        "biography_fact",
+        "education",
+        "career_role",
+        "party_membership"
+      ],
+      "priority_score": 0.72,
+      "reason": "Person vertex has a thin or missing biography profile.",
+      "suggested_source_types": [
+        "official",
+        "legal",
+        "media"
+      ],
+      "search_queries": {
+        "hy": [
+          "Aram Khachatryan կենսագրություն պաշտոն կուսակցություն"
+        ],
+        "ru": [
+          "Aram Khachatryan биография должность партия Армения"
+        ],
+        "en": [
+          "Aram Khachatryan biography office party Armenia"
+        ]
+      },
+      "budget_estimate": {
+        "pages": 6,
+        "max_depth": 2
+      },
+      "status": "queued",
+      "created_at": "2026-05-30T15:26:28+00:00"
+    },
+    {
+      "id": "q-520c0da2682c9b73",
+      "question_type": "biography_completion",
+      "question": "Complete a source-backed biography profile for Suren Maghakyan.",
+      "target_entities": [
+        "person-suren-maghakyan"
+      ],
+      "expected_claim_types": [
+        "biography_fact",
+        "education",
+        "career_role",
+        "party_membership"
+      ],
+      "priority_score": 0.72,
+      "reason": "Person vertex has a thin or missing biography profile.",
+      "suggested_source_types": [
+        "official",
+        "legal",
+        "media"
+      ],
+      "search_queries": {
+        "hy": [
+          "Suren Maghakyan կենսագրություն պաշտոն կուսակցություն"
+        ],
+        "ru": [
+          "Suren Maghakyan биография должность партия Армения"
+        ],
+        "en": [
+          "Suren Maghakyan biography office party Armenia"
+        ]
+      },
+      "budget_estimate": {
+        "pages": 6,
+        "max_depth": 2
+      },
+      "status": "queued",
+      "created_at": "2026-05-30T15:26:28+00:00"
+    },
+    {
+      "id": "q-6e5c923466bed134",
+      "question_type": "biography_completion",
+      "question": "Complete a source-backed biography profile for Vahram Dumanyan.",
+      "target_entities": [
+        "person-vahram-dumanyan"
+      ],
+      "expected_claim_types": [
+        "biography_fact",
+        "education",
+        "career_role",
+        "party_membership"
+      ],
+      "priority_score": 0.72,
+      "reason": "Person vertex has a thin or missing biography profile.",
+      "suggested_source_types": [
+        "official",
+        "legal",
+        "media"
+      ],
+      "search_queries": {
+        "hy": [
+          "Vahram Dumanyan կենսագրություն պաշտոն կուսակցություն"
+        ],
+        "ru": [
+          "Vahram Dumanyan биография должность партия Армения"
+        ],
+        "en": [
+          "Vahram Dumanyan biography office party Armenia"
+        ]
+      },
+      "budget_estimate": {
+        "pages": 6,
+        "max_depth": 2
+      },
+      "status": "queued",
+      "created_at": "2026-05-30T15:26:28+00:00"
+    },
+    {
+      "id": "q-781985da64a95958",
+      "question_type": "biography_completion",
+      "question": "Complete a source-backed biography profile for Artashes Toumanian.",
+      "target_entities": [
+        "person-artashes-toumanian"
+      ],
+      "expected_claim_types": [
+        "biography_fact",
+        "education",
+        "career_role",
+        "party_membership"
+      ],
+      "priority_score": 0.72,
+      "reason": "Person vertex has a thin or missing biography profile.",
+      "suggested_source_types": [
+        "official",
+        "legal",
+        "media"
+      ],
+      "search_queries": {
+        "hy": [
+          "Artashes Toumanian կենսագրություն պաշտոն կուսակցություն"
+        ],
+        "ru": [
+          "Artashes Toumanian биография должность партия Армения"
+        ],
+        "en": [
+          "Artashes Toumanian biography office party Armenia"
+        ]
+      },
+      "budget_estimate": {
+        "pages": 6,
+        "max_depth": 2
+      },
+      "status": "queued",
+      "created_at": "2026-05-30T15:26:28+00:00"
+    }
+  ]
+}
