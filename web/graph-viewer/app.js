@@ -320,6 +320,7 @@
       rejected: el.researchPanelRejected,
       claims: el.researchPanelClaims,
       diff: el.researchPanelDiff,
+      events: el.researchPanelEvents,
       raw: el.researchPanelRaw,
     };
     Object.entries(tabs).forEach(([key, container]) => {
@@ -338,11 +339,13 @@
       return;
     }
     const statusMeta = researchStatusMeta(run);
-    const statusParts = [statusMeta.text];
-    if (run.current_stage) statusParts.push(run.current_stage);
-    if (run.current_entity_name) statusParts.push(run.current_entity_name);
-    if (run.current_source_title) statusParts.push(run.current_source_title);
-    setStatus(statusParts.join(" · "), statusMeta.tone);
+    if (run.status === "running" || run.status === "queued" || run.status === "failed" || run.status === "failed_retryable" || Number(run.accepted_graph_changes || 0) > 0) {
+      const statusParts = [statusMeta.text];
+      if (run.current_stage) statusParts.push(run.current_stage);
+      if (run.current_entity_name) statusParts.push(run.current_entity_name);
+      if (run.current_source_title) statusParts.push(run.current_source_title);
+      setStatus(statusParts.join(" · "), statusMeta.tone);
+    }
     const diff = run.graph_diff || {};
     const diffNamed = run.graph_diff_named || {};
     const diffCounts = [
@@ -410,6 +413,103 @@
           return `<div class="link-item"><a href="${escapeHtml(String(url))}" target="_blank" rel="noreferrer">${escapeHtml(String(label || url))}</a>${status || reason ? `<div class="muted">${escapeHtml([status, reason].filter(Boolean).join(" · "))}</div>` : ""}</div>`;
         }).join("")}</div>`
       : `<div class="empty">${escapeHtml(emptyText)}</div>`;
+    const eventRows = state.latestResearchEvents.length ? state.latestResearchEvents : (run.events || []);
+    const eventPayloadText = (event) => {
+      const payload = event?.payload || {};
+      return [
+        payload.name || payload.label || payload.entity_name || payload.target_name || "",
+        payload.url || payload.source_url || "",
+        payload.evidence_quote || payload.snippet || payload.title || "",
+      ].filter(Boolean).join(" · ");
+    };
+    const renderProcessTimeline = () => {
+      const steps = [];
+      steps.push({
+        stage: "plan",
+        title: run.query || "Research request",
+        meta: [
+          run.run_type || "",
+          run.target_role || run.target_entity || "",
+          `budget ${run.budget_pages || "n/a"} pages`,
+        ].filter(Boolean).join(" · "),
+        status: run.status || "running",
+      });
+      for (const block of run.search_hits || []) {
+        steps.push({
+          stage: "search",
+          title: block?.query || "Search query",
+          meta: `${block?.provider || run.search_provider || "search"} · ${(block?.results || []).length} results`,
+          status: (block?.results || []).length ? "ok" : "warn",
+        });
+      }
+      for (const source of (run.visited_sources || []).slice(0, 12)) {
+        steps.push({
+          stage: "open",
+          title: source.title || source.url || "Visited source",
+          meta: source.url || "",
+          status: source.status || (source.reason ? "warn" : "ok"),
+        });
+      }
+      for (const claim of (run.extracted_claim_items || []).slice(0, 10)) {
+        steps.push({
+          stage: "claim",
+          title: claim.statement || [claim.subject_name, claim.relation_type, claim.object_name].filter(Boolean).join(" → ") || "Extracted claim",
+          meta: claim.source_url || claim.evidence_quote || "",
+          status: "ok",
+        });
+      }
+      const changes = [
+        ...(diffNamed.new_nodes || []).map((item) => ({ stage: "graph", title: item.name || item.id || "New node", meta: "new node", status: "ok" })),
+        ...(diffNamed.updated_nodes || []).map((item) => ({ stage: "graph", title: item.name || item.id || "Updated node", meta: "updated node", status: "ok" })),
+        ...(diffNamed.new_edges || []).map((item) => ({ stage: "graph", title: `${item.source_name || item.source_id || "source"} → ${item.target_name || item.target_id || "target"}`, meta: item.relation_type || "new edge", status: "ok" })),
+        ...(diffNamed.updated_edges || []).map((item) => ({ stage: "graph", title: `${item.source_name || item.source_id || "source"} → ${item.target_name || item.target_id || "target"}`, meta: item.relation_type || "updated edge", status: "ok" })),
+      ];
+      steps.push(...changes.slice(0, 12));
+      if (!steps.length) return '<div class="empty">No visible process steps recorded yet.</div>';
+      return `<div class="process-timeline">${steps.slice(0, 40).map((step, index) => {
+        const isActive = index === steps.length - 1 && ["running", "queued"].includes(String(run.status || ""));
+        const tone = String(step.status || "").includes("fail") || String(step.status || "") === "error" ? "error" : String(step.status || "").includes("warn") || String(step.status || "") === "failed_fetch" ? "warn" : "ok";
+        return `<div class="process-step ${isActive ? "active" : ""}">
+          <div class="process-stage">${escapeHtml(step.stage)}</div>
+          <div>
+            <div class="process-title">${escapeHtml(step.title || "Step")}</div>
+            ${step.meta ? `<div class="process-meta">${escapeHtml(step.meta)}</div>` : ""}
+          </div>
+          <div class="process-badge ${tone}">${escapeHtml(String(step.status || "ok"))}</div>
+        </div>`;
+      }).join("")}</div>`;
+    };
+    const renderEvidenceCards = (items, emptyText) => {
+      const values = Array.isArray(items) ? items.filter(Boolean) : [];
+      if (!values.length) return `<div class="empty">${escapeHtml(emptyText)}</div>`;
+      return `<div class="evidence-grid">${values.map((item) => {
+        const title = item.statement || [item.subject_name, item.relation_type, item.object_name].filter(Boolean).join(" → ") || item.claim_type || "Claim";
+        const meta = [item.claim_type || item.relation_type || "", item.source_url || ""].filter(Boolean).join(" · ");
+        const quote = item.evidence_quote || item.quote || item.snippet || "";
+        return `<div class="evidence-card">
+          <div class="card-title">${escapeHtml(title)}</div>
+          ${meta ? `<div class="card-meta">${escapeHtml(meta)}</div>` : ""}
+          ${quote ? `<div class="quote">${escapeHtml(quote)}</div>` : ""}
+        </div>`;
+      }).join("")}</div>`;
+    };
+    const renderGraphChangeCards = () => {
+      const changes = [
+        ...(diffNamed.new_nodes || []).map((item) => ({ kind: "New node", title: item.name || item.id || "Node", meta: item.status || item.category || "" })),
+        ...(diffNamed.updated_nodes || []).map((item) => ({ kind: "Updated node", title: item.name || item.id || "Node", meta: item.status || item.category || "" })),
+        ...(diffNamed.new_edges || []).map((item) => ({ kind: "New edge", title: `${item.source_name || item.source_id || "source"} → ${item.target_name || item.target_id || "target"}`, meta: item.relation_type || "", quote: item.evidence_quote || "" })),
+        ...(diffNamed.updated_edges || []).map((item) => ({ kind: "Updated edge", title: `${item.source_name || item.source_id || "source"} → ${item.target_name || item.target_id || "target"}`, meta: item.relation_type || "", quote: item.evidence_quote || "" })),
+        ...(diffNamed.rejected_nodes || []).map((item) => ({ kind: "Rejected node", title: item.name || item.id || item.reason || "Rejected", meta: item.reason || "" })),
+        ...(diffNamed.rejected_edges || []).map((item) => ({ kind: "Rejected edge", title: item.name || item.id || item.reason || "Rejected", meta: item.reason || "" })),
+      ];
+      if (!changes.length) return '<div class="empty">No graph changes recorded.</div>';
+      return `<div class="graph-change-grid">${changes.map((item) => `<div class="graph-change-card">
+        <div class="process-stage">${escapeHtml(item.kind)}</div>
+        <div class="card-title">${escapeHtml(item.title)}</div>
+        ${item.meta ? `<div class="card-meta">${escapeHtml(item.meta)}</div>` : ""}
+        ${item.quote ? `<div class="quote">${escapeHtml(item.quote)}</div>` : ""}
+      </div>`).join("")}</div>`;
+    };
 
     const liveNow = [
       `Current stage: ${run.current_stage || "n/a"}`,
@@ -445,6 +545,10 @@
     });
     tabs.summary.innerHTML = `
       <div class="stacked-sections">
+        <section class="trace-section">
+          <h4>Visible LLM process</h4>
+          ${renderProcessTimeline()}
+        </section>
         <section class="trace-section">
           <h4>Now processing</h4>
           <div class="list">${liveNow.map((value) => `<div class="trace-item">${escapeHtml(String(value))}</div>`).join("")}</div>
@@ -483,24 +587,11 @@
         </section>
         <section class="trace-section">
           <h4>Extracted evidence</h4>
-          ${renderTable(
-            run.extracted_claim_items || [],
-            ["subject_name", "relation_type", "object_name", "evidence_quote", "source_url"],
-            run.failure_explanation ? `No extracted claims because ${run.failure_explanation}.` : "No extracted claims recorded."
-          )}
+          ${renderEvidenceCards(run.extracted_claim_items || [], run.failure_explanation ? `No extracted claims because ${run.failure_explanation}.` : "No extracted claims recorded.")}
         </section>
         <section class="trace-section">
           <h4>Graph changes</h4>
-          ${renderTable(
-            [
-              ...(diffNamed.new_nodes || []).map((item) => ({ category: "new node", name: item.name, status: item.status, source_url: item.source_url, relation_type: "" })),
-              ...(diffNamed.updated_nodes || []).map((item) => ({ category: "updated node", name: item.name, status: item.status, source_url: item.source_url, relation_type: "" })),
-              ...(diffNamed.new_edges || []).map((item) => ({ category: "new edge", name: `${item.source_name} → ${item.target_name}`, status: item.status, source_url: item.evidence_quote || "", relation_type: item.relation_type })),
-              ...(diffNamed.updated_edges || []).map((item) => ({ category: "updated edge", name: `${item.source_name} → ${item.target_name}`, status: item.status, source_url: item.evidence_quote || "", relation_type: item.relation_type })),
-            ],
-            ["category", "name", "relation_type", "status", "source_url"],
-            "No graph changes recorded."
-          )}
+          ${renderGraphChangeCards()}
           <div class="trace-item"><strong>Accepted / rejected graph changes</strong><div class="muted">${escapeHtml(`${run.accepted_graph_changes || 0} / ${run.rejected_graph_changes || 0}`)}</div></div>
           <div class="trace-item"><strong>Accepted change artifacts</strong><div class="muted">${escapeHtml(String(run.accepted_change_artifacts || 0))}</div></div>
           <div class="trace-item"><strong>Graph diff</strong><div class="muted">${escapeHtml(diffCounts)}</div></div>
@@ -524,19 +615,12 @@
         <section class="trace-section">
           <h4>Live events</h4>
           ${renderTable(
-            state.latestResearchEvents.slice(-30).map((event) => {
-              const payload = event?.payload || {};
-              return {
-                event_type: event?.event_type || "",
-                stage: event?.stage || "",
-                item_id: event?.item_id || "",
-                payload: [
-                  payload.name || payload.label || payload.entity_name || payload.target_name || "",
-                  payload.url || payload.source_url || "",
-                  payload.evidence_quote || payload.snippet || payload.title || "",
-                ].filter(Boolean).join(" · "),
-              };
-            }),
+            eventRows.slice(-30).map((event) => ({
+              event_type: event?.event_type || "",
+              stage: event?.stage || "",
+              item_id: event?.item_id || "",
+              payload: eventPayloadText(event),
+            })),
             ["event_type", "stage", "item_id", "payload"],
             "No live events recorded yet."
           )}
@@ -546,16 +630,29 @@
     tabs.accepted.innerHTML = renderUrlList(run.accepted_sources || [], run.failure_explanation ? `No accepted sources because ${run.failure_explanation}.` : "No accepted sources recorded.");
     tabs.rejected.innerHTML = renderUrlList(run.rejected_sources || [], run.failure_explanation ? `No rejected sources logged. Failure: ${run.failure_explanation}.` : "No rejected sources recorded.");
     tabs.claims.innerHTML = (run.extracted_claim_items || []).length
-      ? `<div class="list">${(run.extracted_claim_items || []).map((item) => `<div class="list-item">${escapeHtml(String(item.statement || item.evidence_quote || item.subject_name || ""))}</div>`).join("")}</div>`
+      ? renderEvidenceCards(run.extracted_claim_items || [], "No extracted claims recorded.")
       : `<div class="empty">${escapeHtml(run.failure_explanation ? `No extracted claims because ${run.failure_explanation}.` : "No extracted claims recorded.")}</div>`;
     tabs.diff.innerHTML = `
       <div class="list">
+        ${renderGraphChangeCards()}
         <div class="trace-item"><strong>Accepted / rejected graph changes</strong><div class="muted">${escapeHtml(`${run.accepted_graph_changes || 0} / ${run.rejected_graph_changes || 0}`)}</div></div>
         <div class="trace-item"><strong>Accepted change artifacts</strong><div class="muted">${escapeHtml(String(run.accepted_change_artifacts || 0))}</div></div>
         <div class="trace-item"><strong>Graph diff</strong><div class="muted">${escapeHtml(diffCounts)}</div></div>
         <div class="trace-item"><strong>Edge payloads</strong><div class="muted">${escapeHtml(String(run.edge_payload_count || 0))}</div></div>
         <div class="trace-item"><strong>Failure reasons</strong><div class="muted">${escapeHtml((run.failure_reasons || []).join("; ") || "None")}</div></div>
       </div>`;
+    if (tabs.events) {
+      tabs.events.innerHTML = renderTable(
+        eventRows.slice(-120).map((event) => ({
+          event_type: event?.event_type || "",
+          stage: event?.stage || "",
+          item_id: event?.item_id || "",
+          payload: eventPayloadText(event),
+        })),
+        ["event_type", "stage", "item_id", "payload"],
+        "No live events recorded yet."
+      );
+    }
     tabs.raw.innerHTML = `<pre>${escapeHtml(JSON.stringify(payload, null, 2))}</pre>`;
   }
 
@@ -714,6 +811,7 @@
       isRunHighlight: isHighlighted,
       changeType,
       label: raw.name || raw.id,
+      alwaysLabel: false,
       searchText: normalizeText([raw.id, raw.name, raw.summary, raw.category, raw.subtype, ...(raw.tags || [])].join(" ")),
     };
   }
@@ -751,6 +849,24 @@
     }
     for (const node of nodes) {
       node.size = Math.max(2.9, Math.min(14, 3.0 + Math.sqrt(node.degree) * 1.02 + (node.family === "event" ? 0.65 : 0)));
+    }
+    [...nodes]
+      .sort((a, b) => (b.degree || 0) - (a.degree || 0))
+      .slice(0, Math.min(10, nodes.length))
+      .forEach((node) => {
+        node.alwaysLabel = true;
+      });
+    for (const node of nodes) {
+      const text = normalizeText([node.label, node.category, node.subtype, node.summary].join(" "));
+      if (
+        text.includes("pashinyan")
+        || text.includes("government of armenia")
+        || text.includes("national assembly")
+        || text.includes("civil contract")
+        || text.includes("prime minister")
+      ) {
+        node.alwaysLabel = true;
+      }
     }
 
     state.graph = {
@@ -853,6 +969,17 @@
     if (state.familyFilter !== "all") nodes = nodes.filter((node) => (node.family || "unknown") === state.familyFilter);
     if (type !== "all") nodes = nodes.filter((node) => (node.category || node.family || "unknown") === type);
     if (state.showLatestChangesOnly) nodes = nodes.filter((node) => latestNodeIds.has(String(node.id || "").trim()));
+
+    if (q) {
+      const focusedIds = new Set(nodes.map((node) => node.id));
+      for (const link of state.graph.links) {
+        if (focusedIds.has(link.from)) focusedIds.add(link.to);
+        if (focusedIds.has(link.to)) focusedIds.add(link.from);
+      }
+      nodes = state.graph.nodes.filter((node) => focusedIds.has(node.id));
+      if (state.familyFilter !== "all") nodes = nodes.filter((node) => (node.family || "unknown") === state.familyFilter);
+      if (type !== "all") nodes = nodes.filter((node) => (node.category || node.family || "unknown") === type);
+    }
 
     const nodeIds = new Set(nodes.map((node) => node.id));
     let links = state.graph.links.filter((link) => nodeIds.has(link.from) && nodeIds.has(link.to));
@@ -1170,7 +1297,7 @@
     const centerX = weightSum ? weightedX / weightSum : (minX + maxX) / 2;
     const centerY = weightSum ? weightedY / weightSum : (minY + maxY) / 2;
     const centerZ = weightSum ? weightedZ / weightSum : (minZ + maxZ) / 2;
-    const scale = mode === "3d" ? 0.86 : 1.14;
+    const scale = mode === "3d" ? 0.86 : 1.3;
     let maxAbsX = 0;
     let maxAbsY = 0;
     let maxAbsZ = 0;
@@ -1353,7 +1480,7 @@
       ctx.stroke();
       ctx.restore();
     }
-    const show = selectedOrHoveredNode(node) || node.degree >= 7;
+    const show = selectedOrHoveredNode(node) || node.alwaysLabel || node.degree >= 10;
     if (!show) return;
     const label = node.label || node.id;
     if (!label) return;
@@ -1549,7 +1676,7 @@
           ctx.lineWidth = 2;
           ctx.stroke();
         }
-        if (active || node.degree >= 14) {
+        if (active || node.alwaysLabel || node.degree >= 14) {
           const label = String(node.label || node.id || "");
           const text = label.length > 28 ? `${label.slice(0, 26)}...` : label;
           ctx.font = `${active ? 14 : 11}px "IBM Plex Sans", sans-serif`;
@@ -1654,7 +1781,6 @@
         hoveredNode = node;
         state.hoveredNodeId = node ? node.id : null;
         canvas.style.cursor = node ? "pointer" : "grab";
-        if (!state.selectedNodeId && node) renderNodeCard(node);
         render();
         return;
       }
@@ -1809,7 +1935,6 @@
           .linkDirectionalParticleWidth((link) => selectedOrHoveredLink(link) ? 3.2 : 0)
           .onNodeHover((node) => {
             state.hoveredNodeId = node ? node.id : null;
-            if (!state.selectedNodeId && node) renderNodeCard(node);
             refreshGraphStyles();
           })
           .onNodeClick((node) => {
@@ -1818,7 +1943,6 @@
           })
           .onLinkHover((link) => {
             state.hoveredLinkId = link ? link.id : null;
-            if (!state.selectedLinkId && !state.selectedNodeId && link) renderLinkCard(link);
             refreshGraphStyles();
           })
           .onLinkClick((link) => {
@@ -1933,7 +2057,6 @@
       .linkHoverPrecision(10)
       .onNodeHover((node) => {
         state.hoveredNodeId = node ? node.id : null;
-        if (!state.selectedNodeId && node) renderNodeCard(node);
         refreshGraphStyles();
       })
       .onNodeClick((node) => {
@@ -1942,7 +2065,6 @@
       })
       .onLinkHover((link) => {
         state.hoveredLinkId = link ? link.id : null;
-        if (!state.selectedLinkId && !state.selectedNodeId && link) renderLinkCard(link);
         refreshGraphStyles();
       })
       .onLinkClick((link) => {
@@ -2020,6 +2142,7 @@
     syncInspectorTabs();
     renderNodeCard(node);
     if (refresh) refreshView();
+    else refreshGraphStyles();
     if (focus) focusNode(nodeId);
     api(`/api/node/${encodeURIComponent(nodeId)}/card`)
       .then((payload) => {
@@ -2040,6 +2163,7 @@
     syncInspectorTabs();
     renderLinkCard(link);
     if (refresh) refreshView();
+    else refreshGraphStyles();
     api(`/api/relation/${encodeURIComponent(linkId)}/dossier`)
       .then((payload) => {
         if (!payload?.dossier || state.selectedLinkId !== linkId) return;
@@ -2406,8 +2530,8 @@
     el.detailRelationsTitle.textContent = "Direct Network";
     el.detailProvenanceTitle.textContent = "Indirect Network";
     el.detailName.textContent = "Select a node";
-    el.detailMeta.textContent = "Click a node or relation to inspect it.";
-    el.detailSummary.textContent = "A summary and source link will appear here.";
+    el.detailMeta.textContent = "Click a node to inspect it or search to focus a match.";
+    el.detailSummary.textContent = "The graph stays readable on load. Search or click a node to open its dossier.";
     el.detailTags.innerHTML = "";
     el.detailHeroLinks.innerHTML = "";
     renderList(el.detailHistory, [], (value) => value, "No history.");
@@ -2422,15 +2546,37 @@
 
   function rebuildSearchResults(results) {
     if (!results.length) {
-      el.searchResults.innerHTML = '<div class="empty">Type to search the graph.</div>';
+      const query = (el.search?.value || "").trim();
+      el.searchResults.innerHTML = query ? '<div class="empty">No local graph matches.</div>' : '<div class="empty">Type to search the graph.</div>';
       return;
     }
-    el.searchResults.innerHTML = results.map((item) => {
+    el.searchResults.innerHTML = results.map((item, index) => {
       const id = item.id || item.node_id || "";
       const title = item.name || item.label || id;
       const subtitle = item.summary || item.category || "";
-      return `<div class="search-result" data-node-link="${escapeHtml(id)}"><strong>${escapeHtml(title)}</strong><div class="muted">${escapeHtml(subtitle)}</div></div>`;
+      return `<div class="search-result" data-node-link="${escapeHtml(id)}" data-search-rank="${index}"><strong>${escapeHtml(title)}</strong><div class="muted">${escapeHtml(subtitle)}</div></div>`;
     }).join("");
+  }
+
+  function localSearchResults(query, limit = 10) {
+    const q = normalizeText(query);
+    if (!q) return [];
+    return state.graph.nodes
+      .filter((node) => matchesSearch(node, q))
+      .sort((a, b) => {
+        const aStarts = normalizeText(a.label || a.id).startsWith(q) ? 1 : 0;
+        const bStarts = normalizeText(b.label || b.id).startsWith(q) ? 1 : 0;
+        if (aStarts !== bStarts) return bStarts - aStarts;
+        if ((a.degree || 0) !== (b.degree || 0)) return (b.degree || 0) - (a.degree || 0);
+        return String(a.label || a.id).localeCompare(String(b.label || b.id));
+      })
+      .slice(0, limit)
+      .map((node) => ({
+        id: node.id,
+        name: node.label || node.name || node.id,
+        summary: node.summary || node.category || "",
+        category: node.category || node.family || "entity",
+      }));
   }
 
   function populateCommandModelSelector(payload) {
@@ -2662,9 +2808,29 @@
         }
         try {
           const payload = await api(`/api/node/search?q=${encodeURIComponent(value)}&limit=10`);
-          rebuildSearchResults(payload.results || []);
-          setStatus(payload.reranker_used ? "Search completed with rerank." : "Search completed.", "good");
+          const effectiveResults = (payload.results && payload.results.length) ? payload.results : localSearchResults(value, 10);
+          rebuildSearchResults(effectiveResults);
+          const first = effectiveResults.find((item) => state.nodeById.has(item.id || item.node_id || ""));
+          const firstId = String(first?.id || first?.node_id || "").trim();
+          if (firstId && state.nodeById.has(firstId)) {
+            selectNode(firstId, { focus: true, refresh: false });
+          }
+          if (effectiveResults.length && !(payload.results && payload.results.length)) {
+            setStatus("Search completed from the loaded graph.", "good");
+          } else {
+            setStatus(payload.reranker_used ? "Search completed with rerank." : "Search completed.", "good");
+          }
         } catch (error) {
+          const fallbackResults = localSearchResults(value, 10);
+          if (fallbackResults.length) {
+            rebuildSearchResults(fallbackResults);
+            const firstId = String(fallbackResults[0]?.id || "").trim();
+            if (firstId && state.nodeById.has(firstId)) {
+              selectNode(firstId, { focus: true, refresh: false });
+            }
+            setStatus("Search completed from the loaded graph.", "good");
+            return;
+          }
           el.searchResults.innerHTML = `<div class="empty">Search failed: ${escapeHtml(error.message)}</div>`;
         }
       }, 180);
@@ -2755,6 +2921,7 @@
     await loadCommandModels();
     syncInspectorTabs();
     await refreshWorkbenchLayers({ preserveSelection: false });
+    renderEmptyInspector();
     centerGraphView(700);
     window.setInterval(() => {
       void pollWorkbenchDiff();

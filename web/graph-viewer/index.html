@@ -231,11 +231,113 @@
       .search-result,
       .list-item,
       .trace-item,
-      .link-item {
+      .link-item,
+      .process-step,
+      .evidence-card,
+      .graph-change-card {
         padding: 10px 12px;
         border-radius: 12px;
         background: rgba(255,255,255,0.03);
         border: 1px solid rgba(255,255,255,0.05);
+      }
+
+      .process-timeline,
+      .evidence-grid,
+      .graph-change-grid {
+        display: grid;
+        gap: 10px;
+        margin-top: 12px;
+      }
+
+      .process-step {
+        display: grid;
+        grid-template-columns: 120px 1fr auto;
+        gap: 10px;
+        align-items: start;
+      }
+
+      .process-step.active {
+        border-color: rgba(134, 210, 255, 0.32);
+        background: rgba(134, 210, 255, 0.08);
+      }
+
+      .process-stage {
+        color: var(--accent-2);
+        font-size: 12px;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+      }
+
+      .process-title,
+      .card-title {
+        font-weight: 700;
+        line-height: 1.25;
+      }
+
+      .process-meta,
+      .card-meta {
+        color: var(--muted);
+        font-size: 12px;
+        line-height: 1.35;
+        margin-top: 4px;
+      }
+
+      .process-badge {
+        justify-self: end;
+        border-radius: 999px;
+        padding: 4px 8px;
+        color: var(--text);
+        background: rgba(255,255,255,0.06);
+        border: 1px solid rgba(255,255,255,0.08);
+        font-size: 12px;
+      }
+
+      .process-badge.ok { color: var(--good); }
+      .process-badge.warn { color: var(--warn); }
+      .process-badge.error { color: var(--danger); }
+
+      .evidence-grid,
+      .graph-change-grid {
+        grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      }
+
+      .quote {
+        margin-top: 8px;
+        padding-left: 10px;
+        border-left: 2px solid rgba(134, 210, 255, 0.32);
+        color: var(--text);
+        line-height: 1.35;
+      }
+
+      .trace-section {
+        margin-top: 16px;
+      }
+
+      .trace-section h4 {
+        margin: 0 0 8px;
+        font-size: 13px;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: var(--accent-2);
+      }
+
+      .research-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 12px;
+      }
+
+      .research-table th,
+      .research-table td {
+        text-align: left;
+        vertical-align: top;
+        padding: 8px;
+        border-bottom: 1px solid rgba(255,255,255,0.06);
+      }
+
+      .research-table th {
+        color: var(--muted);
+        font-weight: 600;
       }
 
       .legend-item {
@@ -678,6 +780,7 @@
               <button type="button" data-research-tab="rejected">Rejected Sources</button>
               <button type="button" data-research-tab="claims">Claims</button>
               <button type="button" data-research-tab="diff">Graph Diff</button>
+              <button type="button" data-research-tab="events">Live Events</button>
               <button type="button" data-research-tab="raw">Raw JSON</button>
             </div>
             <div id="research-panel-summary" class="drawer-panel"></div>
@@ -686,6 +789,7 @@
             <div id="research-panel-rejected" class="drawer-panel hidden"></div>
             <div id="research-panel-claims" class="drawer-panel hidden"></div>
             <div id="research-panel-diff" class="drawer-panel hidden"></div>
+            <div id="research-panel-events" class="drawer-panel hidden"></div>
             <div id="research-panel-raw" class="drawer-panel hidden"></div>
           </div>
         </div>
@@ -695,6 +799,6 @@
     <script src="/vendor/three.min.js"></script>
     <script src="/vendor/3d-force-graph.min.js"></script>
     <script src="/vendor/force-graph.min.js"></script>
-    <script src="app.js?v=knowledge-explorer-9"></script>
+    <script src="app.js?v=knowledge-explorer-10"></script>
   </body>
 </html>

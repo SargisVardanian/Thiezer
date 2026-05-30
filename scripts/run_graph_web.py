@@ -5000,12 +5000,15 @@ class GraphViewerHandler(SimpleHTTPRequestHandler):
         self.respond(HTTPStatus.OK, content_type, path.read_bytes())
 
     def respond(self, status: int, content_type: str, body: bytes) -> None:
-        self.send_response(status)
-        self.send_header("Content-Type", content_type)
-        self.send_header("Content-Length", str(len(body)))
-        self.send_header("Cache-Control", "no-store")
-        self.end_headers()
-        self.wfile.write(body)
+        try:
+            self.send_response(status)
+            self.send_header("Content-Type", content_type)
+            self.send_header("Content-Length", str(len(body)))
+            self.send_header("Cache-Control", "no-store")
+            self.end_headers()
+            self.wfile.write(body)
+        except (BrokenPipeError, ConnectionResetError):
+            return
 
     def handle_relation_get(self, route: str, query: dict[str, list[str]]) -> None:
         graph = load_graph()
