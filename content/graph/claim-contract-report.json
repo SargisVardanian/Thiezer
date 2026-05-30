@@ -1,0 +1,25 @@
+{
+  "ok": true,
+  "updated_at": "2026-05-05T07:45:40+00:00",
+  "counts": {
+    "vertices": 236,
+    "edges": 57,
+    "claims": 57,
+    "admitted_claims": 56,
+    "sources": 8,
+    "evidence": 23
+  },
+  "claim_first": {
+    "claims_gte_edges": true,
+    "edges_without_claims": 0,
+    "edges_without_evidence": 1,
+    "evidence_without_claims": 0
+  },
+  "issues": [
+    {
+      "severity": "warning",
+      "type": "edge_without_evidence",
+      "id": "edge-8e23cf476717a48a"
+    }
+  ]
+}

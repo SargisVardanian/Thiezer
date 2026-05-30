@@ -1,0 +1,97 @@
+{
+  "project": {
+    "name": "Thiezer Armenia",
+    "mode": "armenia_first_newsroom",
+    "default_language": "ru",
+    "timezone": "Asia/Yerevan"
+  },
+  "models": {
+    "classifier": {
+      "preferred": "ollama/gemma4:e4b",
+      "fallback": "deterministic_rules"
+    },
+    "embedding": {
+      "preferred": "Qwen3-Embedding-4B",
+      "fallback": "lexical_bow"
+    },
+    "reranker": {
+      "preferred": "Qwen3-Reranker-4B",
+      "fallback": "lexical_priority"
+    },
+    "writer": {
+      "preferred": "ollama/gemma4:e4b",
+      "fallback": "deterministic_template"
+    }
+  },
+  "ollama": {
+    "default_num_ctx": 8192,
+    "long_num_ctx": 65536,
+    "experimental_num_ctx": 131072,
+    "recommended_max_num_ctx": 65536,
+    "allow_256k": false
+  },
+  "agents": {
+    "defaults": {
+      "models": {
+        "openrouter/openai/gpt-oss-120b:free": {
+          "alias": "OpenRouter GPT-OSS 120B free"
+        },
+        "openrouter/openai/gpt-oss-20b:free": {
+          "alias": "OpenRouter GPT-OSS 20B free"
+        },
+        "openrouter/qwen/qwen3-4b:free": {
+          "alias": "OpenRouter Qwen3 4B free"
+        },
+        "openrouter/qwen/qwen3-coder:free": {
+          "alias": "OpenRouter Qwen3 Coder free"
+        },
+        "openrouter/nvidia/nemotron-3-super-120b-a12b:free": {
+          "alias": "OpenRouter Nemotron 3 Super free"
+        },
+        "openrouter/google/gemma-3-27b-it:free": {
+          "alias": "OpenRouter Gemma 3 27B free"
+        }
+      }
+    }
+  },
+  "pipeline_order": [
+    "source_registry",
+    "discovery",
+    "armenia_gate",
+    "dedup",
+    "embedding",
+    "rerank",
+    "context_pack",
+    "graph_update",
+    "memory_update",
+    "telegram_output"
+  ],
+  "story_priorities": [
+    "internal_politics",
+    "economy",
+    "foreign_policy",
+    "legal_human_rights",
+    "local_governance",
+    "social_infrastructure_culture",
+    "utility"
+  ],
+  "artifacts": {
+    "canonical_graph": "content/graph/country-graph.json",
+    "evidence_log": "content/graph/evidence-log.jsonl",
+    "discovery_trace": "logs/pipeline/discovery-trace.jsonl",
+    "gate_trace": "logs/pipeline/armenia-gate-trace.jsonl",
+    "rerank_trace": "logs/pipeline/rerank-trace.jsonl",
+    "graph_trace": "logs/pipeline/graph-update-trace.jsonl",
+    "publish_trace": "logs/pipeline/publish-trace.jsonl",
+    "nemotron_handoff": "logs/pipeline/nemotron-handoff.json"
+  },
+  "telegram": {
+    "default_chat": "@thiezerarm",
+    "quiet_hours": {
+      "start": "00:00",
+      "end": "08:00"
+    },
+    "parse_mode": "HTML"
+  },
+  "last_self_repair_demo": "2026-03-21T23:41:36+00:00"
+}

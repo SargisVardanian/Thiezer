@@ -1,0 +1,387 @@
+{
+  "version": 1,
+  "tasks": [
+    {
+      "id": "entity_ru_pashinyan",
+      "task_type": "entity_extraction",
+      "smoke": true,
+      "input": {
+        "text": "В Ереване Никол Пашинян и Ален Симонян обсудили работу Национального собрания.",
+        "candidate_entities": [
+          "person-nikol-pashinyan",
+          "person-alen-simonyan",
+          "institution-parliament"
+        ]
+      },
+      "expected": {
+        "entities": [
+          "person-nikol-pashinyan",
+          "person-alen-simonyan",
+          "institution-parliament"
+        ],
+        "forbidden_entities": [
+          "person-robert-kocharyan"
+        ]
+      }
+    },
+    {
+      "id": "entity_hy_alen",
+      "task_type": "entity_extraction",
+      "smoke": true,
+      "input": {
+        "text": "Ալեն Սիմոնյանը Ազգային ժողովում ասաց, որ կառավարությունը պատրաստ է քննարկել նոր օրինագիծը.",
+        "candidate_entities": [
+          "person-alen-simonyan",
+          "institution-parliament",
+          "institution-government"
+        ]
+      },
+      "expected": {
+        "entities": [
+          "person-alen-simonyan",
+          "institution-parliament",
+          "institution-government"
+        ]
+      }
+    },
+    {
+      "id": "entity_en_ministry",
+      "task_type": "entity_extraction",
+      "smoke": true,
+      "input": {
+        "text": "The Ministry of Economy of Armenia said the package will help small businesses in Yerevan.",
+        "candidate_entities": [
+          "institution-ministry-economy",
+          "country-armenia",
+          "administrative-unit-yerevan"
+        ]
+      },
+      "expected": {
+        "entities": [
+          "institution-ministry-economy",
+          "country-armenia",
+          "administrative-unit-yerevan"
+        ]
+      }
+    },
+    {
+      "id": "alias_resolution_alen",
+      "task_type": "alias_resolution",
+      "smoke": true,
+      "input": {
+        "alias": "Ալեն Սիմոնյան",
+        "candidate_entities": [
+          "person-alen-simonyan",
+          "person-nikol-pashinyan"
+        ],
+        "expected_id": "person-alen-simonyan",
+        "expected_name": "Alen Simonyan"
+      },
+      "expected": {
+        "canonical_id": "person-alen-simonyan",
+        "canonical_name": "Alen Simonyan"
+      }
+    },
+    {
+      "id": "relation_extraction_mentions_only",
+      "task_type": "relation_extraction",
+      "smoke": false,
+      "input": {
+        "text": "Hetq reported that 1Lurer mentioned the government in a brief update and did not prove alignment.",
+        "left_id": "media-hetq",
+        "right_id": "institution-government"
+      },
+      "expected": {
+        "allowed_relations": [
+          "mentions",
+          "reported_by"
+        ],
+        "forbidden_relations": [
+          "aligned_with",
+          "opposes",
+          "publicly_supported"
+        ]
+      }
+    },
+    {
+      "id": "source_ranking_official_vs_watchdog",
+      "task_type": "source_ranking",
+      "smoke": true,
+      "input": {
+        "claim_sensitivity": "normal",
+        "source_ids": [
+          "civic_am",
+          "1lurer",
+          "hetq",
+          "azatutyun",
+          "thiezer_armenia_site"
+        ]
+      },
+      "expected": {
+        "ranking": [
+          "1lurer",
+          "civic_am",
+          "hetq",
+          "azatutyun",
+          "thiezer_armenia_site"
+        ]
+      }
+    },
+    {
+      "id": "newsroom_note_two_sources",
+      "task_type": "newsroom_note",
+      "smoke": false,
+      "input": {
+        "headline": "Плановые отключения света в Ереване",
+        "sources": [
+          {
+            "id": "civic_am",
+            "text": "Civic.am пишет о плановых отключениях и ссылается на предупреждение сети."
+          },
+          {
+            "id": "hetq",
+            "text": "Hetq также подтверждает время работ и список районов."
+          }
+        ]
+      },
+      "expected": {
+        "source_ids": [
+          "civic_am",
+          "hetq"
+        ],
+        "keywords": [
+          "отключ",
+          "Ереван",
+          "район"
+        ]
+      }
+    },
+    {
+      "id": "refusal_insufficient_evidence",
+      "task_type": "refusal",
+      "smoke": true,
+      "input": {
+        "claim": "Пашинян подал в отставку сегодня утром",
+        "sources": [
+          "one vague social post"
+        ]
+      },
+      "expected": {
+        "verdict": "insufficient_evidence"
+      }
+    },
+    {
+      "id": "strict_json_output",
+      "task_type": "strict_json",
+      "smoke": false,
+      "input": {
+        "task": "Return a valid JSON object with keys status, entities, relations, meta."
+      },
+      "expected": {
+        "required_keys": [
+          "status",
+          "entities",
+          "relations",
+          "meta"
+        ]
+      }
+    },
+    {
+      "id": "long_summary_armenia_eu",
+      "task_type": "long_summary",
+      "smoke": false,
+      "input": {
+        "text": "The EU announced a package for Armenia tied to reforms, visa dialogue, and regional cooperation. The announcement followed discussions with Armenian officials. The package is described as support for resilience, governance, and connectivity. Critics asked for more detail on conditions and distribution."
+      },
+      "expected": {
+        "keywords": [
+          "EU",
+          "Armenia",
+          "reforms",
+          "visa",
+          "conditions"
+        ]
+      }
+    },
+    {
+      "id": "conflict_compare_official_watchdog",
+      "task_type": "conflict_compare",
+      "smoke": false,
+      "input": {
+        "official": "The ministry says the program is on schedule.",
+        "watchdog": "The watchdog says the program is delayed and underfunded."
+      },
+      "expected": {
+        "keywords": [
+          "ministry",
+          "watchdog",
+          "schedule",
+          "delayed",
+          "underfunded"
+        ]
+      }
+    },
+    {
+      "id": "graph_safety_office_mismatch",
+      "task_type": "graph_safety",
+      "smoke": false,
+      "input": {
+        "proposal": {
+          "relations": [
+            {
+              "from": "person-alen-simonyan",
+              "relation_type": "holds_office_in",
+              "to": "office-prime-minister-armenia"
+            }
+          ]
+        }
+      },
+      "expected": {
+        "verdict": "reject"
+      }
+    },
+    {
+      "id": "graph_safety_event_not_durable",
+      "task_type": "graph_safety",
+      "smoke": false,
+      "input": {
+        "proposal": {
+          "relations": [
+            {
+              "from": "event-test-001",
+              "relation_type": "aligned_with",
+              "to": "person-nikol-pashinyan"
+            }
+          ]
+        }
+      },
+      "expected": {
+        "verdict": "reject"
+      }
+    },
+    {
+      "id": "source_trust_official_baseline",
+      "task_type": "trust_scoring",
+      "smoke": false,
+      "input": {
+        "claim_sensitivity": "high",
+        "source_ids": [
+          "civic_am",
+          "1lurer",
+          "hetq"
+        ]
+      },
+      "expected": {
+        "ranking": [
+          "1lurer",
+          "civic_am",
+          "hetq"
+        ]
+      }
+    },
+    {
+      "id": "source_trust_partisan_adjacent",
+      "task_type": "trust_scoring",
+      "smoke": false,
+      "input": {
+        "claim_sensitivity": "normal",
+        "source_ids": [
+          "thiezer_armenia_site",
+          "azatutyun",
+          "hetq"
+        ]
+      },
+      "expected": {
+        "ranking": [
+          "hetq",
+          "azatutyun",
+          "thiezer_armenia_site"
+        ]
+      }
+    },
+    {
+      "id": "critic_missing_second_source",
+      "task_type": "critic",
+      "smoke": false,
+      "input": {
+        "issue": "single source claim should not be promoted to durable graph edge"
+      },
+      "expected": {
+        "issues": [
+          "missing_second_source"
+        ]
+      }
+    },
+    {
+      "id": "critic_false_causality",
+      "task_type": "critic",
+      "smoke": false,
+      "input": {
+        "issue": "do not infer causality from a timeline gap"
+      },
+      "expected": {
+        "issues": [
+          "missing_second_source"
+        ]
+      }
+    },
+    {
+      "id": "tool_follow_json",
+      "task_type": "tool_follow_json",
+      "smoke": false,
+      "input": {
+        "steps": [
+          "extract",
+          "rank",
+          "verify",
+          "publish"
+        ],
+        "confidence": 0.8
+      },
+      "expected": {
+        "required_keys": [
+          "steps",
+          "confidence"
+        ]
+      }
+    },
+    {
+      "id": "graph_proposal_minimal_update",
+      "task_type": "graph_proposal",
+      "smoke": false,
+      "input": {
+        "proposal": {
+          "entities": [
+            {
+              "id": "event-mini-001",
+              "name": "Mini event",
+              "category": "event"
+            }
+          ],
+          "relations": [
+            {
+              "from": "event-mini-001",
+              "relation_type": "mentions",
+              "to": "media-civic-am",
+              "status": "reported"
+            }
+          ]
+        }
+      },
+      "expected": {
+        "verdict": "accept"
+      }
+    },
+    {
+      "id": "durable_vs_event_classification",
+      "task_type": "durable_vs_event",
+      "smoke": false,
+      "input": {
+        "text": "The article reports a one-time event in Yerevan, not a durable political alignment."
+      },
+      "expected": {
+        "classification": "event"
+      }
+    }
+  ]
+}

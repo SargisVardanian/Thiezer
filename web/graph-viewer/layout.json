@@ -1,0 +1,4002 @@
+{
+  "positions": {
+    "media-1lurer": {
+      "x": -61.989,
+      "y": 325.424,
+      "z": 0.0,
+      "locked": false,
+      "updated_at": "2026-05-05T22:50:41+00:00"
+    },
+    "person-aharon-sahakyan": {
+      "x": 395.388,
+      "y": 60.289,
+      "z": 0.0,
+      "locked": false,
+      "updated_at": "2026-05-05T22:50:41+00:00"
+    },
+    "person-alen-simonyan": {
+      "x": 334.271,
+      "y": -100.684,
+      "z": 0.0,
+      "locked": false,
+      "updated_at": "2026-05-05T22:50:41+00:00"
+    },
+    "person-andranik-gasparyan": {
+      "x": 248.001,
+      "y": -0.67,
+      "z": 0.0,
+      "locked": false,
+      "updated_at": "2026-05-05T22:50:41+00:00"
+    },
+    "yerevan-district-arabkir": {
+      "x": -74.35,
+      "y": -151.767,
+      "z": 0.0,
+      "locked": false,
+      "updated_at": "2026-05-05T22:50:41+00:00"
+    },
+    "region-aragatsotn": {
+      "x": 81.591,
+      "y": -178.21,
+      "z": 0.0,
+      "locked": false,
+      "updated_at": "2026-05-05T22:50:41+00:00"
+    },
+    "region-ararat": {
+      "x": -40.352,
+      "y": -125.681,
+      "z": 0.0,
+      "locked": false,
+      "updated_at": "2026-05-05T22:50:41+00:00"
+    },
+    "person-aren-mkrtchyan": {
+      "x": 392.784,
+      "y": 55.675,
+      "z": 0.0,
+      "locked": false,
+      "updated_at": "2026-05-05T22:50:41+00:00"
+    },
+    "region-armavir": {
+      "x": 42.694,
+      "y": 211.739,
+      "z": 0.0,
+      "locked": false,
+      "updated_at": "2026-05-05T22:50:41+00:00"
+    },
+    "country-armenia": {
+      "x": 115.491,
+      "y": -39.316,
+      "z": 0.0,
+      "locked": false,
+      "updated_at": "2026-05-05T22:50:41+00:00"
+    },
+    "party-armenia-alliance": {
+      "x": -124.398,
+      "y": 439.621,
+      "z": 0.0,
+      "locked": false,
+      "updated_at": "2026-05-05T22:50:41+00:00"
+    },
+    "party-armenian-national-congress": {
+      "x": -40.989,
+      "y": 165.089,
+      "z": 0.0,
+      "locked": false,
+      "updated_at": "2026-05-05T22:50:41+00:00"
+    },
+    "party-armenian-revolutionary-federation": {
+      "x": 23.918,
+      "y": 500.579,
+      "z": 0.0,
+      "locked": false,
+      "updated_at": "2026-05-05T22:50:41+00:00"
+    },
+    "media-azatutyun": {
+      "x": 24.389,
+      "y": 463.188,
+      "z": 0.0,
+      "locked": false,
+      "updated_at": "2026-05-05T22:50:41+00:00"
+    },
+    "party-bright-armenia": {
+      "x": 91.611,
+      "y": 257.475,
+      "z": 0.0,
+      "locked": false,
+      "updated_at": "2026-05-05T22:50:41+00:00"
+    },
+    "queue-case": {
+      "x": 257.035,
+      "y": -224.412,
+      "z": 0.0,
+      "locked": false,
+      "updated_at": "2026-05-05T22:50:41+00:00"
+    },
+    "media-civic-am": {
+      "x": -272.897,
+      "y": 258.728,
+      "z": 0.0,
+      "locked": false,
+      "updated_at": "2026-05-05T22:50:41+00:00"
+    },
+    "party-civil-contract": {
+      "x": 25.032,
+      "y": 495.403,
+      "z": 0.0,
+      "locked": false,
+      "updated_at": "2026-05-05T22:50:41+00:00"
+    },
+    "media-civilnet": {
+      "x": -208.164,
+      "y": 197.571,
+      "z": 0.0,
+      "locked": false,
+      "updated_at": "2026-05-05T22:50:41+00:00"
+    },
+    "queue-company": {
+      "x": -44.701,
+      "y": -302.717,
+      "z": 0.0,
+      "locked": false,
+      "updated_at": "2026-05-05T22:50:41+00:00"
+    },
+    "person-davit-arushanyan": {
+      "x": 411.092,
+      "y": 142.089,
+      "z": 0.0,
+      "locked": false,
+      "updated_at": "2026-05-05T22:50:41+00:00"
+    },
+    "person-edmon-marukyan": {
+      "x": 327.814,
+      "y": 69.558,
+      "z": 0.0,
+      "locked": false,
+      "updated_at": "2026-05-05T22:50:41+00:00"
+    },
+    "party-for-the-republic": {
+      "x": 101.915,
+      "y": 427.21,
+      "z": 0.0,
+      "locked": false,
+      "updated_at": "2026-05-05T22:50:41+00:00"
+    },
+    "region-gegharkunik": {
+      "x": -158.98,
+      "y": -2.497,
+      "z": 0.0,
+      "locked": false,
+      "updated_at": "2026-05-05T22:50:41+00:00"
+    },
+    "person-hakob-arshakyan": {
+      "x": 608.303,
+      "y": 188.899,
+      "z": 0.0,
+      "locked": false,
+      "updated_at": "2026-05-05T22:50:41+00:00"
+    },
+    "person-hayk-ghalumyan": {
+      "x": 417.027,
+      "y": 128.97,
+      "z": 0.0,
+      "locked": false,
+      "updated_at": "2026-05-05T22:50:41+00:00"
+    },
+    "media-hetq": {
+      "x": 74.021,
+      "y": 345.716,
+      "z": 0.0,
+      "locked": false,
+      "updated_at": "2026-05-05T22:50:41+00:00"
+    },
+    "person-karen-sargsyan": {
+      "x": 364.937,
+      "y": 61.438,
+      "z": 0.0,
+      "locked": false,
+      "updated_at": "2026-05-05T22:50:41+00:00"
+    },
+    "region-kotayk": {
+      "x": 255.376,
+      "y": 151.631,
+      "z": 0.0,
+      "locked": false,
+      "updated_at": "2026-05-05T22:50:41+00:00"
+    },
+    "queue-law": {
+      "x": 265.458,
+      "y": 150.189,
+      "z": 0.0,
+      "locked": false,
+      "updated_at": "2026-05-05T22:50:41+00:00"
+    },
+    "region-lori": {
+      "x": 171.761,
+      "y": 38.393,
+      "z": 0.0,
+      "locked": false,
+      "updated_at": "2026-05-05T22:50:41+00:00"
+    },
+    "institution-parliament": {
+      "x": -17.296,
+      "y": -136.912,
+      "z": 0.0,
+      "locked": false,
+      "updated_at": "2026-05-05T22:50:41+00:00"
+    },
+    "person-nikol-pashinyan": {
+      "x": 313.376,
+      "y": 49.623,
+      "z": 0.0,
+      "locked": false,
+      "updated_at": "2026-05-05T22:50:41+00:00"
+    },
+    "yerevan-district-nubarashen": {
+      "x": 91.31,
+      "y": 73.153,
+      "z": 0.0,
+      "locked": false,
+      "updated_at": "2026-05-05T22:50:41+00:00"
+    },
+    "party-prosperous-armenia": {
+      "x": 220.542,
+      "y": 353.762,
+      "z": 0.0,
+      "locked": false,
+      "updated_at": "2026-05-05T22:50:41+00:00"
+    },
+    "party-reborn-armenia": {
+      "x": -15.036,
+      "y": 67.486,
+      "z": 0.0,
+      "locked": false,
+      "updated_at": "2026-05-05T22:50:41+00:00"
+    },
+    "party-republican-party-of-armenia": {
+      "x": 11.095,
+      "y": 215.727,
+      "z": 0.0,
+      "locked": false,
+      "updated_at": "2026-05-05T22:50:41+00:00"
+    },
+    "person-robert-ghukasyan": {
+      "x": 493.429,
+      "y": -25.028,
+      "z": 0.0,
+      "locked": false,
+      "updated_at": "2026-05-05T22:50:41+00:00"
+    },
+    "person-robert-kocharyan": {
+      "x": 684.818,
+      "y": -153.574,
+      "z": 0.0,
+      "locked": false,
+      "updated_at": "2026-05-05T22:50:41+00:00"
+    },
+    "person-sedrak-tevonyan": {
+      "x": 296.954,
+      "y": 16.551,
+      "z": 0.0,
+      "locked": false,
+      "updated_at": "2026-05-05T22:50:41+00:00"
+    },
+    "person-sergey-movsisyan": {
+      "x": 409.276,
+      "y": 145.798,
+      "z": 0.0,
+      "locked": false,
+      "updated_at": "2026-05-05T22:50:41+00:00"
+    },
+    "person-serzh-sargsyan": {
+      "x": 318.259,
+      "y": 62.835,
+      "z": 0.0,
+      "locked": false,
+      "updated_at": "2026-05-05T22:50:41+00:00"
+    },
+    "yerevan-district-shengavit": {
+      "x": 238.899,
+      "y": -144.113,
+      "z": 0.0,
+      "locked": false,
+      "updated_at": "2026-05-05T22:50:41+00:00"
+    },
+    "region-shirak": {
+      "x": 151.436,
+      "y": -41.428,
+      "z": 0.0,
+      "locked": false,
+      "updated_at": "2026-05-05T22:50:41+00:00"
+    },
+    "person-suren-varosyan": {
+      "x": 468.954,
+      "y": -103.008,
+      "z": 0.0,
+      "locked": false,
+      "updated_at": "2026-05-05T22:50:41+00:00"
+    },
+    "region-syunik": {
+      "x": -135.452,
+      "y": -187.12,
+      "z": 0.0,
+      "locked": false,
+      "updated_at": "2026-05-05T22:50:41+00:00"
+    },
+    "region-tavush": {
+      "x": -40.558,
+      "y": -74.699,
+      "z": 0.0,
+      "locked": false,
+      "updated_at": "2026-05-05T22:50:41+00:00"
+    },
+    "person-tigran-avinyan": {
+      "x": 233.268,
+      "y": -196.181,
+      "z": 0.0,
+      "locked": false,
+      "updated_at": "2026-05-05T22:50:41+00:00"
+    },
+    "person-tigran-gabrielyan": {
+      "x": 545.935,
+      "y": -54.21,
+      "z": 0.0,
+      "locked": false,
+      "updated_at": "2026-05-05T22:50:41+00:00"
+    },
+    "cso-transparency": {
+      "x": -59.521,
+      "y": 568.481,
+      "z": 0.0,
+      "locked": false,
+      "updated_at": "2026-05-05T22:50:41+00:00"
+    },
+    "person-vahagn-arsenyan": {
+      "x": 458.197,
+      "y": 196.158,
+      "z": 0.0,
+      "locked": false,
+      "updated_at": "2026-05-05T22:50:41+00:00"
+    },
+    "person-vahagn-khachaturyan": {
+      "x": 480.322,
+      "y": 177.477,
+      "z": 0.0,
+      "locked": false,
+      "updated_at": "2026-05-05T22:50:41+00:00"
+    },
+    "person-vahram-khachatryan": {
+      "x": 184.054,
+      "y": -60.503,
+      "z": 0.0,
+      "locked": false,
+      "updated_at": "2026-05-05T22:50:41+00:00"
+    },
+    "region-vayots-dzor": {
+      "x": 190.872,
+      "y": 6.999,
+      "z": 0.0,
+      "locked": false,
+      "updated_at": "2026-05-05T22:50:41+00:00"
+    },
+    "administrative-unit-yerevan": {
+      "x": -223.245,
+      "y": 186.662,
+      "z": 0.0,
+      "locked": false,
+      "updated_at": "2026-05-05T22:50:41+00:00"
+    },
+    "media-aravot-am": {
+      "x": -188.939,
+      "y": 114.122,
+      "z": 0.0,
+      "locked": false,
+      "updated_at": "2026-05-05T22:50:41+00:00"
+    },
+    "media-civilnet-am": {
+      "x": -311.667,
+      "y": 130.053,
+      "z": 0.0,
+      "locked": false,
+      "updated_at": "2026-05-05T22:50:41+00:00"
+    },
+    "media-factor-am": {
+      "x": -191.817,
+      "y": 75.038,
+      "z": 0.0,
+      "locked": false,
+      "updated_at": "2026-05-05T22:50:41+00:00"
+    },
+    "person-hayk-konjoryan": {
+      "x": 498.279,
+      "y": -118.438,
+      "z": 0.0,
+      "locked": false,
+      "updated_at": "2026-05-05T22:50:41+00:00"
+    },
+    "person-hayk-mamijanyan": {
+      "x": 300.603,
+      "y": -205.116,
+      "z": 0.0,
+      "locked": false,
+      "updated_at": "2026-05-05T22:50:41+00:00"
+    },
+    "community-diaspora": {
+      "x": 121.973,
+      "y": 2.555,
+      "z": 0.0,
+      "locked": false,
+      "updated_at": "2026-05-05T22:50:41+00:00"
+    },
+    "institution-european-union": {
+      "x": -109.953,
+      "y": 185.92,
+      "z": 0.0,
+      "locked": false,
+      "updated_at": "2026-05-05T22:50:41+00:00"
+    },
+    "person-ilham-aliyev": {
+      "x": 200.848,
+      "y": -29.788,
+      "z": 0.0,
+      "locked": false,
+      "updated_at": "2026-05-05T22:50:41+00:00"
+    },
+    "institution-constitutional-court": {
+      "x": -61.563,
+      "y": -116.765,
+      "z": 0.0,
+      "locked": false,
+      "updated_at": "2026-05-05T22:50:41+00:00"
+    },
+    "person-marta-kos": {
+      "x": 355.644,
+      "y": 89.516,
+      "z": 0.0,
+      "locked": false,
+      "updated_at": "2026-05-05T22:50:41+00:00"
+    },
+    "person-mher-grigoryan": {
+      "x": 498.792,
+      "y": 39.805,
+      "z": 0.0,
+      "locked": false,
+      "updated_at": "2026-05-05T22:50:41+00:00"
+    },
+    "institution-ministry-economy": {
+      "x": -100.753,
+      "y": 138.166,
+      "z": 0.0,
+      "locked": false,
+      "updated_at": "2026-05-05T22:50:41+00:00"
+    },
+    "institution-government": {
+      "x": -72.848,
+      "y": 4.711,
+      "z": 0.0,
+      "locked": false,
+      "updated_at": "2026-05-05T22:50:41+00:00"
+    },
+    "person-samvel-karapetyan": {
+      "x": 473.351,
+      "y": -215.434,
+      "z": 0.0,
+      "locked": false,
+      "updated_at": "2026-05-05T22:50:41+00:00"
+    },
+    "person-seyran-ohanyan": {
+      "x": 478.522,
+      "y": 34.929,
+      "z": 0.0,
+      "locked": false,
+      "updated_at": "2026-05-05T22:50:41+00:00"
+    },
+    "person-taguhi-tovmasyan": {
+      "x": 609.969,
+      "y": 151.969,
+      "z": 0.0,
+      "locked": false,
+      "updated_at": "2026-05-05T22:50:41+00:00"
+    },
+    "party-with-honor": {
+      "x": -73.432,
+      "y": 153.359,
+      "z": 0.0,
+      "locked": false,
+      "updated_at": "2026-05-05T22:50:41+00:00"
+    },
+    "office-prime-minister-armenia": {
+      "x": -45.856,
+      "y": -105.462,
+      "z": 0.0,
+      "locked": false,
+      "updated_at": "2026-05-05T22:50:41+00:00"
+    },
+    "person-papoyan-gevorg": {
+      "x": 476.372,
+      "y": -265.52,
+      "z": 0.0,
+      "locked": false,
+      "updated_at": "2026-05-05T22:50:41+00:00"
+    },
+    "person-baghdasaryan-nazeli": {
+      "x": 594.991,
+      "y": -30.689,
+      "z": 0.0,
+      "locked": false,
+      "updated_at": "2026-05-05T22:50:41+00:00"
+    },
+    "person-gabrielyan-vilen": {
+      "x": 431.015,
+      "y": -270.851,
+      "z": 0.0,
+      "locked": false,
+      "updated_at": "2026-05-05T22:50:41+00:00"
+    },
+    "person-torosyan-arsen": {
+      "x": 538.163,
+      "y": 118.659,
+      "z": 0.0,
+      "locked": false,
+      "updated_at": "2026-05-05T22:50:41+00:00"
+    },
+    "person-khudatyan-davit": {
+      "x": 438.707,
+      "y": -56.985,
+      "z": 0.0,
+      "locked": false,
+      "updated_at": "2026-05-05T22:50:41+00:00"
+    },
+    "person-harutyunyan-arayik": {
+      "x": 338.796,
+      "y": -249.236,
+      "z": 0.0,
+      "locked": false,
+      "updated_at": "2026-05-05T22:50:41+00:00"
+    },
+    "person-papikyan-suren": {
+      "x": 553.308,
+      "y": -188.577,
+      "z": 0.0,
+      "locked": false,
+      "updated_at": "2026-05-05T22:50:41+00:00"
+    },
+    "person-petrosyan-romanos": {
+      "x": 296.871,
+      "y": 249.916,
+      "z": 0.0,
+      "locked": false,
+      "updated_at": "2026-05-05T22:50:41+00:00"
+    },
+    "person-sanosyan-gnel": {
+      "x": 316.095,
+      "y": 162.061,
+      "z": 0.0,
+      "locked": false,
+      "updated_at": "2026-05-05T22:50:41+00:00"
+    },
+    "person-gharibi-hovhannisyan-artur": {
+      "x": 533.049,
+      "y": 200.457,
+      "z": 0.0,
+      "locked": false,
+      "updated_at": "2026-05-05T22:50:41+00:00"
+    },
+    "person-hovsepi-azaryan-julieta": {
+      "x": 512.783,
+      "y": -49.463,
+      "z": 0.0,
+      "locked": false,
+      "updated_at": "2026-05-05T22:50:41+00:00"
+    },
+    "person-arturi-aghajanyan-eduard": {
+      "x": 682.674,
+      "y": -118.36,
+      "z": 0.0,
+      "locked": false,
+      "updated_at": "2026-05-05T22:50:41+00:00"
+    },
+    "person-gagiki-ayvazyan-ester": {
+      "x": 569.289,
+      "y": 165.482,
+      "z": 0.0,
+      "locked": false,
+      "updated_at": "2026-05-05T22:50:41+00:00"
+    },
+    "person-melsiki-avetisyan-aleqsandr": {
+      "x": 694.208,
+      "y": 59.156,
+      "z": 0.0,
+      "locked": false,
+      "updated_at": "2026-05-05T22:50:41+00:00"
+    },
+    "person-vrezhi-arshakyan-hakob": {
+      "x": 533.243,
+      "y": -50.416,
+      "z": 0.0,
+      "locked": false,
+      "updated_at": "2026-05-05T22:50:41+00:00"
+    },
+    "person-samveli-babayan-narek": {
+      "x": 673.849,
+      "y": -53.988,
+      "z": 0.0,
+      "locked": false,
+      "updated_at": "2026-05-05T22:50:41+00:00"
+    },
+    "person-khachiki-badalyan-lusine": {
+      "x": 435.685,
+      "y": 54.83,
+      "z": 0.0,
+      "locked": false,
+      "updated_at": "2026-05-05T22:50:41+00:00"
+    },
+    "person-valeriani-batoyan-zaruhi": {
+      "x": 261.758,
+      "y": 148.505,
+      "z": 0.0,
+      "locked": false,
+      "updated_at": "2026-05-05T22:50:41+00:00"
+    },
+    "person-zurbayi-baqoyan-rustam": {
+      "x": 662.788,
+      "y": 64.726,
+      "z": 0.0,
+      "locked": false,
+      "updated_at": "2026-05-05T22:50:41+00:00"
+    },
+    "person-armeni-gabrielyan-sisak": {
+      "x": 501.286,
+      "y": -163.918,
+      "z": 0.0,
+      "locked": false,
+      "updated_at": "2026-05-05T22:50:41+00:00"
+    },
+    "person-mateւosi-gasparyan-tateւik": {
+      "x": 562.16,
+      "y": -44.463,
+      "z": 0.0,
+      "locked": false,
+      "updated_at": "2026-05-05T22:50:41+00:00"
+    },
+    "person-ashoti-grigoryan-hripsime": {
+      "x": 302.165,
+      "y": -6.741,
+      "z": 0.0,
+      "locked": false,
+      "updated_at": "2026-05-05T22:50:41+00:00"
+    },
+    "person-harazati-grigoryan-narek": {
+      "x": 209.067,
+      "y": 188.345,
+      "z": 0.0,
+      "locked": false,
+      "updated_at": "2026-05-05T22:50:41+00:00"
+    },
+    "person-hranti-danielyan-davit": {
+      "x": 277.846,
+      "y": 100.932,
+      "z": 0.0,
+      "locked": false,
+      "updated_at": "2026-05-05T22:50:41+00:00"
+    },
+    "person-hrahati-davoyan-arpine": {
+      "x": 326.248,
+      "y": 126.335,
+      "z": 0.0,
+      "locked": false,
+      "updated_at": "2026-05-05T22:50:41+00:00"
+    },
+    "person-artyomi-eghiazaryan-gayane": {
+      "x": 388.022,
+      "y": 244.537,
+      "z": 0.0,
+      "locked": false,
+      "updated_at": "2026-05-05T22:50:41+00:00"
+    },
+    "person-ashoti-eghoyan-arman": {
+      "x": 142.58,
+      "y": -71.953,
+      "z": 0.0,
+      "locked": false,
+      "updated_at": "2026-05-05T22:50:41+00:00"
+    },
+    "person-eduardi-tumasyan-miqayel": {
+      "x": 391.681,
+      "y": 38.849,
+      "z": 0.0,
+      "locked": false,
+      "updated_at": "2026-05-05T22:50:41+00:00"
+    },
+    "person-ediki-tunyan-babken": {
+      "x": 552.254,
+      "y": 29.24,
+      "z": 0.0,
+      "locked": false,
+      "updated_at": "2026-05-05T22:50:41+00:00"
+    },
+    "person-hayki-khandanyan-sargis": {
+      "x": 485.799,
+      "y": 22.437,
+      "z": 0.0,
+      "locked": false,
+      "updated_at": "2026-05-05T22:50:41+00:00"
+    },
+    "person-gurgeni-karapetyan-davit": {
+      "x": 495.872,
+      "y": 43.81,
+      "z": 0.0,
+      "locked": false,
+      "updated_at": "2026-05-05T22:50:41+00:00"
+    },
+    "person-edvardi-karapetyan-maria": {
+      "x": 368.193,
+      "y": 55.9,
+      "z": 0.0,
+      "locked": false,
+      "updated_at": "2026-05-05T22:50:41+00:00"
+    },
+    "person-ishkhani-kirakosyan-lilit": {
+      "x": 255.773,
+      "y": 158.46,
+      "z": 0.0,
+      "locked": false,
+      "updated_at": "2026-05-05T22:50:41+00:00"
+    },
+    "person-rubiki-hakobyan-edgar": {
+      "x": 650.055,
+      "y": 205.701,
+      "z": 0.0,
+      "locked": false,
+      "updated_at": "2026-05-05T22:50:41+00:00"
+    },
+    "person-vachiki-hakobyan-hrachya": {
+      "x": 362.091,
+      "y": -230.172,
+      "z": 0.0,
+      "locked": false,
+      "updated_at": "2026-05-05T22:50:41+00:00"
+    },
+    "person-sosi-hakobyan-vagharshak": {
+      "x": 557.567,
+      "y": 18.411,
+      "z": 0.0,
+      "locked": false,
+      "updated_at": "2026-05-05T22:50:41+00:00"
+    },
+    "person-hovhannesi-hambardzumyan-karen": {
+      "x": 643.715,
+      "y": -190.633,
+      "z": 0.0,
+      "locked": false,
+      "updated_at": "2026-05-05T22:50:41+00:00"
+    },
+    "person-tarieli-hunanyan-hripsime": {
+      "x": 341.411,
+      "y": -185.419,
+      "z": 0.0,
+      "locked": false,
+      "updated_at": "2026-05-05T22:50:41+00:00"
+    },
+    "person-nshani-ghazaryan-armenuhi": {
+      "x": 413.196,
+      "y": -135.372,
+      "z": 0.0,
+      "locked": false,
+      "updated_at": "2026-05-05T22:50:41+00:00"
+    },
+    "person-ararati-ghazaryan-taguhi": {
+      "x": 472.152,
+      "y": -291.231,
+      "z": 0.0,
+      "locked": false,
+      "updated_at": "2026-05-05T22:50:41+00:00"
+    },
+    "person-kamoyi-ghazaryan-marina": {
+      "x": 455.927,
+      "y": -80.438,
+      "z": 0.0,
+      "locked": false,
+      "updated_at": "2026-05-05T22:50:41+00:00"
+    },
+    "person-arayi-ghazaryan-sona": {
+      "x": 459.925,
+      "y": -75.412,
+      "z": 0.0,
+      "locked": false,
+      "updated_at": "2026-05-05T22:50:41+00:00"
+    },
+    "person-volodyayi-ghalumyan-vahe": {
+      "x": 311.03,
+      "y": -22.973,
+      "z": 0.0,
+      "locked": false,
+      "updated_at": "2026-05-05T22:50:41+00:00"
+    },
+    "person-ghukasi-mehrabyan-artyom": {
+      "x": 377.089,
+      "y": -19.956,
+      "z": 0.0,
+      "locked": false,
+      "updated_at": "2026-05-05T22:50:41+00:00"
+    },
+    "person-hambardzumi-minasyan-lilit": {
+      "x": 447.745,
+      "y": -192.845,
+      "z": 0.0,
+      "locked": false,
+      "updated_at": "2026-05-05T22:50:41+00:00"
+    },
+    "person-rafayeli-nazaryan-lena": {
+      "x": 508.944,
+      "y": 57.851,
+      "z": 0.0,
+      "locked": false,
+      "updated_at": "2026-05-05T22:50:41+00:00"
+    },
+    "person-norayri-palyan-emma": {
+      "x": 504.695,
+      "y": 111.605,
+      "z": 0.0,
+      "locked": false,
+      "updated_at": "2026-05-05T22:50:41+00:00"
+    },
+    "person-seryozhayi-parsilyan-tigran": {
+      "x": 295.276,
+      "y": 46.466,
+      "z": 0.0,
+      "locked": false,
+      "updated_at": "2026-05-05T22:50:41+00:00"
+    },
+    "person-ashoti-poghosyan-mariam": {
+      "x": 468.627,
+      "y": -178.722,
+      "z": 0.0,
+      "locked": false,
+      "updated_at": "2026-05-05T22:50:41+00:00"
+    },
+    "person-atomi-poghosyan-qristine": {
+      "x": 630.05,
+      "y": -186.11,
+      "z": 0.0,
+      "locked": false,
+      "updated_at": "2026-05-05T22:50:41+00:00"
+    },
+    "person-zarehi-sargsyan-hayk": {
+      "x": 226.25,
+      "y": -66.985,
+      "z": 0.0,
+      "locked": false,
+      "updated_at": "2026-05-05T22:50:41+00:00"
+    },
+    "person-noriki-sargsyan-trdat": {
+      "x": 258.231,
+      "y": -51.778,
+      "z": 0.0,
+      "locked": false,
+      "updated_at": "2026-05-05T22:50:41+00:00"
+    },
+    "person-hakobi-sarukhanyan-karen": {
+      "x": 538.372,
+      "y": 22.892,
+      "z": 0.0,
+      "locked": false,
+      "updated_at": "2026-05-05T22:50:41+00:00"
+    },
+    "person-roberti-simonyan-alen": {
+      "x": 381.371,
+      "y": -171.241,
+      "z": 0.0,
+      "locked": false,
+      "updated_at": "2026-05-05T22:50:41+00:00"
+    },
+    "person-sasuni-stepanyan-lilit": {
+      "x": 360.827,
+      "y": -147.04,
+      "z": 0.0,
+      "locked": false,
+      "updated_at": "2026-05-05T22:50:41+00:00"
+    },
+    "person-geւorgi-vardanyan-tsovinar": {
+      "x": 493.123,
+      "y": -39.166,
+      "z": 0.0,
+      "locked": false,
+      "updated_at": "2026-05-05T22:50:41+00:00"
+    },
+    "person-sargsi-tigranyan-heriqnaz": {
+      "x": 390.851,
+      "y": -34.415,
+      "z": 0.0,
+      "locked": false,
+      "updated_at": "2026-05-05T22:50:41+00:00"
+    },
+    "person-zarmiki-tsirunyan-hayk": {
+      "x": 237.618,
+      "y": -107.156,
+      "z": 0.0,
+      "locked": false,
+      "updated_at": "2026-05-05T22:50:41+00:00"
+    },
+    "person-sargsi-qloyan-anush": {
+      "x": 372.02,
+      "y": 77.38,
+      "z": 0.0,
+      "locked": false,
+      "updated_at": "2026-05-05T22:50:41+00:00"
+    },
+    "person-grigori-qocharyan-andranik": {
+      "x": 523.742,
+      "y": -200.191,
+      "z": 0.0,
+      "locked": false,
+      "updated_at": "2026-05-05T22:50:41+00:00"
+    },
+    "person-siraki-ohanyan-vanik": {
+      "x": 472.772,
+      "y": -292.168,
+      "z": 0.0,
+      "locked": false,
+      "updated_at": "2026-05-05T22:50:41+00:00"
+    },
+    "person-rubeni-mamijanyan-hayk": {
+      "x": 430.727,
+      "y": -57.254,
+      "z": 0.0,
+      "locked": false,
+      "updated_at": "2026-05-05T22:50:41+00:00"
+    },
+    "person-hranti-abrahamyan-tigran": {
+      "x": 534.561,
+      "y": -43.293,
+      "z": 0.0,
+      "locked": false,
+      "updated_at": "2026-05-05T22:50:41+00:00"
+    },
+    "person-andraniki-margaryan-taron": {
+      "x": 377.891,
+      "y": 38.359,
+      "z": 0.0,
+      "locked": false,
+      "updated_at": "2026-05-05T22:50:41+00:00"
+    },
+    "person-arayi-mkrtchyan-anna": {
+      "x": 309.907,
+      "y": 103.111,
+      "z": 0.0,
+      "locked": false,
+      "updated_at": "2026-05-05T22:50:41+00:00"
+    },
+    "person-armen-ashotyan": {
+      "x": 535.2,
+      "y": -12.364,
+      "z": 0.0,
+      "locked": false,
+      "updated_at": "2026-05-05T22:50:41+00:00"
+    },
+    "person-vahram-baghdasaryan": {
+      "x": 439.33,
+      "y": -63.996,
+      "z": 0.0,
+      "locked": false,
+      "updated_at": "2026-05-05T22:50:41+00:00"
+    },
+    "person-mushegh-lalayan": {
+      "x": 379.351,
+      "y": 75.702,
+      "z": 0.0,
+      "locked": false,
+      "updated_at": "2026-05-05T22:50:41+00:00"
+    },
+    "person-davit-harutyunyan": {
+      "x": 291.167,
+      "y": -179.27,
+      "z": 0.0,
+      "locked": false,
+      "updated_at": "2026-05-05T22:50:41+00:00"
+    },
+    "person-karine-atshemyan": {
+      "x": 284.273,
+      "y": 19.949,
+      "z": 0.0,
+      "locked": false,
+      "updated_at": "2026-05-05T22:50:41+00:00"
+    },
+    "person-artak-zakaryan": {
+      "x": 391.561,
+      "y": -46.289,
+      "z": 0.0,
+      "locked": false,
+      "updated_at": "2026-05-05T22:50:41+00:00"
+    },
+    "person-ruben-tadevosyan": {
+      "x": 654.06,
+      "y": -149.33,
+      "z": 0.0,
+      "locked": false,
+      "updated_at": "2026-05-05T22:50:41+00:00"
+    },
+    "person-gagik-minasyan": {
+      "x": 564.236,
+      "y": 21.013,
+      "z": 0.0,
+      "locked": false,
+      "updated_at": "2026-05-05T22:50:41+00:00"
+    },
+    "person-eduard-sharmazanov": {
+      "x": 328.105,
+      "y": 131.942,
+      "z": 0.0,
+      "locked": false,
+      "updated_at": "2026-05-05T22:50:41+00:00"
+    },
+    "person-karen-avagyan": {
+      "x": 401.838,
+      "y": 196.325,
+      "z": 0.0,
+      "locked": false,
+      "updated_at": "2026-05-05T22:50:41+00:00"
+    },
+    "person-margarit-yesayan": {
+      "x": 447.921,
+      "y": -266.882,
+      "z": 0.0,
+      "locked": false,
+      "updated_at": "2026-05-05T22:50:41+00:00"
+    },
+    "person-samvel-nikoyan": {
+      "x": 697.642,
+      "y": -57.59,
+      "z": 0.0,
+      "locked": false,
+      "updated_at": "2026-05-05T22:50:41+00:00"
+    },
+    "person-robert-abrahamyan": {
+      "x": 526.889,
+      "y": -81.31,
+      "z": 0.0,
+      "locked": false,
+      "updated_at": "2026-05-05T22:50:41+00:00"
+    },
+    "person-azatyan-anita": {
+      "x": 194.775,
+      "y": -171.072,
+      "z": 0.0,
+      "locked": false,
+      "updated_at": "2026-05-05T22:50:41+00:00"
+    },
+    "person-koryun-atoyan": {
+      "x": 348.052,
+      "y": 265.531,
+      "z": 0.0,
+      "locked": false,
+      "updated_at": "2026-05-05T22:50:41+00:00"
+    },
+    "person-arakelyan-arman-gagik": {
+      "x": 347.462,
+      "y": -57.6,
+      "z": 0.0,
+      "locked": false,
+      "updated_at": "2026-05-05T22:50:41+00:00"
+    },
+    "person-ara-avetisyan": {
+      "x": 699.495,
+      "y": -164.046,
+      "z": 0.0,
+      "locked": false,
+      "updated_at": "2026-05-05T22:50:41+00:00"
+    },
+    "person-avetisyan-sukias-gegel": {
+      "x": 298.802,
+      "y": 127.135,
+      "z": 0.0,
+      "locked": false,
+      "updated_at": "2026-05-05T22:50:41+00:00"
+    },
+    "person-ara-babloyan": {
+      "x": 322.444,
+      "y": -110.007,
+      "z": 0.0,
+      "locked": false,
+      "updated_at": "2026-05-05T22:50:41+00:00"
+    },
+    "person-arman-babloyan": {
+      "x": 724.521,
+      "y": -50.681,
+      "z": 0.0,
+      "locked": false,
+      "updated_at": "2026-05-05T22:50:41+00:00"
+    },
+    "person-garnik-badalyan": {
+      "x": 192.575,
+      "y": -139.417,
+      "z": 0.0,
+      "locked": false,
+      "updated_at": "2026-05-05T22:50:41+00:00"
+    },
+    "person-jemma-baghdasaryan": {
+      "x": 478.973,
+      "y": -184.938,
+      "z": 0.0,
+      "locked": false,
+      "updated_at": "2026-05-05T22:50:41+00:00"
+    },
+    "person-lilit-beglaryan": {
+      "x": 521.654,
+      "y": -242.629,
+      "z": 0.0,
+      "locked": false,
+      "updated_at": "2026-05-05T22:50:41+00:00"
+    },
+    "person-hakob-beglaryan": {
+      "x": 669.513,
+      "y": 70.169,
+      "z": 0.0,
+      "locked": false,
+      "updated_at": "2026-05-05T22:50:41+00:00"
+    },
+    "person-karen-botoyan": {
+      "x": 542.886,
+      "y": -4.852,
+      "z": 0.0,
+      "locked": false,
+      "updated_at": "2026-05-05T22:50:41+00:00"
+    },
+    "person-georgy-gabrielyan": {
+      "x": 684.773,
+      "y": 33.095,
+      "z": 0.0,
+      "locked": false,
+      "updated_at": "2026-05-05T22:50:41+00:00"
+    },
+    "person-hovhannes-gabrielyan": {
+      "x": 310.096,
+      "y": -75.0,
+      "z": 0.0,
+      "locked": false,
+      "updated_at": "2026-05-05T22:50:41+00:00"
+    },
+    "person-gagik-gagyan": {
+      "x": 627.86,
+      "y": -167.966,
+      "z": 0.0,
+      "locked": false,
+      "updated_at": "2026-05-05T22:50:41+00:00"
+    },
+    "person-gaspar-gasparyan": {
+      "x": 505.791,
+      "y": -120.169,
+      "z": 0.0,
+      "locked": false,
+      "updated_at": "2026-05-05T22:50:41+00:00"
+    },
+    "person-arayik-grigoryan": {
+      "x": 583.626,
+      "y": -31.315,
+      "z": 0.0,
+      "locked": false,
+      "updated_at": "2026-05-05T22:50:41+00:00"
+    },
+    "person-artak-grigoryan": {
+      "x": 409.098,
+      "y": 51.43,
+      "z": 0.0,
+      "locked": false,
+      "updated_at": "2026-05-05T22:50:41+00:00"
+    },
+    "person-davit-grigoryan": {
+      "x": 315.008,
+      "y": 237.068,
+      "z": 0.0,
+      "locked": false,
+      "updated_at": "2026-05-05T22:50:41+00:00"
+    },
+    "person-rafik-grigoryan": {
+      "x": 376.336,
+      "y": 209.542,
+      "z": 0.0,
+      "locked": false,
+      "updated_at": "2026-05-05T22:50:41+00:00"
+    },
+    "person-varujan-grigoryan": {
+      "x": 328.907,
+      "y": 124.689,
+      "z": 0.0,
+      "locked": false,
+      "updated_at": "2026-05-05T22:50:41+00:00"
+    },
+    "person-smbat-daghbashyan": {
+      "x": 492.419,
+      "y": 19.703,
+      "z": 0.0,
+      "locked": false,
+      "updated_at": "2026-05-05T22:50:41+00:00"
+    },
+    "person-samvel-darbinyan": {
+      "x": 417.505,
+      "y": 97.437,
+      "z": 0.0,
+      "locked": false,
+      "updated_at": "2026-05-05T22:50:41+00:00"
+    },
+    "person-razmik-zohrabyan": {
+      "x": 517.07,
+      "y": 57.238,
+      "z": 0.0,
+      "locked": false,
+      "updated_at": "2026-05-05T22:50:41+00:00"
+    },
+    "person-ida-khachatryan": {
+      "x": 502.231,
+      "y": -91.915,
+      "z": 0.0,
+      "locked": false,
+      "updated_at": "2026-05-05T22:50:41+00:00"
+    },
+    "person-gagik-khachatryan": {
+      "x": 335.483,
+      "y": -10.064,
+      "z": 0.0,
+      "locked": false,
+      "updated_at": "2026-05-05T22:50:41+00:00"
+    },
+    "person-vardan-khachatryan": {
+      "x": 404.979,
+      "y": 190.813,
+      "z": 0.0,
+      "locked": false,
+      "updated_at": "2026-05-05T22:50:41+00:00"
+    },
+    "person-suren-xachatryan": {
+      "x": 605.494,
+      "y": 22.376,
+      "z": 0.0,
+      "locked": false,
+      "updated_at": "2026-05-05T22:50:41+00:00"
+    },
+    "person-suren-karayan": {
+      "x": 383.309,
+      "y": -143.186,
+      "z": 0.0,
+      "locked": false,
+      "updated_at": "2026-05-05T22:50:41+00:00"
+    },
+    "person-vazgen-karakhanyan": {
+      "x": 217.137,
+      "y": 133.91,
+      "z": 0.0,
+      "locked": false,
+      "updated_at": "2026-05-05T22:50:41+00:00"
+    },
+    "person-anahit-kirakosyan": {
+      "x": 510.949,
+      "y": -12.255,
+      "z": 0.0,
+      "locked": false,
+      "updated_at": "2026-05-05T22:50:41+00:00"
+    },
+    "person-artur-kirakosyan": {
+      "x": 291.167,
+      "y": -179.27,
+      "z": 0.0,
+      "locked": false,
+      "updated_at": "2026-05-05T22:50:41+00:00"
+    },
+    "person-gevorg-hakobyan": {
+      "x": 253.151,
+      "y": 7.505,
+      "z": 0.0,
+      "locked": false,
+      "updated_at": "2026-05-05T22:50:41+00:00"
+    },
+    "person-karen-hakobyan": {
+      "x": 372.609,
+      "y": 72.522,
+      "z": 0.0,
+      "locked": false,
+      "updated_at": "2026-05-05T22:50:41+00:00"
+    },
+    "person-hakob-hakobyan": {
+      "x": 403.023,
+      "y": 67.54,
+      "z": 0.0,
+      "locked": false,
+      "updated_at": "2026-05-05T22:50:41+00:00"
+    },
+    "person-t-hayrapetyan-araqel-hayrape": {
+      "x": 524.028,
+      "y": -171.523,
+      "z": 0.0,
+      "locked": false,
+      "updated_at": "2026-05-05T22:50:41+00:00"
+    },
+    "person-ruben-hayrapetyan": {
+      "x": 449.759,
+      "y": 70.326,
+      "z": 0.0,
+      "locked": false,
+      "updated_at": "2026-05-05T22:50:41+00:00"
+    },
+    "person-aram-harutyunyan": {
+      "x": 652.556,
+      "y": -13.745,
+      "z": 0.0,
+      "locked": false,
+      "updated_at": "2026-05-05T22:50:41+00:00"
+    },
+    "person-edgar-hovhannisyan": {
+      "x": 522.235,
+      "y": -281.223,
+      "z": 0.0,
+      "locked": false,
+      "updated_at": "2026-05-05T22:50:41+00:00"
+    },
+    "institution-government-of-armenia": {
+      "x": 86.196,
+      "y": -44.489,
+      "z": 0.0,
+      "locked": false,
+      "updated_at": "2026-05-05T22:50:41+00:00"
+    },
+    "institution-ministry-of-defense-of-armenia": {
+      "x": -112.756,
+      "y": 84.659,
+      "z": 0.0,
+      "locked": false,
+      "updated_at": "2026-05-05T22:50:41+00:00"
+    },
+    "institution-general-staff-of-the-armed-forces-of-armenia": {
+      "x": 111.981,
+      "y": -15.14,
+      "z": 0.0,
+      "locked": false,
+      "updated_at": "2026-05-05T22:50:41+00:00"
+    },
+    "office-chief-of-the-general-staff-of-the-armed-forces": {
+      "x": 75.804,
+      "y": 62.101,
+      "z": 0.0,
+      "locked": false,
+      "updated_at": "2026-05-05T22:50:41+00:00"
+    },
+    "person-edvard-asryan": {
+      "x": 322.2,
+      "y": -69.944,
+      "z": 0.0,
+      "locked": false,
+      "updated_at": "2026-05-05T22:50:41+00:00"
+    },
+    "person-arpine-sargsyan": {
+      "x": 481.46,
+      "y": -134.767,
+      "z": 0.0,
+      "locked": false,
+      "updated_at": "2026-05-05T22:50:41+00:00"
+    },
+    "office-minister-of-internal-affairs": {
+      "x": 128.137,
+      "y": 138.265,
+      "z": 0.0,
+      "locked": false,
+      "updated_at": "2026-05-05T22:50:41+00:00"
+    },
+    "institution-ministry-of-internal-affairs": {
+      "x": -254.067,
+      "y": -105.238,
+      "z": 0.0,
+      "locked": false,
+      "updated_at": "2026-05-05T22:50:41+00:00"
+    },
+    "person-suren-papikyan": {
+      "x": 353.842,
+      "y": 192.608,
+      "z": 0.0,
+      "locked": false,
+      "updated_at": "2026-05-05T22:50:41+00:00"
+    },
+    "office-minister-of-defense": {
+      "x": 392.274,
+      "y": 84.769,
+      "z": 0.0,
+      "locked": false,
+      "updated_at": "2026-05-05T22:50:41+00:00"
+    },
+    "institution-ministry-of-defense": {
+      "x": 72.094,
+      "y": 52.187,
+      "z": 0.0,
+      "locked": false,
+      "updated_at": "2026-05-05T22:50:41+00:00"
+    },
+    "person-gevorg-papoyan": {
+      "x": 533.429,
+      "y": 157.353,
+      "z": 0.0,
+      "locked": false,
+      "updated_at": "2026-05-05T22:50:41+00:00"
+    },
+    "office-minister-of-economy": {
+      "x": 500.186,
+      "y": 46.385,
+      "z": 0.0,
+      "locked": false,
+      "updated_at": "2026-05-05T22:50:41+00:00"
+    },
+    "institution-ministry-of-economy": {
+      "x": 103.608,
+      "y": 62.501,
+      "z": 0.0,
+      "locked": false,
+      "updated_at": "2026-05-05T22:50:41+00:00"
+    },
+    "person-zhanna-andreasyan": {
+      "x": 330.129,
+      "y": -74.949,
+      "z": 0.0,
+      "locked": false,
+      "updated_at": "2026-05-05T22:50:41+00:00"
+    },
+    "office-minister-of-education-science-culture-and-sport": {
+      "x": 407.222,
+      "y": 81.018,
+      "z": 0.0,
+      "locked": false,
+      "updated_at": "2026-05-05T22:50:41+00:00"
+    },
+    "institution-ministry-of-education-science-culture-and-sport": {
+      "x": -120.927,
+      "y": -127.877,
+      "z": 0.0,
+      "locked": false,
+      "updated_at": "2026-05-05T22:50:41+00:00"
+    },
+    "person-hambardzum-matevosyan": {
+      "x": 500.065,
+      "y": -29.686,
+      "z": 0.0,
+      "locked": false,
+      "updated_at": "2026-05-05T22:50:41+00:00"
+    },
+    "office-minister-of-environment": {
+      "x": 103.561,
+      "y": 165.063,
+      "z": 0.0,
+      "locked": false,
+      "updated_at": "2026-05-05T22:50:41+00:00"
+    },
+    "institution-ministry-of-environment": {
+      "x": -49.718,
+      "y": -47.845,
+      "z": 0.0,
+      "locked": false,
+      "updated_at": "2026-05-05T22:50:41+00:00"
+    },
+    "person-vahe-hovhannisyan": {
+      "x": 630.679,
+      "y": -128.614,
+      "z": 0.0,
+      "locked": false,
+      "updated_at": "2026-05-05T22:50:41+00:00"
+    },
+    "office-minister-of-finance": {
+      "x": 149.472,
+      "y": -167.779,
+      "z": 0.0,
+      "locked": false,
+      "updated_at": "2026-05-05T22:50:41+00:00"
+    },
+    "institution-ministry-of-finance": {
+      "x": 68.328,
+      "y": -50.56,
+      "z": 0.0,
+      "locked": false,
+      "updated_at": "2026-05-05T22:50:41+00:00"
+    },
+    "person-ararat-mirzoyan": {
+      "x": 572.983,
+      "y": 177.762,
+      "z": 0.0,
+      "locked": false,
+      "updated_at": "2026-05-05T22:50:41+00:00"
+    },
+    "office-minister-of-foreign-affairs": {
+      "x": 5.078,
+      "y": 166.711,
+      "z": 0.0,
+      "locked": false,
+      "updated_at": "2026-05-05T22:50:41+00:00"
+    },
+    "institution-ministry-of-foreign-affairs": {
+      "x": -106.858,
+      "y": 109.501,
+      "z": 0.0,
+      "locked": false,
+      "updated_at": "2026-05-05T22:50:41+00:00"
+    },
+    "person-anahit-avanesyan": {
+      "x": 286.114,
+      "y": 215.741,
+      "z": 0.0,
+      "locked": false,
+      "updated_at": "2026-05-05T22:50:41+00:00"
+    },
+    "office-minister-of-health": {
+      "x": 287.601,
+      "y": 121.454,
+      "z": 0.0,
+      "locked": false,
+      "updated_at": "2026-05-05T22:50:41+00:00"
+    },
+    "institution-ministry-of-health": {
+      "x": 37.415,
+      "y": -95.964,
+      "z": 0.0,
+      "locked": false,
+      "updated_at": "2026-05-05T22:50:41+00:00"
+    },
+    "person-mkhitar-hayrapetyan": {
+      "x": 416.642,
+      "y": 70.217,
+      "z": 0.0,
+      "locked": false,
+      "updated_at": "2026-05-05T22:50:41+00:00"
+    },
+    "office-minister-of-high-tech-industry": {
+      "x": 249.055,
+      "y": 65.877,
+      "z": 0.0,
+      "locked": false,
+      "updated_at": "2026-05-05T22:50:41+00:00"
+    },
+    "institution-ministry-of-high-tech-industry": {
+      "x": 146.578,
+      "y": -36.274,
+      "z": 0.0,
+      "locked": false,
+      "updated_at": "2026-05-05T22:50:41+00:00"
+    },
+    "person-srbuhi-galyan": {
+      "x": 496.309,
+      "y": 99.122,
+      "z": 0.0,
+      "locked": false,
+      "updated_at": "2026-05-05T22:50:41+00:00"
+    },
+    "office-minister-of-justice": {
+      "x": 296.376,
+      "y": -9.784,
+      "z": 0.0,
+      "locked": false,
+      "updated_at": "2026-05-05T22:50:41+00:00"
+    },
+    "institution-ministry-of-justice": {
+      "x": -98.098,
+      "y": 51.94,
+      "z": 0.0,
+      "locked": false,
+      "updated_at": "2026-05-05T22:50:41+00:00"
+    },
+    "person-arsen-torosyan": {
+      "x": 654.29,
+      "y": -212.8,
+      "z": 0.0,
+      "locked": false,
+      "updated_at": "2026-05-05T22:50:41+00:00"
+    },
+    "office-minister-of-labor-and-social-affairs": {
+      "x": 416.158,
+      "y": -18.197,
+      "z": 0.0,
+      "locked": false,
+      "updated_at": "2026-05-05T22:50:41+00:00"
+    },
+    "institution-ministry-of-labor-and-social-affairs": {
+      "x": -55.095,
+      "y": -268.404,
+      "z": 0.0,
+      "locked": false,
+      "updated_at": "2026-05-05T22:50:41+00:00"
+    },
+    "person-davit-khudatyan": {
+      "x": 364.134,
+      "y": 4.507,
+      "z": 0.0,
+      "locked": false,
+      "updated_at": "2026-05-05T22:50:41+00:00"
+    },
+    "office-minister-of-territorial-administration-and-infrastructure": {
+      "x": 33.89,
+      "y": -190.05,
+      "z": 0.0,
+      "locked": false,
+      "updated_at": "2026-05-05T22:50:41+00:00"
+    },
+    "institution-ministry-of-territorial-administration-and-infrastructure": {
+      "x": -49.615,
+      "y": 201.996,
+      "z": 0.0,
+      "locked": false,
+      "updated_at": "2026-05-05T22:50:41+00:00"
+    },
+    "person-onik-gasparyan": {
+      "x": 198.743,
+      "y": 36.487,
+      "z": 0.0,
+      "locked": false,
+      "updated_at": "2026-05-05T22:50:41+00:00"
+    },
+    "person-kamo-kochunts": {
+      "x": 444.711,
+      "y": 72.848,
+      "z": 0.0,
+      "locked": false,
+      "updated_at": "2026-05-05T22:50:41+00:00"
+    },
+    "office-acting-chief-of-the-general-staff-of-the-armed-forces": {
+      "x": 275.528,
+      "y": -165.957,
+      "z": 0.0,
+      "locked": false,
+      "updated_at": "2026-05-05T22:50:41+00:00"
+    },
+    "person-artak-davtian": {
+      "x": 498.157,
+      "y": -266.733,
+      "z": 0.0,
+      "locked": false,
+      "updated_at": "2026-05-05T22:50:41+00:00"
+    },
+    "person-deputy-chiefs-of-staff": {
+      "x": 601.549,
+      "y": -88.079,
+      "z": 0.0,
+      "locked": false,
+      "updated_at": "2026-05-05T22:50:41+00:00"
+    },
+    "office-member-of-the-national-assembly-of-armenia": {
+      "x": 284.741,
+      "y": 62.519,
+      "z": 0.0,
+      "locked": false,
+      "updated_at": "2026-05-05T22:50:41+00:00"
+    },
+    "institution-national-assembly-of-armenia": {
+      "x": -58.981,
+      "y": -59.81,
+      "z": 0.0,
+      "locked": false,
+      "updated_at": "2026-05-05T22:50:41+00:00"
+    },
+    "person-a": {
+      "x": 587.738,
+      "y": 125.735,
+      "z": 72.0,
+      "locked": false,
+      "updated_at": "2026-05-05T22:50:41+00:00"
+    },
+    "party-b": {
+      "x": -56.549,
+      "y": 386.088,
+      "z": 36.0,
+      "locked": false,
+      "updated_at": "2026-05-05T22:50:41+00:00"
+    },
+    "person-thin": {
+      "x": 344.581,
+      "y": -166.611,
+      "z": -72.0,
+      "locked": false,
+      "updated_at": "2026-05-05T22:50:41+00:00"
+    },
+    "organization-ministry-of-health": {
+      "x": 188.006,
+      "y": 472.276,
+      "z": -36.0,
+      "locked": false,
+      "updated_at": "2026-05-05T22:53:50+00:00"
+    },
+    "organization-ministry-of-finance": {
+      "x": 59.887,
+      "y": 387.462,
+      "z": 36.0,
+      "locked": false,
+      "updated_at": "2026-05-06T09:27:44+00:00"
+    },
+    "organization-ministry-of-education-science-culture-and-sport": {
+      "x": -131.607,
+      "y": 280.801,
+      "z": 72.0,
+      "locked": false,
+      "updated_at": "2026-05-06T09:27:44+00:00"
+    },
+    "event-story-000dab54700f2a83": {
+      "x": 117.207,
+      "y": 89.421,
+      "z": 36.0,
+      "locked": false,
+      "updated_at": "2026-05-06T09:43:55+00:00"
+    },
+    "event-story-005293d3afb602fe": {
+      "x": -49.645,
+      "y": 337.139,
+      "z": -72.0,
+      "locked": false,
+      "updated_at": "2026-05-06T09:43:55+00:00"
+    },
+    "event-story-01479dc300fa184a": {
+      "x": -123.74,
+      "y": 363.321,
+      "z": -72.0,
+      "locked": false,
+      "updated_at": "2026-05-06T09:43:55+00:00"
+    },
+    "event-story-025c69adf7b1d64b": {
+      "x": 78.292,
+      "y": 353.809,
+      "z": -36.0,
+      "locked": false,
+      "updated_at": "2026-05-06T09:43:55+00:00"
+    },
+    "event-story-026c762b311e63ab": {
+      "x": -22.896,
+      "y": 510.76,
+      "z": -72.0,
+      "locked": false,
+      "updated_at": "2026-05-06T09:43:55+00:00"
+    },
+    "event-story-03e4c75102aef16b": {
+      "x": 187.509,
+      "y": 254.29,
+      "z": 36.0,
+      "locked": false,
+      "updated_at": "2026-05-06T09:43:55+00:00"
+    },
+    "event-story-04ba24a8941e3b65": {
+      "x": -31.41,
+      "y": 471.141,
+      "z": -108.0,
+      "locked": false,
+      "updated_at": "2026-05-06T09:43:55+00:00"
+    },
+    "event-story-04c345815089a0d1": {
+      "x": -50.694,
+      "y": 516.135,
+      "z": -108.0,
+      "locked": false,
+      "updated_at": "2026-05-06T09:43:55+00:00"
+    },
+    "event-story-04c5c7399fc398af": {
+      "x": 49.718,
+      "y": 274.229,
+      "z": -108.0,
+      "locked": false,
+      "updated_at": "2026-05-06T09:43:55+00:00"
+    },
+    "event-story-05ef3366d374be9f": {
+      "x": -75.0,
+      "y": 429.904,
+      "z": -72.0,
+      "locked": false,
+      "updated_at": "2026-05-06T09:43:55+00:00"
+    },
+    "event-story-06354101890aaf82": {
+      "x": -25.801,
+      "y": 50.33,
+      "z": 108.0,
+      "locked": false,
+      "updated_at": "2026-05-06T09:43:55+00:00"
+    },
+    "event-story-0642817bada02a39": {
+      "x": -229.496,
+      "y": 208.673,
+      "z": -36.0,
+      "locked": false,
+      "updated_at": "2026-05-06T09:43:55+00:00"
+    },
+    "event-story-06cea07e45093f95": {
+      "x": 107.908,
+      "y": 245.255,
+      "z": 72.0,
+      "locked": false,
+      "updated_at": "2026-05-06T09:43:55+00:00"
+    },
+    "event-story-09bbba8c407a8109": {
+      "x": 84.891,
+      "y": 427.289,
+      "z": 0.0,
+      "locked": false,
+      "updated_at": "2026-05-06T09:43:55+00:00"
+    },
+    "event-story-0aab4a2fce7df1a6": {
+      "x": 189.509,
+      "y": 76.538,
+      "z": 36.0,
+      "locked": false,
+      "updated_at": "2026-05-06T09:43:55+00:00"
+    },
+    "event-story-0ba39e0bc3cfcc04": {
+      "x": -109.14,
+      "y": 37.808,
+      "z": -108.0,
+      "locked": false,
+      "updated_at": "2026-05-06T09:43:55+00:00"
+    },
+    "event-story-0bb312e26f3eb27c": {
+      "x": -25.746,
+      "y": 77.485,
+      "z": -108.0,
+      "locked": false,
+      "updated_at": "2026-05-06T09:43:55+00:00"
+    },
+    "event-story-0c2bdef14f898486": {
+      "x": -74.618,
+      "y": 353.816,
+      "z": -72.0,
+      "locked": false,
+      "updated_at": "2026-05-06T09:43:55+00:00"
+    },
+    "event-story-0c4e3be887c31193": {
+      "x": 304.093,
+      "y": 265.891,
+      "z": -108.0,
+      "locked": false,
+      "updated_at": "2026-05-06T09:43:55+00:00"
+    },
+    "event-story-0ceba67e1ee87a30": {
+      "x": 229.344,
+      "y": 380.315,
+      "z": -36.0,
+      "locked": false,
+      "updated_at": "2026-05-06T09:43:55+00:00"
+    },
+    "event-story-0e9530650b3c254e": {
+      "x": 26.429,
+      "y": 403.685,
+      "z": 0.0,
+      "locked": false,
+      "updated_at": "2026-05-06T09:43:55+00:00"
+    },
+    "event-story-0ee07e08a84543ea": {
+      "x": -146.273,
+      "y": 285.4,
+      "z": 36.0,
+      "locked": false,
+      "updated_at": "2026-05-06T09:43:55+00:00"
+    },
+    "event-story-0f5ea4868e58d107": {
+      "x": 3.997,
+      "y": 221.101,
+      "z": -108.0,
+      "locked": false,
+      "updated_at": "2026-05-06T09:43:55+00:00"
+    },
+    "event-story-1055977d4c66e8e2": {
+      "x": -201.89,
+      "y": 168.389,
+      "z": -72.0,
+      "locked": false,
+      "updated_at": "2026-05-06T09:43:55+00:00"
+    },
+    "event-story-108b582a819ce5c3": {
+      "x": 229.513,
+      "y": 370.169,
+      "z": -108.0,
+      "locked": false,
+      "updated_at": "2026-05-06T09:43:55+00:00"
+    },
+    "event-story-111c51b482c189bc": {
+      "x": -8.692,
+      "y": 7.129,
+      "z": -36.0,
+      "locked": false,
+      "updated_at": "2026-05-06T09:43:55+00:00"
+    },
+    "event-story-113f30cc4eddcae4": {
+      "x": 218.27,
+      "y": 501.413,
+      "z": -72.0,
+      "locked": false,
+      "updated_at": "2026-05-06T09:43:55+00:00"
+    },
+    "event-story-11865699b9c4ec5b": {
+      "x": 49.258,
+      "y": 402.809,
+      "z": -36.0,
+      "locked": false,
+      "updated_at": "2026-05-06T09:43:55+00:00"
+    },
+    "event-story-14ccbf8d93ef66b7": {
+      "x": -96.424,
+      "y": 449.621,
+      "z": 108.0,
+      "locked": false,
+      "updated_at": "2026-05-06T09:43:55+00:00"
+    },
+    "event-story-15b0f20c994fe192": {
+      "x": -79.717,
+      "y": 207.647,
+      "z": 36.0,
+      "locked": false,
+      "updated_at": "2026-05-06T09:43:55+00:00"
+    },
+    "event-story-15ec9f68ac9a8c6a": {
+      "x": 89.715,
+      "y": 470.881,
+      "z": -108.0,
+      "locked": false,
+      "updated_at": "2026-05-06T09:43:55+00:00"
+    },
+    "event-story-1666684bba90ce50": {
+      "x": 119.215,
+      "y": 337.588,
+      "z": -36.0,
+      "locked": false,
+      "updated_at": "2026-05-06T09:43:55+00:00"
+    },
+    "event-story-17c9e5560408610f": {
+      "x": 135.948,
+      "y": 549.347,
+      "z": -108.0,
+      "locked": false,
+      "updated_at": "2026-05-06T09:43:55+00:00"
+    },
+    "event-story-187117f8cfa79b5b": {
+      "x": -283.5,
+      "y": 283.157,
+      "z": -72.0,
+      "locked": false,
+      "updated_at": "2026-05-06T09:43:55+00:00"
+    },
+    "event-story-194515374240b600": {
+      "x": 228.208,
+      "y": 413.78,
+      "z": 72.0,
+      "locked": false,
+      "updated_at": "2026-05-06T09:43:55+00:00"
+    },
+    "event-story-19df901f0bf2d0b7": {
+      "x": -39.84,
+      "y": 451.861,
+      "z": 72.0,
+      "locked": false,
+      "updated_at": "2026-05-06T09:43:55+00:00"
+    },
+    "event-story-1b480b340fde94ee": {
+      "x": -75.025,
+      "y": 422.911,
+      "z": -72.0,
+      "locked": false,
+      "updated_at": "2026-05-06T09:43:55+00:00"
+    },
+    "event-story-1b4a369bae9c5ffe": {
+      "x": 47.443,
+      "y": 527.097,
+      "z": 36.0,
+      "locked": false,
+      "updated_at": "2026-05-06T09:43:55+00:00"
+    },
+    "event-story-1b5d222eedb2d6a4": {
+      "x": -2.215,
+      "y": 159.017,
+      "z": 36.0,
+      "locked": false,
+      "updated_at": "2026-05-06T09:43:55+00:00"
+    },
+    "event-story-1bcfc56d1a147eea": {
+      "x": 100.866,
+      "y": 554.759,
+      "z": 108.0,
+      "locked": false,
+      "updated_at": "2026-05-06T09:43:55+00:00"
+    },
+    "event-story-1de5e27ed22db405": {
+      "x": -107.901,
+      "y": 195.801,
+      "z": 36.0,
+      "locked": false,
+      "updated_at": "2026-05-06T09:43:55+00:00"
+    },
+    "event-story-201a544d7676636e": {
+      "x": -66.736,
+      "y": 331.974,
+      "z": 36.0,
+      "locked": false,
+      "updated_at": "2026-05-06T09:43:55+00:00"
+    },
+    "event-story-21d327b6ce11f110": {
+      "x": 141.244,
+      "y": 127.434,
+      "z": -36.0,
+      "locked": false,
+      "updated_at": "2026-05-06T09:43:55+00:00"
+    },
+    "event-story-23175e24f8b83eeb": {
+      "x": -178.595,
+      "y": 358.719,
+      "z": -108.0,
+      "locked": false,
+      "updated_at": "2026-05-06T09:43:55+00:00"
+    },
+    "event-story-24717014146e6c7a": {
+      "x": -158.741,
+      "y": 499.565,
+      "z": 108.0,
+      "locked": false,
+      "updated_at": "2026-05-06T09:43:55+00:00"
+    },
+    "event-story-25fbfba44b04496d": {
+      "x": 124.876,
+      "y": 515.423,
+      "z": 0.0,
+      "locked": false,
+      "updated_at": "2026-05-06T09:43:55+00:00"
+    },
+    "event-story-27fe35a3cef0c0b8": {
+      "x": 267.933,
+      "y": 370.291,
+      "z": 108.0,
+      "locked": false,
+      "updated_at": "2026-05-06T09:43:55+00:00"
+    },
+    "event-story-289b312966b5840e": {
+      "x": -56.015,
+      "y": 278.498,
+      "z": 36.0,
+      "locked": false,
+      "updated_at": "2026-05-06T09:43:55+00:00"
+    },
+    "event-story-298cd65b2cc7232a": {
+      "x": -86.568,
+      "y": 385.965,
+      "z": 108.0,
+      "locked": false,
+      "updated_at": "2026-05-06T09:43:55+00:00"
+    },
+    "event-story-2a186058e40dd818": {
+      "x": 307.25,
+      "y": 267.164,
+      "z": 108.0,
+      "locked": false,
+      "updated_at": "2026-05-06T09:43:55+00:00"
+    },
+    "event-story-2a6fbbc4f8d103d8": {
+      "x": -173.092,
+      "y": 157.82,
+      "z": -108.0,
+      "locked": false,
+      "updated_at": "2026-05-06T09:43:55+00:00"
+    },
+    "event-story-2abafed4cd1a6715": {
+      "x": -73.293,
+      "y": 33.91,
+      "z": -36.0,
+      "locked": false,
+      "updated_at": "2026-05-06T09:43:55+00:00"
+    },
+    "event-story-2da46548001c9db4": {
+      "x": 18.534,
+      "y": 385.003,
+      "z": 0.0,
+      "locked": false,
+      "updated_at": "2026-05-06T09:43:55+00:00"
+    },
+    "event-story-2dead274fd00d6fa": {
+      "x": 183.877,
+      "y": 418.955,
+      "z": -36.0,
+      "locked": false,
+      "updated_at": "2026-05-06T09:43:55+00:00"
+    },
+    "event-story-2efc829c2a70f69b": {
+      "x": 58.514,
+      "y": 490.203,
+      "z": 0.0,
+      "locked": false,
+      "updated_at": "2026-05-06T09:43:55+00:00"
+    },
+    "event-story-30e21c9d8cb80311": {
+      "x": -205.273,
+      "y": 200.767,
+      "z": -108.0,
+      "locked": false,
+      "updated_at": "2026-05-06T09:43:55+00:00"
+    },
+    "event-story-337a5515241f6713": {
+      "x": 189.298,
+      "y": 499.478,
+      "z": -108.0,
+      "locked": false,
+      "updated_at": "2026-05-06T09:43:55+00:00"
+    },
+    "event-story-33a57f3b8e0e1890": {
+      "x": -11.514,
+      "y": 80.302,
+      "z": 0.0,
+      "locked": false,
+      "updated_at": "2026-05-06T09:43:55+00:00"
+    },
+    "event-story-34c49543bc13b5d4": {
+      "x": -61.806,
+      "y": 157.856,
+      "z": 36.0,
+      "locked": false,
+      "updated_at": "2026-05-06T09:43:55+00:00"
+    },
+    "event-story-3615bfd805d7c8d4": {
+      "x": -41.246,
+      "y": 223.398,
+      "z": -72.0,
+      "locked": false,
+      "updated_at": "2026-05-06T09:43:55+00:00"
+    },
+    "event-story-367c4220d181eec3": {
+      "x": -83.145,
+      "y": 544.236,
+      "z": 0.0,
+      "locked": false,
+      "updated_at": "2026-05-06T09:43:55+00:00"
+    },
+    "event-story-36ae552a13456d7d": {
+      "x": -105.808,
+      "y": 273.815,
+      "z": 36.0,
+      "locked": false,
+      "updated_at": "2026-05-06T09:43:55+00:00"
+    },
+    "event-story-37216f5465f578fe": {
+      "x": 285.993,
+      "y": 298.003,
+      "z": 108.0,
+      "locked": false,
+      "updated_at": "2026-05-06T09:43:55+00:00"
+    },
+    "event-story-37eac7c3026db19c": {
+      "x": -237.977,
+      "y": 296.677,
+      "z": -36.0,
+      "locked": false,
+      "updated_at": "2026-05-06T09:43:55+00:00"
+    },
+    "event-story-384f2209c0ede796": {
+      "x": -232.887,
+      "y": 426.447,
+      "z": -72.0,
+      "locked": false,
+      "updated_at": "2026-05-06T09:43:55+00:00"
+    },
+    "event-story-38f930b8cfb8a134": {
+      "x": -178.976,
+      "y": 217.68,
+      "z": 0.0,
+      "locked": false,
+      "updated_at": "2026-05-06T09:43:55+00:00"
+    },
+    "event-story-38fb8a3dec449bd3": {
+      "x": 100.485,
+      "y": 377.664,
+      "z": 108.0,
+      "locked": false,
+      "updated_at": "2026-05-06T09:43:55+00:00"
+    },
+    "event-story-3d474fbd3fbd5a11": {
+      "x": 93.508,
+      "y": 509.039,
+      "z": 0.0,
+      "locked": false,
+      "updated_at": "2026-05-06T09:43:55+00:00"
+    },
+    "event-story-3e4d870c0b1ea508": {
+      "x": 63.254,
+      "y": 340.297,
+      "z": 36.0,
+      "locked": false,
+      "updated_at": "2026-05-06T09:43:55+00:00"
+    },
+    "event-story-3e7d5144d2a986ee": {
+      "x": 143.013,
+      "y": 150.346,
+      "z": 72.0,
+      "locked": false,
+      "updated_at": "2026-05-06T09:43:55+00:00"
+    },
+    "event-story-3f866652c5f2ddf3": {
+      "x": 126.297,
+      "y": 364.908,
+      "z": -108.0,
+      "locked": false,
+      "updated_at": "2026-05-06T09:43:55+00:00"
+    },
+    "event-story-400d981ff5481ba3": {
+      "x": -170.446,
+      "y": 334.988,
+      "z": -108.0,
+      "locked": false,
+      "updated_at": "2026-05-06T09:43:55+00:00"
+    },
+    "event-story-40be5058563ea276": {
+      "x": 71.986,
+      "y": 219.489,
+      "z": -108.0,
+      "locked": false,
+      "updated_at": "2026-05-06T09:43:55+00:00"
+    },
+    "event-story-41151ec5fbc220df": {
+      "x": 121.884,
+      "y": 277.19,
+      "z": 36.0,
+      "locked": false,
+      "updated_at": "2026-05-06T09:43:55+00:00"
+    },
+    "event-story-42c39cf9f45fdef6": {
+      "x": 167.417,
+      "y": 270.48,
+      "z": -108.0,
+      "locked": false,
+      "updated_at": "2026-05-06T09:43:55+00:00"
+    },
+    "event-story-440640a73084c4ce": {
+      "x": -20.917,
+      "y": 60.913,
+      "z": -72.0,
+      "locked": false,
+      "updated_at": "2026-05-06T09:43:55+00:00"
+    },
+    "event-story-45e95a31d702cb82": {
+      "x": -52.825,
+      "y": 59.739,
+      "z": -36.0,
+      "locked": false,
+      "updated_at": "2026-05-06T09:43:55+00:00"
+    },
+    "event-story-462a73543c1f3aec": {
+      "x": 102.829,
+      "y": 305.929,
+      "z": -72.0,
+      "locked": false,
+      "updated_at": "2026-05-06T09:43:55+00:00"
+    },
+    "event-story-47046092183e3bac": {
+      "x": -223.275,
+      "y": 214.74,
+      "z": -108.0,
+      "locked": false,
+      "updated_at": "2026-05-06T09:43:55+00:00"
+    },
+    "event-story-47c774a11bdd75ce": {
+      "x": -284.039,
+      "y": 416.493,
+      "z": -36.0,
+      "locked": false,
+      "updated_at": "2026-05-06T09:43:55+00:00"
+    },
+    "event-story-47ee028424971283": {
+      "x": 30.299,
+      "y": 249.374,
+      "z": 0.0,
+      "locked": false,
+      "updated_at": "2026-05-06T09:43:55+00:00"
+    },
+    "event-story-491c548f49e34eb8": {
+      "x": -188.577,
+      "y": 186.692,
+      "z": -108.0,
+      "locked": false,
+      "updated_at": "2026-05-06T09:43:55+00:00"
+    },
+    "event-story-4a397c7a9792db90": {
+      "x": 222.239,
+      "y": 433.007,
+      "z": 108.0,
+      "locked": false,
+      "updated_at": "2026-05-06T09:43:55+00:00"
+    },
+    "event-story-4aca0e30b437f92e": {
+      "x": 165.3,
+      "y": 115.122,
+      "z": -36.0,
+      "locked": false,
+      "updated_at": "2026-05-06T09:43:55+00:00"
+    },
+    "event-story-4c842a4f637eeb85": {
+      "x": 155.544,
+      "y": 414.259,
+      "z": -36.0,
+      "locked": false,
+      "updated_at": "2026-05-06T09:43:55+00:00"
+    },
+    "event-story-4d09b7ae17e5b5cd": {
+      "x": 83.785,
+      "y": 17.148,
+      "z": -72.0,
+      "locked": false,
+      "updated_at": "2026-05-06T09:43:55+00:00"
+    },
+    "event-story-4d6bc531e4c5954d": {
+      "x": 257.858,
+      "y": 259.621,
+      "z": -108.0,
+      "locked": false,
+      "updated_at": "2026-05-06T09:43:55+00:00"
+    },
+    "event-story-4ea46403861c8ed7": {
+      "x": -92.612,
+      "y": 328.845,
+      "z": 72.0,
+      "locked": false,
+      "updated_at": "2026-05-06T09:43:55+00:00"
+    },
+    "event-story-4f2f9ade6d2e04b5": {
+      "x": 95.334,
+      "y": 77.569,
+      "z": 0.0,
+      "locked": false,
+      "updated_at": "2026-05-06T09:43:55+00:00"
+    },
+    "event-story-4f5964e0954828c1": {
+      "x": 53.988,
+      "y": 533.849,
+      "z": 36.0,
+      "locked": false,
+      "updated_at": "2026-05-06T09:43:55+00:00"
+    },
+    "event-story-4ffe814eb657940e": {
+      "x": -30.415,
+      "y": 524.953,
+      "z": -72.0,
+      "locked": false,
+      "updated_at": "2026-05-06T09:43:55+00:00"
+    },
+    "event-story-515d548400274034": {
+      "x": -64.741,
+      "y": 237.481,
+      "z": 108.0,
+      "locked": false,
+      "updated_at": "2026-05-06T09:43:55+00:00"
+    },
+    "event-story-5171636c4d7d6983": {
+      "x": 38.123,
+      "y": 593.535,
+      "z": 108.0,
+      "locked": false,
+      "updated_at": "2026-05-06T09:43:55+00:00"
+    },
+    "event-story-53192909ef968bfe": {
+      "x": -167.966,
+      "y": 112.14,
+      "z": -36.0,
+      "locked": false,
+      "updated_at": "2026-05-06T09:43:55+00:00"
+    },
+    "event-story-56e378f87780d733": {
+      "x": 167.499,
+      "y": 419.917,
+      "z": 36.0,
+      "locked": false,
+      "updated_at": "2026-05-06T09:43:55+00:00"
+    },
+    "event-story-57764a702cb96e79": {
+      "x": -65.038,
+      "y": 119.351,
+      "z": -36.0,
+      "locked": false,
+      "updated_at": "2026-05-06T09:43:55+00:00"
+    },
+    "event-story-5935c9a4de6214a6": {
+      "x": 81.13,
+      "y": 372.794,
+      "z": 36.0,
+      "locked": false,
+      "updated_at": "2026-05-06T09:43:55+00:00"
+    },
+    "event-story-59b2108c47f0750f": {
+      "x": -167.549,
+      "y": 312.304,
+      "z": -72.0,
+      "locked": false,
+      "updated_at": "2026-05-06T09:43:55+00:00"
+    },
+    "event-story-5a41debaae45d6ec": {
+      "x": -172.784,
+      "y": 195.359,
+      "z": -108.0,
+      "locked": false,
+      "updated_at": "2026-05-06T09:43:55+00:00"
+    },
+    "event-story-5ab900b36b0293de": {
+      "x": 113.147,
+      "y": 129.053,
+      "z": 0.0,
+      "locked": false,
+      "updated_at": "2026-05-06T09:43:55+00:00"
+    },
+    "event-story-5ba84c1c7e55e36f": {
+      "x": 131.46,
+      "y": 505.558,
+      "z": -108.0,
+      "locked": false,
+      "updated_at": "2026-05-06T09:43:55+00:00"
+    },
+    "event-story-5bcc072025ebaec5": {
+      "x": -96.501,
+      "y": 277.898,
+      "z": -36.0,
+      "locked": false,
+      "updated_at": "2026-05-06T09:43:55+00:00"
+    },
+    "event-story-5c4f3a27d5690ec0": {
+      "x": -188.547,
+      "y": 145.126,
+      "z": 108.0,
+      "locked": false,
+      "updated_at": "2026-05-06T09:43:55+00:00"
+    },
+    "event-story-615ae41c3e44aafb": {
+      "x": 163.414,
+      "y": 253.142,
+      "z": 0.0,
+      "locked": false,
+      "updated_at": "2026-05-06T09:43:55+00:00"
+    },
+    "event-story-61b2bae2f7ac17d1": {
+      "x": 114.151,
+      "y": 414.95,
+      "z": -36.0,
+      "locked": false,
+      "updated_at": "2026-05-06T09:43:55+00:00"
+    },
+    "event-story-61df2168ce1ea05d": {
+      "x": 229.065,
+      "y": 190.25,
+      "z": 36.0,
+      "locked": false,
+      "updated_at": "2026-05-06T09:43:55+00:00"
+    },
+    "event-story-63b54dcce12bd331": {
+      "x": 256.813,
+      "y": 361.181,
+      "z": -72.0,
+      "locked": false,
+      "updated_at": "2026-05-06T09:43:55+00:00"
+    },
+    "event-story-6406dc9acc38076e": {
+      "x": 37.927,
+      "y": 376.069,
+      "z": -108.0,
+      "locked": false,
+      "updated_at": "2026-05-06T09:43:55+00:00"
+    },
+    "event-story-65e3e321edc02db3": {
+      "x": 35.257,
+      "y": 339.572,
+      "z": -108.0,
+      "locked": false,
+      "updated_at": "2026-05-06T09:43:55+00:00"
+    },
+    "event-story-66179d71fbfba0e6": {
+      "x": -77.611,
+      "y": 191.993,
+      "z": 0.0,
+      "locked": false,
+      "updated_at": "2026-05-06T09:43:55+00:00"
+    },
+    "event-story-677e648cf9ba2bb5": {
+      "x": -22.892,
+      "y": 398.372,
+      "z": 108.0,
+      "locked": false,
+      "updated_at": "2026-05-06T09:43:55+00:00"
+    },
+    "event-story-67cdaffa6a66f159": {
+      "x": -100.226,
+      "y": 287.516,
+      "z": 72.0,
+      "locked": false,
+      "updated_at": "2026-05-06T09:43:55+00:00"
+    },
+    "event-story-6b37e2c01b40ade1": {
+      "x": -175.131,
+      "y": 168.508,
+      "z": -72.0,
+      "locked": false,
+      "updated_at": "2026-05-06T09:43:55+00:00"
+    },
+    "event-story-6c2d0e303ff6cb22": {
+      "x": 32.26,
+      "y": 41.001,
+      "z": -72.0,
+      "locked": false,
+      "updated_at": "2026-05-06T09:43:55+00:00"
+    },
+    "event-story-6d6ac97953ce7ecf": {
+      "x": 222.679,
+      "y": 94.518,
+      "z": 108.0,
+      "locked": false,
+      "updated_at": "2026-05-06T09:43:55+00:00"
+    },
+    "event-story-6e6f457125c7f23a": {
+      "x": 51.775,
+      "y": 247.129,
+      "z": 0.0,
+      "locked": false,
+      "updated_at": "2026-05-06T09:43:55+00:00"
+    },
+    "event-story-6fe4d4ada9ea6d1c": {
+      "x": -48.439,
+      "y": 500.224,
+      "z": 0.0,
+      "locked": false,
+      "updated_at": "2026-05-06T09:43:55+00:00"
+    },
+    "event-story-717653bc38a9defa": {
+      "x": -254.593,
+      "y": 383.706,
+      "z": -72.0,
+      "locked": false,
+      "updated_at": "2026-05-06T09:43:55+00:00"
+    },
+    "event-story-736932ede6b58d7e": {
+      "x": 57.098,
+      "y": 235.689,
+      "z": 36.0,
+      "locked": false,
+      "updated_at": "2026-05-06T09:43:55+00:00"
+    },
+    "event-story-73b4efb9bc880ab4": {
+      "x": 133.835,
+      "y": 480.868,
+      "z": 72.0,
+      "locked": false,
+      "updated_at": "2026-05-06T09:43:55+00:00"
+    },
+    "event-story-7570e4b21afee5c7": {
+      "x": 51.394,
+      "y": 277.76,
+      "z": -108.0,
+      "locked": false,
+      "updated_at": "2026-05-06T09:43:55+00:00"
+    },
+    "event-story-75c969f9f3818b5b": {
+      "x": -100.683,
+      "y": 207.092,
+      "z": -72.0,
+      "locked": false,
+      "updated_at": "2026-05-06T09:43:55+00:00"
+    },
+    "event-story-76cf49e288c6464b": {
+      "x": -108.803,
+      "y": 404.704,
+      "z": -72.0,
+      "locked": false,
+      "updated_at": "2026-05-06T09:43:55+00:00"
+    },
+    "event-story-7746aeb857641558": {
+      "x": -137.622,
+      "y": 439.557,
+      "z": 0.0,
+      "locked": false,
+      "updated_at": "2026-05-06T09:43:55+00:00"
+    },
+    "event-story-77f2569b34f0b3c2": {
+      "x": 175.947,
+      "y": 295.7,
+      "z": -108.0,
+      "locked": false,
+      "updated_at": "2026-05-06T09:43:55+00:00"
+    },
+    "event-story-785d175690422a44": {
+      "x": 61.95,
+      "y": 255.975,
+      "z": -36.0,
+      "locked": false,
+      "updated_at": "2026-05-06T09:43:55+00:00"
+    },
+    "event-story-796660e77b0d287d": {
+      "x": -64.984,
+      "y": 478.542,
+      "z": 108.0,
+      "locked": false,
+      "updated_at": "2026-05-06T09:43:55+00:00"
+    },
+    "event-story-7a9d5a2661aade7e": {
+      "x": -27.474,
+      "y": 408.578,
+      "z": -72.0,
+      "locked": false,
+      "updated_at": "2026-05-06T09:43:55+00:00"
+    },
+    "event-story-7d58c5b3c5bba73b": {
+      "x": -54.535,
+      "y": 172.145,
+      "z": -72.0,
+      "locked": false,
+      "updated_at": "2026-05-06T09:43:55+00:00"
+    },
+    "event-story-7ef2d3bcc57a40ee": {
+      "x": 182.385,
+      "y": 285.005,
+      "z": 36.0,
+      "locked": false,
+      "updated_at": "2026-05-06T09:43:55+00:00"
+    },
+    "event-story-815b02091acae555": {
+      "x": -184.872,
+      "y": 365.104,
+      "z": 0.0,
+      "locked": false,
+      "updated_at": "2026-05-06T09:43:55+00:00"
+    },
+    "event-story-817f63d41f06a584": {
+      "x": -23.817,
+      "y": 377.419,
+      "z": 72.0,
+      "locked": false,
+      "updated_at": "2026-05-06T09:43:55+00:00"
+    },
+    "event-story-8234ec8a0cc64288": {
+      "x": -19.633,
+      "y": 110.012,
+      "z": 0.0,
+      "locked": false,
+      "updated_at": "2026-05-06T09:43:55+00:00"
+    },
+    "event-story-82935c1f333960eb": {
+      "x": -195.304,
+      "y": 200.917,
+      "z": -36.0,
+      "locked": false,
+      "updated_at": "2026-05-06T09:43:55+00:00"
+    },
+    "event-story-85f517b4b5b4309a": {
+      "x": -31.767,
+      "y": 386.341,
+      "z": 108.0,
+      "locked": false,
+      "updated_at": "2026-05-06T09:43:55+00:00"
+    },
+    "event-story-864bdddad679db25": {
+      "x": 89.089,
+      "y": 261.632,
+      "z": -108.0,
+      "locked": false,
+      "updated_at": "2026-05-06T09:43:55+00:00"
+    },
+    "event-story-86f5e8e5f4eb39fd": {
+      "x": 80.379,
+      "y": 310.012,
+      "z": 36.0,
+      "locked": false,
+      "updated_at": "2026-05-06T09:43:55+00:00"
+    },
+    "event-story-883f91b127aa7bef": {
+      "x": -185.871,
+      "y": 320.52,
+      "z": -72.0,
+      "locked": false,
+      "updated_at": "2026-05-06T09:43:55+00:00"
+    },
+    "event-story-8ab4c75fdd79ce76": {
+      "x": 217.952,
+      "y": 295.435,
+      "z": 108.0,
+      "locked": false,
+      "updated_at": "2026-05-06T09:43:55+00:00"
+    },
+    "event-story-8b7839f3959765ad": {
+      "x": -50.681,
+      "y": 15.479,
+      "z": 0.0,
+      "locked": false,
+      "updated_at": "2026-05-06T09:43:55+00:00"
+    },
+    "event-story-8d2501ec44d08507": {
+      "x": 263.919,
+      "y": 163.781,
+      "z": 36.0,
+      "locked": false,
+      "updated_at": "2026-05-06T09:43:55+00:00"
+    },
+    "event-story-8d5cb567622bf578": {
+      "x": 59.147,
+      "y": 273.045,
+      "z": -108.0,
+      "locked": false,
+      "updated_at": "2026-05-06T09:43:55+00:00"
+    },
+    "event-story-8e917927aa9f4e4f": {
+      "x": -37.292,
+      "y": 198.643,
+      "z": 108.0,
+      "locked": false,
+      "updated_at": "2026-05-06T09:43:55+00:00"
+    },
+    "event-story-8ee08e8d8a8fae04": {
+      "x": -163.278,
+      "y": 511.257,
+      "z": 0.0,
+      "locked": false,
+      "updated_at": "2026-05-06T09:43:55+00:00"
+    },
+    "event-story-8f96c494a81573d4": {
+      "x": 134.387,
+      "y": 527.236,
+      "z": 72.0,
+      "locked": false,
+      "updated_at": "2026-05-06T09:43:55+00:00"
+    },
+    "event-story-8fba664bc820452a": {
+      "x": -68.348,
+      "y": 382.326,
+      "z": 108.0,
+      "locked": false,
+      "updated_at": "2026-05-06T09:43:55+00:00"
+    },
+    "event-story-9124a461988d7853": {
+      "x": 279.194,
+      "y": 201.68,
+      "z": 108.0,
+      "locked": false,
+      "updated_at": "2026-05-06T09:43:55+00:00"
+    },
+    "event-story-91dc9f78f0f87049": {
+      "x": 30.657,
+      "y": 409.801,
+      "z": 36.0,
+      "locked": false,
+      "updated_at": "2026-05-06T09:43:55+00:00"
+    },
+    "event-story-92ebc0f7c95635b1": {
+      "x": -143.955,
+      "y": 275.652,
+      "z": 108.0,
+      "locked": false,
+      "updated_at": "2026-05-06T09:43:55+00:00"
+    },
+    "event-story-939b010dfb26ba94": {
+      "x": -306.423,
+      "y": 268.875,
+      "z": -72.0,
+      "locked": false,
+      "updated_at": "2026-05-06T09:43:55+00:00"
+    },
+    "event-story-949fc81cae3f86ec": {
+      "x": 11.447,
+      "y": 542.73,
+      "z": -36.0,
+      "locked": false,
+      "updated_at": "2026-05-06T09:43:55+00:00"
+    },
+    "event-story-95a133e2a1af6846": {
+      "x": 211.562,
+      "y": 159.439,
+      "z": -108.0,
+      "locked": false,
+      "updated_at": "2026-05-06T09:43:55+00:00"
+    },
+    "event-story-95f93c891ae454d6": {
+      "x": 143.852,
+      "y": 293.468,
+      "z": 36.0,
+      "locked": false,
+      "updated_at": "2026-05-06T09:43:55+00:00"
+    },
+    "event-story-97e45187fac7b42e": {
+      "x": 42.731,
+      "y": 132.36,
+      "z": -108.0,
+      "locked": false,
+      "updated_at": "2026-05-06T09:43:55+00:00"
+    },
+    "event-story-98b42e4780cfe365": {
+      "x": 172.095,
+      "y": 345.469,
+      "z": 72.0,
+      "locked": false,
+      "updated_at": "2026-05-06T09:43:55+00:00"
+    },
+    "event-story-9942a34eb3a8c498": {
+      "x": 36.305,
+      "y": 440.381,
+      "z": -72.0,
+      "locked": false,
+      "updated_at": "2026-05-06T09:43:55+00:00"
+    },
+    "event-story-9ab031c5a7a882e1": {
+      "x": -3.796,
+      "y": 363.887,
+      "z": 36.0,
+      "locked": false,
+      "updated_at": "2026-05-06T09:43:55+00:00"
+    },
+    "event-story-9b83a4c0b7c37ca8": {
+      "x": -117.152,
+      "y": 253.616,
+      "z": 0.0,
+      "locked": false,
+      "updated_at": "2026-05-06T09:43:55+00:00"
+    },
+    "event-story-9b89e0569be6fca2": {
+      "x": -234.039,
+      "y": 479.585,
+      "z": 0.0,
+      "locked": false,
+      "updated_at": "2026-05-06T09:43:55+00:00"
+    },
+    "event-story-9c2f99f42f64e390": {
+      "x": 18.383,
+      "y": 193.576,
+      "z": -36.0,
+      "locked": false,
+      "updated_at": "2026-05-06T09:43:55+00:00"
+    },
+    "event-story-9cd555116f7bec1e": {
+      "x": 228.373,
+      "y": 442.15,
+      "z": 36.0,
+      "locked": false,
+      "updated_at": "2026-05-06T09:43:55+00:00"
+    },
+    "event-story-9ea74f7fa266fdfe": {
+      "x": 229.853,
+      "y": 268.514,
+      "z": 72.0,
+      "locked": false,
+      "updated_at": "2026-05-06T09:43:55+00:00"
+    },
+    "event-story-a22cc5103525adbe": {
+      "x": -35.607,
+      "y": 361.426,
+      "z": 36.0,
+      "locked": false,
+      "updated_at": "2026-05-06T09:43:55+00:00"
+    },
+    "event-story-a2a158fc638be5a6": {
+      "x": -60.705,
+      "y": 210.675,
+      "z": -36.0,
+      "locked": false,
+      "updated_at": "2026-05-06T09:43:55+00:00"
+    },
+    "event-story-a35d996fd2aab1ea": {
+      "x": 153.776,
+      "y": 547.051,
+      "z": -108.0,
+      "locked": false,
+      "updated_at": "2026-05-06T09:43:55+00:00"
+    },
+    "event-story-a383881a9e2c12ab": {
+      "x": -38.052,
+      "y": 65.062,
+      "z": 0.0,
+      "locked": false,
+      "updated_at": "2026-05-06T09:43:55+00:00"
+    },
+    "event-story-a3af2d4727466edb": {
+      "x": 104.676,
+      "y": 291.762,
+      "z": 0.0,
+      "locked": false,
+      "updated_at": "2026-05-06T09:43:55+00:00"
+    },
+    "event-story-a425c65322a3df4f": {
+      "x": 52.036,
+      "y": 128.73,
+      "z": 36.0,
+      "locked": false,
+      "updated_at": "2026-05-06T09:43:55+00:00"
+    },
+    "event-story-a46db21c1de49f8d": {
+      "x": 173.002,
+      "y": 553.612,
+      "z": -72.0,
+      "locked": false,
+      "updated_at": "2026-05-06T09:43:55+00:00"
+    },
+    "event-story-a611577147176abe": {
+      "x": 104.628,
+      "y": 479.769,
+      "z": 108.0,
+      "locked": false,
+      "updated_at": "2026-05-06T09:43:55+00:00"
+    },
+    "event-story-a62a89db9fe82396": {
+      "x": -48.271,
+      "y": 333.925,
+      "z": 36.0,
+      "locked": false,
+      "updated_at": "2026-05-06T09:43:55+00:00"
+    },
+    "event-story-a635322592dec0ca": {
+      "x": 113.239,
+      "y": 61.519,
+      "z": 108.0,
+      "locked": false,
+      "updated_at": "2026-05-06T09:43:55+00:00"
+    },
+    "event-story-a788f0b260b39655": {
+      "x": -30.711,
+      "y": 341.962,
+      "z": 72.0,
+      "locked": false,
+      "updated_at": "2026-05-06T09:43:55+00:00"
+    },
+    "event-story-a7a741e5671c46a6": {
+      "x": -16.635,
+      "y": 2.465,
+      "z": 36.0,
+      "locked": false,
+      "updated_at": "2026-05-06T09:43:55+00:00"
+    },
+    "event-story-a985318af5dcdb84": {
+      "x": 63.028,
+      "y": 336.831,
+      "z": -108.0,
+      "locked": false,
+      "updated_at": "2026-05-06T09:43:55+00:00"
+    },
+    "event-story-ab1ebd19b0808d58": {
+      "x": -199.544,
+      "y": 324.148,
+      "z": 72.0,
+      "locked": false,
+      "updated_at": "2026-05-06T09:43:55+00:00"
+    },
+    "event-story-ac238755cb195f77": {
+      "x": 26.877,
+      "y": 352.523,
+      "z": 36.0,
+      "locked": false,
+      "updated_at": "2026-05-06T09:43:55+00:00"
+    },
+    "event-story-ad15c31625f7bb02": {
+      "x": 11.995,
+      "y": 25.262,
+      "z": -72.0,
+      "locked": false,
+      "updated_at": "2026-05-06T09:43:55+00:00"
+    },
+    "event-story-ae34a3f2e8ba9f97": {
+      "x": 80.125,
+      "y": 328.374,
+      "z": 108.0,
+      "locked": false,
+      "updated_at": "2026-05-06T09:43:55+00:00"
+    },
+    "event-story-af5c3f5ff5c4071c": {
+      "x": -28.307,
+      "y": 243.718,
+      "z": -108.0,
+      "locked": false,
+      "updated_at": "2026-05-06T09:43:55+00:00"
+    },
+    "event-story-b1c0567d029ce672": {
+      "x": -24.551,
+      "y": 215.494,
+      "z": 108.0,
+      "locked": false,
+      "updated_at": "2026-05-06T09:43:55+00:00"
+    },
+    "event-story-b3750f3e75eb9192": {
+      "x": -67.273,
+      "y": 157.037,
+      "z": 72.0,
+      "locked": false,
+      "updated_at": "2026-05-06T09:43:55+00:00"
+    },
+    "event-story-b448db69a3196488": {
+      "x": -59.139,
+      "y": 374.348,
+      "z": 0.0,
+      "locked": false,
+      "updated_at": "2026-05-06T09:43:55+00:00"
+    },
+    "event-story-b53f10d0f99db8f9": {
+      "x": 31.022,
+      "y": 560.157,
+      "z": -36.0,
+      "locked": false,
+      "updated_at": "2026-05-06T09:43:55+00:00"
+    },
+    "event-story-b56adb4c6ae3cc9e": {
+      "x": -81.627,
+      "y": 247.597,
+      "z": -72.0,
+      "locked": false,
+      "updated_at": "2026-05-06T09:43:55+00:00"
+    },
+    "event-story-b60ab228f0daeddd": {
+      "x": -16.327,
+      "y": 47.527,
+      "z": 0.0,
+      "locked": false,
+      "updated_at": "2026-05-06T09:43:55+00:00"
+    },
+    "event-story-b6287bd6356323d0": {
+      "x": -155.514,
+      "y": 480.165,
+      "z": 0.0,
+      "locked": false,
+      "updated_at": "2026-05-06T09:43:55+00:00"
+    },
+    "event-story-b777757e4c6aa2bd": {
+      "x": 178.827,
+      "y": 222.244,
+      "z": 108.0,
+      "locked": false,
+      "updated_at": "2026-05-06T09:43:55+00:00"
+    },
+    "event-story-b788b836bbafbbc9": {
+      "x": 293.606,
+      "y": 356.54,
+      "z": 36.0,
+      "locked": false,
+      "updated_at": "2026-05-06T09:43:55+00:00"
+    },
+    "event-story-b78909037f341e1a": {
+      "x": 153.009,
+      "y": 346.779,
+      "z": 108.0,
+      "locked": false,
+      "updated_at": "2026-05-06T09:43:55+00:00"
+    },
+    "event-story-ba4e3a8e989b7594": {
+      "x": 46.081,
+      "y": 372.612,
+      "z": 0.0,
+      "locked": false,
+      "updated_at": "2026-05-06T09:43:55+00:00"
+    },
+    "event-story-bb3ef4062e6c9c7a": {
+      "x": 209.579,
+      "y": 443.502,
+      "z": -108.0,
+      "locked": false,
+      "updated_at": "2026-05-06T09:43:55+00:00"
+    },
+    "event-story-bc00a0bc30bf822c": {
+      "x": -108.172,
+      "y": 264.016,
+      "z": -72.0,
+      "locked": false,
+      "updated_at": "2026-05-06T09:43:55+00:00"
+    },
+    "event-story-bd19d2264b4bbba9": {
+      "x": 125.399,
+      "y": 312.295,
+      "z": 36.0,
+      "locked": false,
+      "updated_at": "2026-05-06T09:43:55+00:00"
+    },
+    "event-story-bd89988690581665": {
+      "x": -252.288,
+      "y": 281.03,
+      "z": 36.0,
+      "locked": false,
+      "updated_at": "2026-05-06T09:43:55+00:00"
+    },
+    "event-story-beaa6914fb157ebd": {
+      "x": 107.358,
+      "y": 461.587,
+      "z": 0.0,
+      "locked": false,
+      "updated_at": "2026-05-06T09:43:55+00:00"
+    },
+    "event-story-c05df8a76fd8cd69": {
+      "x": -76.656,
+      "y": 329.119,
+      "z": 108.0,
+      "locked": false,
+      "updated_at": "2026-05-06T09:43:55+00:00"
+    },
+    "event-story-c1fa31edfe7c18e2": {
+      "x": 6.114,
+      "y": 445.872,
+      "z": 72.0,
+      "locked": false,
+      "updated_at": "2026-05-06T09:43:55+00:00"
+    },
+    "event-story-c2147ed5f20a945e": {
+      "x": -68.104,
+      "y": 527.004,
+      "z": -36.0,
+      "locked": false,
+      "updated_at": "2026-05-06T09:43:55+00:00"
+    },
+    "event-story-c2ecd4a7f6187b6d": {
+      "x": 273.414,
+      "y": 387.257,
+      "z": 36.0,
+      "locked": false,
+      "updated_at": "2026-05-06T09:43:55+00:00"
+    },
+    "event-story-c2f1454842b3cf83": {
+      "x": -238.35,
+      "y": 393.408,
+      "z": 0.0,
+      "locked": false,
+      "updated_at": "2026-05-06T09:43:55+00:00"
+    },
+    "event-story-c392c87435410297": {
+      "x": 28.351,
+      "y": 189.582,
+      "z": -72.0,
+      "locked": false,
+      "updated_at": "2026-05-06T09:43:55+00:00"
+    },
+    "event-story-c47a537bbab27e58": {
+      "x": -99.994,
+      "y": 340.807,
+      "z": 108.0,
+      "locked": false,
+      "updated_at": "2026-05-06T09:43:55+00:00"
+    },
+    "event-story-c48185e749b94333": {
+      "x": -97.123,
+      "y": 546.561,
+      "z": -108.0,
+      "locked": false,
+      "updated_at": "2026-05-06T09:43:55+00:00"
+    },
+    "event-story-c51da6a221d21a0a": {
+      "x": 123.93,
+      "y": 277.255,
+      "z": -72.0,
+      "locked": false,
+      "updated_at": "2026-05-06T09:43:55+00:00"
+    },
+    "event-story-c5ab4a41973fbe16": {
+      "x": -64.776,
+      "y": 351.895,
+      "z": -36.0,
+      "locked": false,
+      "updated_at": "2026-05-06T09:43:55+00:00"
+    },
+    "event-story-c740cedd3064a34e": {
+      "x": -68.238,
+      "y": 347.25,
+      "z": -36.0,
+      "locked": false,
+      "updated_at": "2026-05-06T09:43:55+00:00"
+    },
+    "event-story-c75553246284bcc6": {
+      "x": -298.963,
+      "y": 295.304,
+      "z": -108.0,
+      "locked": false,
+      "updated_at": "2026-05-06T09:43:55+00:00"
+    },
+    "event-story-c7c0dedca7017371": {
+      "x": -82.556,
+      "y": 378.617,
+      "z": 36.0,
+      "locked": false,
+      "updated_at": "2026-05-06T09:43:55+00:00"
+    },
+    "event-story-c7fa59d8dd4bb97f": {
+      "x": -94.707,
+      "y": 292.546,
+      "z": -36.0,
+      "locked": false,
+      "updated_at": "2026-05-06T09:43:55+00:00"
+    },
+    "event-story-c84f91416374e83f": {
+      "x": 2.4,
+      "y": 25.01,
+      "z": 72.0,
+      "locked": false,
+      "updated_at": "2026-05-06T09:43:55+00:00"
+    },
+    "event-story-ca70f3b8b1c206dd": {
+      "x": 29.206,
+      "y": 229.836,
+      "z": 72.0,
+      "locked": false,
+      "updated_at": "2026-05-06T09:43:55+00:00"
+    },
+    "event-story-cabfd9a5ab74085b": {
+      "x": -92.152,
+      "y": 370.456,
+      "z": 36.0,
+      "locked": false,
+      "updated_at": "2026-05-06T09:43:55+00:00"
+    },
+    "event-story-cb5c9f43bed03966": {
+      "x": 208.465,
+      "y": 285.057,
+      "z": 108.0,
+      "locked": false,
+      "updated_at": "2026-05-06T09:43:55+00:00"
+    },
+    "event-story-cf84c610303d53c9": {
+      "x": -50.32,
+      "y": 283.358,
+      "z": 36.0,
+      "locked": false,
+      "updated_at": "2026-05-06T09:43:55+00:00"
+    },
+    "event-story-cfe427ed9d77184d": {
+      "x": 7.948,
+      "y": 203.326,
+      "z": -108.0,
+      "locked": false,
+      "updated_at": "2026-05-06T09:43:55+00:00"
+    },
+    "event-story-d22329f0dcb2e788": {
+      "x": -33.502,
+      "y": 403.724,
+      "z": -72.0,
+      "locked": false,
+      "updated_at": "2026-05-06T09:43:55+00:00"
+    },
+    "event-story-d50a82674bbc1a86": {
+      "x": 127.079,
+      "y": 322.179,
+      "z": 72.0,
+      "locked": false,
+      "updated_at": "2026-05-06T09:43:55+00:00"
+    },
+    "event-story-d682fee9f6d3745c": {
+      "x": -73.98,
+      "y": 258.144,
+      "z": -72.0,
+      "locked": false,
+      "updated_at": "2026-05-06T09:43:55+00:00"
+    },
+    "event-story-d875d1ae1ac19091": {
+      "x": 167.876,
+      "y": 293.551,
+      "z": 108.0,
+      "locked": false,
+      "updated_at": "2026-05-06T09:43:55+00:00"
+    },
+    "event-story-d8b3a5825acf8406": {
+      "x": -94.355,
+      "y": 336.031,
+      "z": 0.0,
+      "locked": false,
+      "updated_at": "2026-05-06T09:43:55+00:00"
+    },
+    "event-story-da29d13edfe40f3e": {
+      "x": -37.612,
+      "y": 224.891,
+      "z": -108.0,
+      "locked": false,
+      "updated_at": "2026-05-06T09:43:55+00:00"
+    },
+    "event-story-da7df5691e14d73e": {
+      "x": 249.288,
+      "y": 146.037,
+      "z": -108.0,
+      "locked": false,
+      "updated_at": "2026-05-06T09:43:55+00:00"
+    },
+    "event-story-dbb9df51fd308a98": {
+      "x": -61.874,
+      "y": 484.923,
+      "z": 0.0,
+      "locked": false,
+      "updated_at": "2026-05-06T09:43:55+00:00"
+    },
+    "event-story-dc4e9ce63a062081": {
+      "x": -63.208,
+      "y": 398.457,
+      "z": 0.0,
+      "locked": false,
+      "updated_at": "2026-05-06T09:43:55+00:00"
+    },
+    "event-story-dd6ae7e451e5d4e7": {
+      "x": -264.67,
+      "y": 167.463,
+      "z": 36.0,
+      "locked": false,
+      "updated_at": "2026-05-06T09:43:55+00:00"
+    },
+    "event-story-deffa15d54af4f3c": {
+      "x": 81.977,
+      "y": 281.676,
+      "z": 36.0,
+      "locked": false,
+      "updated_at": "2026-05-06T09:43:55+00:00"
+    },
+    "event-story-dfe4bbd2e4162d81": {
+      "x": -109.604,
+      "y": 460.072,
+      "z": -72.0,
+      "locked": false,
+      "updated_at": "2026-05-06T09:43:55+00:00"
+    },
+    "event-story-e0e0e03a4b150aee": {
+      "x": 252.018,
+      "y": 249.642,
+      "z": 0.0,
+      "locked": false,
+      "updated_at": "2026-05-06T09:43:55+00:00"
+    },
+    "event-story-e2665ef293b9414a": {
+      "x": -139.397,
+      "y": 94.884,
+      "z": 72.0,
+      "locked": false,
+      "updated_at": "2026-05-06T09:43:55+00:00"
+    },
+    "event-story-e41d04c1f96fd85e": {
+      "x": 231.788,
+      "y": 173.625,
+      "z": 108.0,
+      "locked": false,
+      "updated_at": "2026-05-06T09:43:55+00:00"
+    },
+    "event-story-e556684a576f0ba9": {
+      "x": 122.188,
+      "y": 374.291,
+      "z": -108.0,
+      "locked": false,
+      "updated_at": "2026-05-06T09:43:55+00:00"
+    },
+    "event-story-e6bdbc88b436dbfa": {
+      "x": 189.298,
+      "y": 499.478,
+      "z": 72.0,
+      "locked": false,
+      "updated_at": "2026-05-06T09:43:55+00:00"
+    },
+    "event-story-ea8fb69d8b6b4047": {
+      "x": 21.303,
+      "y": 348.53,
+      "z": -108.0,
+      "locked": false,
+      "updated_at": "2026-05-06T09:43:55+00:00"
+    },
+    "event-story-eb6cb6ce1c771ea9": {
+      "x": 129.921,
+      "y": 304.537,
+      "z": -36.0,
+      "locked": false,
+      "updated_at": "2026-05-06T09:43:55+00:00"
+    },
+    "event-story-eba2094e066bc6d8": {
+      "x": -107.447,
+      "y": 289.086,
+      "z": 0.0,
+      "locked": false,
+      "updated_at": "2026-05-06T09:43:55+00:00"
+    },
+    "event-story-ec349ffc27cb008d": {
+      "x": -105.871,
+      "y": 112.874,
+      "z": 0.0,
+      "locked": false,
+      "updated_at": "2026-05-06T09:43:55+00:00"
+    },
+    "event-story-eca2ebf4579c40ac": {
+      "x": 76.953,
+      "y": 470.432,
+      "z": 36.0,
+      "locked": false,
+      "updated_at": "2026-05-06T09:43:55+00:00"
+    },
+    "event-story-ed2db3172411edb5": {
+      "x": 59.668,
+      "y": 366.036,
+      "z": 72.0,
+      "locked": false,
+      "updated_at": "2026-05-06T09:43:55+00:00"
+    },
+    "event-story-ed315c7fcac916f8": {
+      "x": 76.718,
+      "y": 468.343,
+      "z": -72.0,
+      "locked": false,
+      "updated_at": "2026-05-06T09:43:55+00:00"
+    },
+    "event-story-efc73a338cb56487": {
+      "x": -79.156,
+      "y": 199.41,
+      "z": 108.0,
+      "locked": false,
+      "updated_at": "2026-05-06T09:43:55+00:00"
+    },
+    "event-story-f044aac4287117c8": {
+      "x": 152.953,
+      "y": 400.471,
+      "z": 0.0,
+      "locked": false,
+      "updated_at": "2026-05-06T09:43:55+00:00"
+    },
+    "event-story-f104c4549f4fdbd8": {
+      "x": 106.292,
+      "y": 423.576,
+      "z": -108.0,
+      "locked": false,
+      "updated_at": "2026-05-06T09:43:55+00:00"
+    },
+    "event-story-f158c242a61b59e8": {
+      "x": 78.605,
+      "y": 585.372,
+      "z": 0.0,
+      "locked": false,
+      "updated_at": "2026-05-06T09:43:55+00:00"
+    },
+    "event-story-f200dc888d4168b5": {
+      "x": 90.072,
+      "y": 254.304,
+      "z": 0.0,
+      "locked": false,
+      "updated_at": "2026-05-06T09:43:55+00:00"
+    },
+    "event-story-f365891abdbbd865": {
+      "x": -51.394,
+      "y": 322.24,
+      "z": 36.0,
+      "locked": false,
+      "updated_at": "2026-05-06T09:43:55+00:00"
+    },
+    "event-story-f5cb5f2ce62dec2f": {
+      "x": -233.827,
+      "y": 165.0,
+      "z": -72.0,
+      "locked": false,
+      "updated_at": "2026-05-06T09:43:55+00:00"
+    },
+    "event-story-f635b9b1780a3a81": {
+      "x": 78.518,
+      "y": 214.613,
+      "z": 72.0,
+      "locked": false,
+      "updated_at": "2026-05-06T09:43:55+00:00"
+    },
+    "event-story-f64578925321f82d": {
+      "x": 281.386,
+      "y": 229.843,
+      "z": 108.0,
+      "locked": false,
+      "updated_at": "2026-05-06T09:43:55+00:00"
+    },
+    "event-story-f66b841148d6f65f": {
+      "x": -209.833,
+      "y": 269.763,
+      "z": 108.0,
+      "locked": false,
+      "updated_at": "2026-05-06T09:43:55+00:00"
+    },
+    "event-story-f78c58869ff832f6": {
+      "x": -146.357,
+      "y": 223.811,
+      "z": -36.0,
+      "locked": false,
+      "updated_at": "2026-05-06T09:43:55+00:00"
+    },
+    "event-story-f7b8a2aef394c0d6": {
+      "x": 45.064,
+      "y": 427.257,
+      "z": 36.0,
+      "locked": false,
+      "updated_at": "2026-05-06T09:43:55+00:00"
+    },
+    "event-story-f90c87197ec83672": {
+      "x": 142.568,
+      "y": 109.426,
+      "z": -72.0,
+      "locked": false,
+      "updated_at": "2026-05-06T09:43:55+00:00"
+    },
+    "event-story-fa43cee5f96b91fc": {
+      "x": 20.087,
+      "y": 230.859,
+      "z": -36.0,
+      "locked": false,
+      "updated_at": "2026-05-06T09:43:55+00:00"
+    },
+    "event-story-faf691e819118b41": {
+      "x": 53.338,
+      "y": 348.364,
+      "z": -72.0,
+      "locked": false,
+      "updated_at": "2026-05-06T09:43:55+00:00"
+    },
+    "event-story-fbab1c87103356a7": {
+      "x": -82.535,
+      "y": 36.63,
+      "z": 108.0,
+      "locked": false,
+      "updated_at": "2026-05-06T09:43:55+00:00"
+    },
+    "event-story-fc2664e76024e72f": {
+      "x": 297.42,
+      "y": 371.953,
+      "z": -72.0,
+      "locked": false,
+      "updated_at": "2026-05-06T09:43:55+00:00"
+    },
+    "event-story-fd32af627e5784b6": {
+      "x": -282.979,
+      "y": 303.457,
+      "z": -36.0,
+      "locked": false,
+      "updated_at": "2026-05-06T09:43:55+00:00"
+    },
+    "event-story-fe07ab4c54af48ce": {
+      "x": -117.368,
+      "y": 79.263,
+      "z": 0.0,
+      "locked": false,
+      "updated_at": "2026-05-06T09:43:55+00:00"
+    },
+    "event-story-fe312ca40f13ae1f": {
+      "x": 69.534,
+      "y": 353.936,
+      "z": -108.0,
+      "locked": false,
+      "updated_at": "2026-05-06T09:43:55+00:00"
+    },
+    "event-story-fe5c2272e4b1aba0": {
+      "x": -83.052,
+      "y": 479.74,
+      "z": -36.0,
+      "locked": false,
+      "updated_at": "2026-05-06T09:43:55+00:00"
+    },
+    "media-news-am": {
+      "x": -160.585,
+      "y": 241.234,
+      "z": -108.0,
+      "locked": false,
+      "updated_at": "2026-05-06T09:43:55+00:00"
+    },
+    "organization-gegharkunik": {
+      "x": -135.0,
+      "y": 66.173,
+      "z": -108.0,
+      "locked": false,
+      "updated_at": "2026-05-06T09:43:55+00:00"
+    },
+    "organization-ministry-of-defense": {
+      "x": 183.494,
+      "y": 462.342,
+      "z": 108.0,
+      "locked": false,
+      "updated_at": "2026-05-06T09:43:55+00:00"
+    },
+    "party-n-a": {
+      "x": 12.491,
+      "y": 516.64,
+      "z": 36.0,
+      "locked": false,
+      "updated_at": "2026-05-06T09:43:55+00:00"
+    },
+    "person-about-armenia": {
+      "x": -112.682,
+      "y": 419.158,
+      "z": 108.0,
+      "locked": false,
+      "updated_at": "2026-05-06T09:43:55+00:00"
+    },
+    "person-republican-party": {
+      "x": 47.177,
+      "y": 330.171,
+      "z": 72.0,
+      "locked": false,
+      "updated_at": "2026-05-06T09:43:55+00:00"
+    },
+    "person-ruben-rubinyan": {
+      "x": -5.067,
+      "y": 431.903,
+      "z": -108.0,
+      "locked": false,
+      "updated_at": "2026-05-06T09:43:55+00:00"
+    },
+    "office-minister-of-territorial-administration-and-infrastructures": {
+      "x": 1.869,
+      "y": 249.034,
+      "z": 0.0,
+      "locked": false,
+      "updated_at": "2026-05-06T09:46:13+00:00"
+    },
+    "organization-ministry-of-economy": {
+      "x": -58.689,
+      "y": 125.611,
+      "z": 72.0,
+      "locked": false,
+      "updated_at": "2026-05-06T09:46:13+00:00"
+    },
+    "organization-ministry-of-environment": {
+      "x": -161.455,
+      "y": 394.347,
+      "z": -36.0,
+      "locked": false,
+      "updated_at": "2026-05-06T09:46:13+00:00"
+    },
+    "organization-ministry-of-foreign-affairs": {
+      "x": 146.529,
+      "y": 177.483,
+      "z": 36.0,
+      "locked": false,
+      "updated_at": "2026-05-06T09:46:13+00:00"
+    },
+    "organization-ministry-of-high-tech-industry": {
+      "x": 5.8,
+      "y": 394.823,
+      "z": 0.0,
+      "locked": false,
+      "updated_at": "2026-05-06T09:46:13+00:00"
+    },
+    "organization-ministry-of-internal-affairs": {
+      "x": -117.309,
+      "y": 24.973,
+      "z": -72.0,
+      "locked": false,
+      "updated_at": "2026-05-06T09:46:13+00:00"
+    },
+    "organization-ministry-of-justice": {
+      "x": 69.751,
+      "y": 234.04,
+      "z": -108.0,
+      "locked": false,
+      "updated_at": "2026-05-06T09:46:13+00:00"
+    },
+    "organization-ministry-of-labor-and-social-affairs": {
+      "x": -88.708,
+      "y": 18.653,
+      "z": -108.0,
+      "locked": false,
+      "updated_at": "2026-05-06T09:46:13+00:00"
+    },
+    "organization-ministry-of-territorial-administration-and-infrastructures": {
+      "x": -39.27,
+      "y": 539.806,
+      "z": 72.0,
+      "locked": false,
+      "updated_at": "2026-05-06T09:46:13+00:00"
+    },
+    "E556684A576F0Ba9": {
+      "x": 632.129,
+      "y": -51.84,
+      "z": 36.0,
+      "locked": false,
+      "updated_at": "2026-05-06T12:58:18+00:00"
+    },
+    "person-chief-of-staff-of-the-prime-minister": {
+      "x": 507.095,
+      "y": 141.941,
+      "z": 36.0,
+      "locked": false,
+      "updated_at": "2026-05-06T13:01:52+00:00"
+    },
+    "office-chief-of-staff-of-the-prime-minister": {
+      "x": 203.759,
+      "y": 49.399,
+      "z": -108.0,
+      "locked": false,
+      "updated_at": "2026-05-06T13:01:52+00:00"
+    },
+    "person-government-team-members": {
+      "x": 642.431,
+      "y": -100.488,
+      "z": 0.0,
+      "locked": false,
+      "updated_at": "2026-05-06T14:14:06+00:00"
+    },
+    "person-government-of-armenia": {
+      "x": 244.113,
+      "y": 145.479,
+      "z": 72.0,
+      "locked": false,
+      "updated_at": "2026-05-06T14:14:06+00:00"
+    },
+    "person-electronic-register-of-armenia": {
+      "x": 381.807,
+      "y": 226.648,
+      "z": 0.0,
+      "locked": false,
+      "updated_at": "2026-05-06T14:14:06+00:00"
+    },
+    "person-prime-minister": {
+      "x": 400.737,
+      "y": -187.943,
+      "z": -72.0,
+      "locked": false,
+      "updated_at": "2026-05-07T07:11:06+00:00"
+    },
+    "person-the-government": {
+      "x": 456.935,
+      "y": 67.921,
+      "z": 108.0,
+      "locked": false,
+      "updated_at": "2026-05-07T07:11:06+00:00"
+    },
+    "person-intergovernmental-commissions": {
+      "x": 483.08,
+      "y": -40.313,
+      "z": -36.0,
+      "locked": false,
+      "updated_at": "2026-05-07T07:11:06+00:00"
+    },
+    "person-government-program": {
+      "x": 443.698,
+      "y": -162.958,
+      "z": 108.0,
+      "locked": false,
+      "updated_at": "2026-05-07T07:11:06+00:00"
+    },
+    "person-the-prime-minister": {
+      "x": 382.317,
+      "y": 53.979,
+      "z": -72.0,
+      "locked": false,
+      "updated_at": "2026-05-07T07:11:06+00:00"
+    },
+    "person-prime-minister-nikol": {
+      "x": 409.294,
+      "y": -200.664,
+      "z": -72.0,
+      "locked": false,
+      "updated_at": "2026-05-07T07:11:06+00:00"
+    },
+    "person-state-registration": {
+      "x": 708.039,
+      "y": -145.533,
+      "z": -36.0,
+      "locked": false,
+      "updated_at": "2026-05-07T07:11:06+00:00"
+    },
+    "institution-address-republic-square-government-house-1-0010-yerevan-republic-of-armenia": {
+      "x": 122.447,
+      "y": 367.873,
+      "z": -72.0,
+      "locked": false,
+      "updated_at": "2026-05-07T07:11:06+00:00"
+    },
+    "office-acting-prime-minister-nikol-pashinyan-introduced-newly-appointed-chief-of-staff-araik-harutyunyan-to-the-office-of-the-prime-minister": {
+      "x": 219.623,
+      "y": 53.999,
+      "z": -72.0,
+      "locked": false,
+      "updated_at": "2026-05-07T07:11:06+00:00"
+    },
+    "person-araik-harutyunyan-to-the": {
+      "x": 489.603,
+      "y": 66.547,
+      "z": 0.0,
+      "locked": false,
+      "updated_at": "2026-05-07T07:11:06+00:00"
+    },
+    "person-araik-harutyunyan": {
+      "x": 722.579,
+      "y": -60.58,
+      "z": -36.0,
+      "locked": false,
+      "updated_at": "2026-05-07T07:11:06+00:00"
+    },
+    "person-tigran-khachatryan": {
+      "x": 486.501,
+      "y": -102.989,
+      "z": -36.0,
+      "locked": false,
+      "updated_at": "2026-05-08T23:28:23+00:00"
+    },
+    "person-deputy-minister": {
+      "x": -89.101,
+      "y": 254.601,
+      "z": -108.0,
+      "locked": false,
+      "updated_at": "2026-05-08T23:28:23+00:00"
+    },
+    "person-deputy-pm-tigran": {
+      "x": 497.551,
+      "y": 91.389,
+      "z": -72.0,
+      "locked": false,
+      "updated_at": "2026-05-08T23:28:23+00:00"
+    },
+    "person-arayik-harutyunyan": {
+      "x": 521.591,
+      "y": -178.21,
+      "z": -72.0,
+      "locked": false,
+      "updated_at": "2026-05-08T23:28:23+00:00"
+    },
+    "office-deputy-chiefs-of-prime-minister-staff": {
+      "x": 220.74,
+      "y": -211.999,
+      "z": 36.0,
+      "locked": false,
+      "updated_at": "2026-05-09T09:26:15+00:00"
+    },
+    "person-armenak-khachatryan": {
+      "x": 268.451,
+      "y": 205.9,
+      "z": 0.0,
+      "locked": false,
+      "updated_at": "2026-05-09T09:26:15+00:00"
+    },
+    "person-artur-hovsepyan": {
+      "x": 456.996,
+      "y": -61.702,
+      "z": -36.0,
+      "locked": false,
+      "updated_at": "2026-05-09T09:26:15+00:00"
+    },
+    "person-sargis-torosyan": {
+      "x": 528.951,
+      "y": 2.951,
+      "z": 0.0,
+      "locked": false,
+      "updated_at": "2026-05-09T09:26:15+00:00"
+    },
+    "person-taron-chakhoyan": {
+      "x": 256.152,
+      "y": -183.848,
+      "z": 72.0,
+      "locked": false,
+      "updated_at": "2026-05-09T09:26:15+00:00"
+    },
+    "person-zaruhi-matevosyan": {
+      "x": 375.259,
+      "y": 62.519,
+      "z": 36.0,
+      "locked": false,
+      "updated_at": "2026-05-09T09:26:15+00:00"
+    },
+    "institution-chief-adviser-to-the-prime-minister": {
+      "x": -63.618,
+      "y": 440.245,
+      "z": -108.0,
+      "locked": false,
+      "updated_at": "2026-05-09T09:26:15+00:00"
+    },
+    "person-artak-kamalyan": {
+      "x": 406.535,
+      "y": 67.12,
+      "z": -108.0,
+      "locked": false,
+      "updated_at": "2026-05-09T09:26:15+00:00"
+    },
+    "person-lilit-makunts": {
+      "x": 521.363,
+      "y": 158.316,
+      "z": 108.0,
+      "locked": false,
+      "updated_at": "2026-05-09T09:26:15+00:00"
+    },
+    "institution-advisers-to-prime-minister": {
+      "x": 48.271,
+      "y": 266.075,
+      "z": -36.0,
+      "locked": false,
+      "updated_at": "2026-05-09T09:26:15+00:00"
+    },
+    "person-aram-khachatryan": {
+      "x": 336.302,
+      "y": -42.318,
+      "z": 36.0,
+      "locked": false,
+      "updated_at": "2026-05-09T09:26:15+00:00"
+    },
+    "person-artashes-toumanian": {
+      "x": 424.471,
+      "y": -57.956,
+      "z": 72.0,
+      "locked": false,
+      "updated_at": "2026-05-09T09:26:15+00:00"
+    },
+    "person-vahram-dumanyan": {
+      "x": 360.304,
+      "y": -6.972,
+      "z": 72.0,
+      "locked": false,
+      "updated_at": "2026-05-09T09:26:15+00:00"
+    },
+    "institution-appointed-advisers-to-prime-minister-pro-bono": {
+      "x": -27.618,
+      "y": 400.266,
+      "z": 108.0,
+      "locked": false,
+      "updated_at": "2026-05-09T09:26:15+00:00"
+    },
+    "person-anzhela-kzhdryan": {
+      "x": 636.395,
+      "y": 89.917,
+      "z": -108.0,
+      "locked": false,
+      "updated_at": "2026-05-09T09:26:15+00:00"
+    },
+    "person-suren-maghakyan": {
+      "x": 477.713,
+      "y": -83.915,
+      "z": 72.0,
+      "locked": false,
+      "updated_at": "2026-05-09T09:26:15+00:00"
+    },
+    "institution-press-secretary-of-prime-minister": {
+      "x": 208.661,
+      "y": 477.585,
+      "z": 108.0,
+      "locked": false,
+      "updated_at": "2026-05-09T09:26:15+00:00"
+    },
+    "person-nazeli-baghdasaryan": {
+      "x": 381.881,
+      "y": -121.849,
+      "z": 72.0,
+      "locked": false,
+      "updated_at": "2026-05-09T09:26:15+00:00"
+    },
+    "office-chief-protocol-officer-for-the-prime-minister": {
+      "x": 182.218,
+      "y": 38.582,
+      "z": -72.0,
+      "locked": false,
+      "updated_at": "2026-05-09T09:26:15+00:00"
+    },
+    "person-ester-sahakyan": {
+      "x": 291.921,
+      "y": -207.599,
+      "z": 108.0,
+      "locked": false,
+      "updated_at": "2026-05-09T09:26:15+00:00"
+    },
+    "institution-assistants-to-the-prime-minister": {
+      "x": -128.67,
+      "y": 309.223,
+      "z": 72.0,
+      "locked": false,
+      "updated_at": "2026-05-09T09:26:15+00:00"
+    },
+    "person-arsen-mikhaylov": {
+      "x": 240.522,
+      "y": 189.298,
+      "z": -36.0,
+      "locked": false,
+      "updated_at": "2026-05-09T09:26:15+00:00"
+    },
+    "institution-curriculum-vitae": {
+      "x": 36.466,
+      "y": 506.81,
+      "z": 108.0,
+      "locked": false,
+      "updated_at": "2026-05-09T09:26:15+00:00"
+    },
+    "person-site-map": {
+      "x": 356.651,
+      "y": -58.796,
+      "z": -36.0,
+      "locked": false,
+      "updated_at": "2026-05-09T09:26:15+00:00"
+    },
+    "person-david-gevorgyan": {
+      "x": 378.297,
+      "y": 115.559,
+      "z": 72.0,
+      "locked": false,
+      "updated_at": "2026-05-09T09:26:15+00:00"
+    },
+    "person-gagik-isakhanyan": {
+      "x": 324.01,
+      "y": 156.752,
+      "z": 36.0,
+      "locked": false,
+      "updated_at": "2026-05-09T09:26:15+00:00"
+    },
+    "person-karine-davoyan": {
+      "x": 588.079,
+      "y": 207.599,
+      "z": 36.0,
+      "locked": false,
+      "updated_at": "2026-05-09T09:26:15+00:00"
+    },
+    "institution-department-for-relations-with-the-national-assembly": {
+      "x": -182.547,
+      "y": 194.181,
+      "z": 72.0,
+      "locked": false,
+      "updated_at": "2026-05-09T09:26:15+00:00"
+    },
+    "person-anahit-stephanyan": {
+      "x": 155.961,
+      "y": 116.493,
+      "z": -108.0,
+      "locked": false,
+      "updated_at": "2026-05-09T09:26:15+00:00"
+    }
+  },
+  "updated_at": "2026-05-09T09:26:15+00:00"
+}

@@ -1,58 +1,85 @@
-# Thiezer Armenia
+# Thiezer
 
-Multilingual Armenia news starter project for a website plus Telegram, Facebook, and Instagram rollout.
-This repository is also structured as a base template for future country-specific `Thiezer` editions.
+Deterministic Armenia-first newsroom + claim-first knowledge-graph core with explicit proposal, verification, critique, canonical admission, and publication stages.
 
-## What is included
+## Core Loop
 
-- A working landing page for `Thiezer Armenia` with Armenian, Russian, and English switching.
-- Seed editorial content that shows the daily-briefing structure.
-- A draft generator for daily news entries in `/content/drafts`.
-- Launch and workflow documents for website and social channels.
-- A Telegram bot scaffold for multilingual forum topics and hidden intake routing in `/telegram-bot`.
+`ingest -> retrieve -> graph -> publish`
 
-## Local run
+The graph stage now operates as:
 
-```bash
-npm install
-npm run dev
-```
+`story -> claims/evidence/events -> graph safety verify -> critic -> canonical admission -> verified story pack`
 
-Production build:
+## Task Runtime
 
-```bash
-npm run build
-```
+Use these user-facing modes when you want the system to do the work for you:
 
-Cloudflare Pages deploy after one-time auth:
+- `python3 scripts/orchestrator.py ask --query "..."` for a bounded task route
+- `python3 scripts/orchestrator.py background-sync` for a pipeline run plus exploration
+- `python3 scripts/orchestrator.py graph-audit` for a safety-only graph check
+- `python3 scripts/orchestrator.py graph-explore` for a budgeted link-expansion pass
+- `python3 scripts/orchestrator.py deep-research` for topic-oriented expansion
+- `python3 scripts/orchestrator.py ask --query "..." --deliver-public-telegram @thiezerarm --deliver-ops-telegram <chat_id>` to send public posts and operator trace via OpenClaw Telegram transport
 
-```bash
-npx wrangler login
-npm run build
-npx wrangler pages deploy ./dist --project-name=thiezer-armenia
-```
+## Canonical Data
 
-Create a draft file for a new daily brief:
+- `content/graph/country-graph.json`
+- `content/graph/evidence-log.jsonl`
+- `content/graph/schema-v2.json`
+- `content/graph/schema-v3.json`
+- `content/graph/relation-types.json`
+- `content/sources/source-registry.json`
+- `content/sources/armenia-source-seed.json`
+- `content/system/local-model-config.json`
+- `content/prompts/prompt-stack.json`
+- `content/evals/tasks.json`
 
-```bash
-npm run create:brief -- 2026-03-16
-```
+## Prompt Roles
 
-## What still needs your input
+- `router`
+- `news_research_analyst`
+- `source_judge`
+- `graph_proposer`
+- `graph_critic`
+- `writer`
+- `social_operator`
+- `graph_native_assistant`
 
-- Official logo, colors, and any brand assets for `Thiezer Armenia`.
-- Account access for Telegram, Facebook, and Instagram.
-- Source policy: which Armenian outlets, institutions, and newsletters should be monitored daily.
-- Hosting target for the site.
+## Run
 
-## Project structure
+- `python3 scripts/orchestrator.py health`
+- `python3 scripts/orchestrator.py daily-sync`
+- `python3 scripts/orchestrator.py ask --query "дай новости сегодня по Армении" --budget 2 --deliver-public-telegram @thiezerarm --deliver-ops-telegram 870013583`
+- `python3 scripts/orchestrator.py background-sync --topic internal_politics --budget 4 --deliver-ops-telegram 870013583`
+- `python3 scripts/run_graph_web.py` for the local graph explorer
+- `python3 scripts/export_knowledge_graph.py` to rebuild the generated `web/graph-viewer/knowledge_graph.json` explorer payload; the viewer boots from this artifact and overlays live graph/runtime data when available
 
-- `index.html`: homepage shell.
-- `src/main.js`: language switching and rendering.
-- `src/content/site-data.js`: initial localized copy and channel definitions.
-- `src/styles.css`: responsive visual system.
-- `scripts/create-daily-brief.mjs`: draft generator.
-- `docs/social-launch.md`: launch checklist and channel strategy.
-- `docs/editorial-workflow.md`: daily editorial pipeline.
-- `docs/telegram-forum-setup.md`: Telegram forum layout and bot workflow.
-- `telegram-bot/`: bot bootstrap, localized commands, and private intake routing.
+## Claim-First Model
+
+- Articles do not write canonical edges directly.
+- Articles produce `claims`, `evidence`, `sources`, and `events`.
+- Only class-admitted claims can produce canonical `edges`.
+- Rumors and disputed interpretations stay in `claims`, `perspectives`, and `narratives`, not in canonical edges.
+- Viewer terminology is standardized around `вершины`, `рёбра`, `утверждения`, and `перспективы`.
+
+## Eval
+
+- `python3 scripts/eval_models.py smoke`
+- `python3 scripts/eval_models.py run`
+- `python3 scripts/eval_models.py report`
+
+## Operator Artifacts
+
+- `content/evals/latest/summary.json`
+- `content/evals/latest/results.jsonl`
+- `content/evals/latest/leaderboard.json`
+- `content/evals/latest/failures.json`
+- `content/evals/latest/report.md`
+- `content/evals/latest/source-trust-report.json`
+- `content/evals/latest/graph-safety-report.json`
+- `content/evals/latest/openclaw-comparison.json`
+- `content/evals/latest/prompt-audit.json`
+- `content/system/task-runtime.json`
+- `content/system/exploration-runtime.json`
+- `content/system/exploration-queue.jsonl`
+- `content/graph/migrations/latest-report.json`

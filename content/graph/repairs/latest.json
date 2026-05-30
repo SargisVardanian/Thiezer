@@ -1,0 +1,615 @@
+{
+  "ok": true,
+  "updated_at": "2026-05-08T23:44:13+00:00",
+  "snapshot_rows": 267,
+  "evidence_rows": 5731,
+  "vertices": 270,
+  "edges": 83,
+  "claims": 92,
+  "sources": 330,
+  "evidence": 389,
+  "derived_relations": 28,
+  "rejected_vertices": [
+    {
+      "type": "vertex",
+      "reason": "hash_like_label",
+      "vertex_id": "event-story-000dab54700f2a83",
+      "label": "000Dab54700F2A83"
+    },
+    {
+      "type": "vertex",
+      "reason": "hash_like_label",
+      "vertex_id": "event-story-005293d3afb602fe",
+      "label": "005293D3Afb602Fe"
+    },
+    {
+      "type": "vertex",
+      "reason": "hash_like_label",
+      "vertex_id": "event-story-01479dc300fa184a",
+      "label": "01479Dc300Fa184A"
+    },
+    {
+      "type": "vertex",
+      "reason": "hash_like_label",
+      "vertex_id": "event-story-025c69adf7b1d64b",
+      "label": "025C69Adf7B1D64B"
+    },
+    {
+      "type": "vertex",
+      "reason": "hash_like_label",
+      "vertex_id": "event-story-026c762b311e63ab",
+      "label": "026C762B311E63Ab"
+    },
+    {
+      "type": "vertex",
+      "reason": "hash_like_label",
+      "vertex_id": "event-story-03e4c75102aef16b",
+      "label": "03E4C75102Aef16B"
+    },
+    {
+      "type": "vertex",
+      "reason": "hash_like_label",
+      "vertex_id": "event-story-04ba24a8941e3b65",
+      "label": "04Ba24A8941E3B65"
+    },
+    {
+      "type": "vertex",
+      "reason": "hash_like_label",
+      "vertex_id": "event-story-04c345815089a0d1",
+      "label": "04C345815089A0D1"
+    },
+    {
+      "type": "vertex",
+      "reason": "hash_like_label",
+      "vertex_id": "event-story-04c5c7399fc398af",
+      "label": "04C5C7399Fc398Af"
+    },
+    {
+      "type": "vertex",
+      "reason": "hash_like_label",
+      "vertex_id": "event-story-05ef3366d374be9f",
+      "label": "05Ef3366D374Be9F"
+    },
+    {
+      "type": "vertex",
+      "reason": "hash_like_label",
+      "vertex_id": "event-story-06354101890aaf82",
+      "label": "06354101890Aaf82"
+    },
+    {
+      "type": "vertex",
+      "reason": "hash_like_label",
+      "vertex_id": "event-story-0642817bada02a39",
+      "label": "0642817Bada02A39"
+    },
+    {
+      "type": "vertex",
+      "reason": "hash_like_label",
+      "vertex_id": "event-story-06cea07e45093f95",
+      "label": "06Cea07E45093F95"
+    },
+    {
+      "type": "vertex",
+      "reason": "hash_like_label",
+      "vertex_id": "event-story-09bbba8c407a8109",
+      "label": "09Bbba8C407A8109"
+    },
+    {
+      "type": "vertex",
+      "reason": "hash_like_label",
+      "vertex_id": "event-story-0aab4a2fce7df1a6",
+      "label": "0Aab4A2Fce7Df1A6"
+    },
+    {
+      "type": "vertex",
+      "reason": "hash_like_label",
+      "vertex_id": "event-story-0ba39e0bc3cfcc04",
+      "label": "0Ba39E0Bc3Cfcc04"
+    },
+    {
+      "type": "vertex",
+      "reason": "hash_like_label",
+      "vertex_id": "event-story-0bb312e26f3eb27c",
+      "label": "0Bb312E26F3Eb27C"
+    },
+    {
+      "type": "vertex",
+      "reason": "hash_like_label",
+      "vertex_id": "event-story-0c2bdef14f898486",
+      "label": "0C2Bdef14F898486"
+    },
+    {
+      "type": "vertex",
+      "reason": "hash_like_label",
+      "vertex_id": "event-story-0c4e3be887c31193",
+      "label": "0C4E3Be887C31193"
+    },
+    {
+      "type": "vertex",
+      "reason": "hash_like_label",
+      "vertex_id": "event-story-0ceba67e1ee87a30",
+      "label": "0Ceba67E1Ee87A30"
+    },
+    {
+      "type": "vertex",
+      "reason": "hash_like_label",
+      "vertex_id": "event-story-0e9530650b3c254e",
+      "label": "0E9530650B3C254E"
+    },
+    {
+      "type": "vertex",
+      "reason": "hash_like_label",
+      "vertex_id": "event-story-0ee07e08a84543ea",
+      "label": "0Ee07E08A84543Ea"
+    },
+    {
+      "type": "vertex",
+      "reason": "hash_like_label",
+      "vertex_id": "event-story-0f5ea4868e58d107",
+      "label": "0F5Ea4868E58D107"
+    },
+    {
+      "type": "vertex",
+      "reason": "hash_like_label",
+      "vertex_id": "event-story-1055977d4c66e8e2",
+      "label": "1055977D4C66E8E2"
+    },
+    {
+      "type": "vertex",
+      "reason": "hash_like_label",
+      "vertex_id": "event-story-108b582a819ce5c3",
+      "label": "108B582A819Ce5C3"
+    },
+    {
+      "type": "vertex",
+      "reason": "hash_like_label",
+      "vertex_id": "event-story-111c51b482c189bc",
+      "label": "111C51B482C189Bc"
+    },
+    {
+      "type": "vertex",
+      "reason": "hash_like_label",
+      "vertex_id": "event-story-113f30cc4eddcae4",
+      "label": "113F30Cc4Eddcae4"
+    },
+    {
+      "type": "vertex",
+      "reason": "hash_like_label",
+      "vertex_id": "event-story-11865699b9c4ec5b",
+      "label": "11865699B9C4Ec5B"
+    },
+    {
+      "type": "vertex",
+      "reason": "hash_like_label",
+      "vertex_id": "event-story-14ccbf8d93ef66b7",
+      "label": "14Ccbf8D93Ef66B7"
+    },
+    {
+      "type": "vertex",
+      "reason": "hash_like_label",
+      "vertex_id": "event-story-15b0f20c994fe192",
+      "label": "15B0F20C994Fe192"
+    },
+    {
+      "type": "vertex",
+      "reason": "hash_like_label",
+      "vertex_id": "event-story-15ec9f68ac9a8c6a",
+      "label": "15Ec9F68Ac9A8C6A"
+    },
+    {
+      "type": "vertex",
+      "reason": "hash_like_label",
+      "vertex_id": "event-story-1666684bba90ce50",
+      "label": "1666684Bba90Ce50"
+    },
+    {
+      "type": "vertex",
+      "reason": "hash_like_label",
+      "vertex_id": "event-story-17c9e5560408610f",
+      "label": "17C9E5560408610F"
+    },
+    {
+      "type": "vertex",
+      "reason": "hash_like_label",
+      "vertex_id": "event-story-187117f8cfa79b5b",
+      "label": "187117F8Cfa79B5B"
+    },
+    {
+      "type": "vertex",
+      "reason": "hash_like_label",
+      "vertex_id": "event-story-194515374240b600",
+      "label": "194515374240B600"
+    },
+    {
+      "type": "vertex",
+      "reason": "hash_like_label",
+      "vertex_id": "event-story-19df901f0bf2d0b7",
+      "label": "19Df901F0Bf2D0B7"
+    },
+    {
+      "type": "vertex",
+      "reason": "hash_like_label",
+      "vertex_id": "event-story-1b480b340fde94ee",
+      "label": "1B480B340Fde94Ee"
+    },
+    {
+      "type": "vertex",
+      "reason": "hash_like_label",
+      "vertex_id": "event-story-1b4a369bae9c5ffe",
+      "label": "1B4A369Bae9C5Ffe"
+    },
+    {
+      "type": "vertex",
+      "reason": "hash_like_label",
+      "vertex_id": "event-story-1b5d222eedb2d6a4",
+      "label": "1B5D222Eedb2D6A4"
+    },
+    {
+      "type": "vertex",
+      "reason": "hash_like_label",
+      "vertex_id": "event-story-1bcfc56d1a147eea",
+      "label": "1Bcfc56D1A147Eea"
+    },
+    {
+      "type": "vertex",
+      "reason": "hash_like_label",
+      "vertex_id": "event-story-1de5e27ed22db405",
+      "label": "1De5E27Ed22Db405"
+    },
+    {
+      "type": "vertex",
+      "reason": "hash_like_label",
+      "vertex_id": "event-story-201a544d7676636e",
+      "label": "201A544D7676636E"
+    },
+    {
+      "type": "vertex",
+      "reason": "hash_like_label",
+      "vertex_id": "event-story-21d327b6ce11f110",
+      "label": "21D327B6Ce11F110"
+    },
+    {
+      "type": "vertex",
+      "reason": "hash_like_label",
+      "vertex_id": "event-story-23175e24f8b83eeb",
+      "label": "23175E24F8B83Eeb"
+    },
+    {
+      "type": "vertex",
+      "reason": "hash_like_label",
+      "vertex_id": "event-story-24717014146e6c7a",
+      "label": "24717014146E6C7A"
+    },
+    {
+      "type": "vertex",
+      "reason": "hash_like_label",
+      "vertex_id": "event-story-25fbfba44b04496d",
+      "label": "25Fbfba44B04496D"
+    },
+    {
+      "type": "vertex",
+      "reason": "hash_like_label",
+      "vertex_id": "event-story-27fe35a3cef0c0b8",
+      "label": "27Fe35A3Cef0C0B8"
+    },
+    {
+      "type": "vertex",
+      "reason": "hash_like_label",
+      "vertex_id": "event-story-289b312966b5840e",
+      "label": "289B312966B5840E"
+    },
+    {
+      "type": "vertex",
+      "reason": "hash_like_label",
+      "vertex_id": "event-story-298cd65b2cc7232a",
+      "label": "298Cd65B2Cc7232A"
+    },
+    {
+      "type": "vertex",
+      "reason": "hash_like_label",
+      "vertex_id": "event-story-2a186058e40dd818",
+      "label": "2A186058E40Dd818"
+    },
+    {
+      "type": "vertex",
+      "reason": "hash_like_label",
+      "vertex_id": "event-story-2a6fbbc4f8d103d8",
+      "label": "2A6Fbbc4F8D103D8"
+    },
+    {
+      "type": "vertex",
+      "reason": "hash_like_label",
+      "vertex_id": "event-story-2abafed4cd1a6715",
+      "label": "2Abafed4Cd1A6715"
+    },
+    {
+      "type": "vertex",
+      "reason": "hash_like_label",
+      "vertex_id": "event-story-2da46548001c9db4",
+      "label": "2Da46548001C9Db4"
+    },
+    {
+      "type": "vertex",
+      "reason": "hash_like_label",
+      "vertex_id": "event-story-2dead274fd00d6fa",
+      "label": "2Dead274Fd00D6Fa"
+    },
+    {
+      "type": "vertex",
+      "reason": "hash_like_label",
+      "vertex_id": "event-story-2efc829c2a70f69b",
+      "label": "2Efc829C2A70F69B"
+    },
+    {
+      "type": "vertex",
+      "reason": "hash_like_label",
+      "vertex_id": "event-story-30e21c9d8cb80311",
+      "label": "30E21C9D8Cb80311"
+    },
+    {
+      "type": "vertex",
+      "reason": "hash_like_label",
+      "vertex_id": "event-story-337a5515241f6713",
+      "label": "337A5515241F6713"
+    },
+    {
+      "type": "vertex",
+      "reason": "hash_like_label",
+      "vertex_id": "event-story-33a57f3b8e0e1890",
+      "label": "33A57F3B8E0E1890"
+    },
+    {
+      "type": "vertex",
+      "reason": "hash_like_label",
+      "vertex_id": "event-story-34c49543bc13b5d4",
+      "label": "34C49543Bc13B5D4"
+    },
+    {
+      "type": "vertex",
+      "reason": "hash_like_label",
+      "vertex_id": "event-story-3615bfd805d7c8d4",
+      "label": "3615Bfd805D7C8D4"
+    },
+    {
+      "type": "vertex",
+      "reason": "hash_like_label",
+      "vertex_id": "event-story-367c4220d181eec3",
+      "label": "367C4220D181Eec3"
+    },
+    {
+      "type": "vertex",
+      "reason": "hash_like_label",
+      "vertex_id": "event-story-36ae552a13456d7d",
+      "label": "36Ae552A13456D7D"
+    },
+    {
+      "type": "vertex",
+      "reason": "hash_like_label",
+      "vertex_id": "event-story-37216f5465f578fe",
+      "label": "37216F5465F578Fe"
+    },
+    {
+      "type": "vertex",
+      "reason": "hash_like_label",
+      "vertex_id": "event-story-37eac7c3026db19c",
+      "label": "37Eac7C3026Db19C"
+    },
+    {
+      "type": "vertex",
+      "reason": "hash_like_label",
+      "vertex_id": "event-story-384f2209c0ede796",
+      "label": "384F2209C0Ede796"
+    },
+    {
+      "type": "vertex",
+      "reason": "hash_like_label",
+      "vertex_id": "event-story-38f930b8cfb8a134",
+      "label": "38F930B8Cfb8A134"
+    },
+    {
+      "type": "vertex",
+      "reason": "hash_like_label",
+      "vertex_id": "event-story-38fb8a3dec449bd3",
+      "label": "38Fb8A3Dec449Bd3"
+    },
+    {
+      "type": "vertex",
+      "reason": "hash_like_label",
+      "vertex_id": "event-story-3d474fbd3fbd5a11",
+      "label": "3D474Fbd3Fbd5A11"
+    },
+    {
+      "type": "vertex",
+      "reason": "hash_like_label",
+      "vertex_id": "event-story-3e4d870c0b1ea508",
+      "label": "3E4D870C0B1Ea508"
+    },
+    {
+      "type": "vertex",
+      "reason": "hash_like_label",
+      "vertex_id": "event-story-3e7d5144d2a986ee",
+      "label": "3E7D5144D2A986Ee"
+    },
+    {
+      "type": "vertex",
+      "reason": "hash_like_label",
+      "vertex_id": "event-story-3f866652c5f2ddf3",
+      "label": "3F866652C5F2Ddf3"
+    },
+    {
+      "type": "vertex",
+      "reason": "hash_like_label",
+      "vertex_id": "event-story-400d981ff5481ba3",
+      "label": "400D981Ff5481Ba3"
+    },
+    {
+      "type": "vertex",
+      "reason": "hash_like_label",
+      "vertex_id": "event-story-40be5058563ea276",
+      "label": "40Be5058563Ea276"
+    },
+    {
+      "type": "vertex",
+      "reason": "hash_like_label",
+      "vertex_id": "event-story-41151ec5fbc220df",
+      "label": "41151Ec5Fbc220Df"
+    },
+    {
+      "type": "vertex",
+      "reason": "hash_like_label",
+      "vertex_id": "event-story-42c39cf9f45fdef6",
+      "label": "42C39Cf9F45Fdef6"
+    },
+    {
+      "type": "vertex",
+      "reason": "hash_like_label",
+      "vertex_id": "event-story-440640a73084c4ce",
+      "label": "440640A73084C4Ce"
+    },
+    {
+      "type": "vertex",
+      "reason": "hash_like_label",
+      "vertex_id": "event-story-45e95a31d702cb82",
+      "label": "45E95A31D702Cb82"
+    },
+    {
+      "type": "vertex",
+      "reason": "hash_like_label",
+      "vertex_id": "event-story-462a73543c1f3aec",
+      "label": "462A73543C1F3Aec"
+    },
+    {
+      "type": "vertex",
+      "reason": "hash_like_label",
+      "vertex_id": "event-story-47046092183e3bac",
+      "label": "47046092183E3Bac"
+    },
+    {
+      "type": "vertex",
+      "reason": "hash_like_label",
+      "vertex_id": "event-story-47c774a11bdd75ce",
+      "label": "47C774A11Bdd75Ce"
+    },
+    {
+      "type": "vertex",
+      "reason": "hash_like_label",
+      "vertex_id": "event-story-47ee028424971283",
+      "label": "47Ee028424971283"
+    },
+    {
+      "type": "vertex",
+      "reason": "hash_like_label",
+      "vertex_id": "event-story-491c548f49e34eb8",
+      "label": "491C548F49E34Eb8"
+    },
+    {
+      "type": "vertex",
+      "reason": "hash_like_label",
+      "vertex_id": "event-story-4a397c7a9792db90",
+      "label": "4A397C7A9792Db90"
+    },
+    {
+      "type": "vertex",
+      "reason": "hash_like_label",
+      "vertex_id": "event-story-4aca0e30b437f92e",
+      "label": "4Aca0E30B437F92E"
+    },
+    {
+      "type": "vertex",
+      "reason": "hash_like_label",
+      "vertex_id": "event-story-4c842a4f637eeb85",
+      "label": "4C842A4F637Eeb85"
+    },
+    {
+      "type": "vertex",
+      "reason": "hash_like_label",
+      "vertex_id": "event-story-4d09b7ae17e5b5cd",
+      "label": "4D09B7Ae17E5B5Cd"
+    },
+    {
+      "type": "vertex",
+      "reason": "hash_like_label",
+      "vertex_id": "event-story-4d6bc531e4c5954d",
+      "label": "4D6Bc531E4C5954D"
+    },
+    {
+      "type": "vertex",
+      "reason": "hash_like_label",
+      "vertex_id": "event-story-4ea46403861c8ed7",
+      "label": "4Ea46403861C8Ed7"
+    },
+    {
+      "type": "vertex",
+      "reason": "hash_like_label",
+      "vertex_id": "event-story-4f2f9ade6d2e04b5",
+      "label": "4F2F9Ade6D2E04B5"
+    },
+    {
+      "type": "vertex",
+      "reason": "hash_like_label",
+      "vertex_id": "event-story-4f5964e0954828c1",
+      "label": "4F5964E0954828C1"
+    },
+    {
+      "type": "vertex",
+      "reason": "hash_like_label",
+      "vertex_id": "event-story-4ffe814eb657940e",
+      "label": "4Ffe814Eb657940E"
+    },
+    {
+      "type": "vertex",
+      "reason": "hash_like_label",
+      "vertex_id": "event-story-515d548400274034",
+      "label": "515D548400274034"
+    },
+    {
+      "type": "vertex",
+      "reason": "hash_like_label",
+      "vertex_id": "event-story-5171636c4d7d6983",
+      "label": "5171636C4D7D6983"
+    },
+    {
+      "type": "vertex",
+      "reason": "hash_like_label",
+      "vertex_id": "event-story-53192909ef968bfe",
+      "label": "53192909Ef968Bfe"
+    },
+    {
+      "type": "vertex",
+      "reason": "hash_like_label",
+      "vertex_id": "event-story-56e378f87780d733",
+      "label": "56E378F87780D733"
+    },
+    {
+      "type": "vertex",
+      "reason": "hash_like_label",
+      "vertex_id": "event-story-57764a702cb96e79",
+      "label": "57764A702Cb96E79"
+    },
+    {
+      "type": "vertex",
+      "reason": "hash_like_label",
+      "vertex_id": "event-story-5935c9a4de6214a6",
+      "label": "5935C9A4De6214A6"
+    },
+    {
+      "type": "vertex",
+      "reason": "hash_like_label",
+      "vertex_id": "event-story-59b2108c47f0750f",
+      "label": "59B2108C47F0750F"
+    },
+    {
+      "type": "vertex",
+      "reason": "hash_like_label",
+      "vertex_id": "event-story-5a41debaae45d6ec",
+      "label": "5A41Debaae45D6Ec"
+    },
+    {
+      "type": "vertex",
+      "reason": "hash_like_label",
+      "vertex_id": "event-story-5ab900b36b0293de",
+      "label": "5Ab900B36B0293De"
+    }
+  ],
+  "repair_run_id": "graph-repair-restore-old-links"
+}

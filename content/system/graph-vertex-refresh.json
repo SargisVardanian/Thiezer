@@ -1,0 +1,31 @@
+{
+  "ok": true,
+  "updated_at": "2026-04-18T20:15:52+00:00",
+  "updated_entities": 3,
+  "model_profiles": 3,
+  "fallback_profiles": 0,
+  "search_limit": 1,
+  "fetch_limit": 1,
+  "batch_size": 1,
+  "news_scout_model": "Alibaba-NLP/gte-multilingual-reranker-base",
+  "records": [
+    {
+      "entity_id": "media-1lurer",
+      "name": "1Lurer",
+      "evidence_count": 1,
+      "model_ok": true
+    },
+    {
+      "entity_id": "person-aharon-sahakyan",
+      "name": "Aharon Sahakyan",
+      "evidence_count": 1,
+      "model_ok": true
+    },
+    {
+      "entity_id": "person-alen-simonyan",
+      "name": "Alen Simonyan",
+      "evidence_count": 1,
+      "model_ok": true
+    }
+  ]
+}

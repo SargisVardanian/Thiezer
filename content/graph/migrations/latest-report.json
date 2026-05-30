@@ -1,0 +1,14 @@
+{
+  "status": "migrated_to_v3",
+  "updated_at": "2026-05-09T00:17:58+00:00",
+  "admission_policy_version": 2,
+  "canonical_edges_admitted": 0,
+  "new_counts": {
+    "vertices": 1,
+    "edges": 0,
+    "claims": 0,
+    "events": 0,
+    "evidence": 1,
+    "sources": 1
+  }
+}

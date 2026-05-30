@@ -1,0 +1,117 @@
+{
+  "defaults": {
+    "fetch_mode": "rss",
+    "crawl_frequency_minutes": 180,
+    "needs_js": false,
+    "armenia_relevance_default": 1.0,
+    "trust_weight": 0.65,
+    "freshness_weight": 0.75,
+    "coverage_tags": [
+      "armenia"
+    ]
+  },
+  "sources": {
+    "1lurer.am": {
+      "fetch_mode": "rss",
+      "trust_weight": 0.8,
+      "coverage_tags": [
+        "official",
+        "state_media"
+      ]
+    },
+    "mineconomy.am": {
+      "fetch_mode": "html",
+      "trust_weight": 0.85,
+      "coverage_tags": [
+        "economy",
+        "government"
+      ]
+    },
+    "civic.am": {
+      "fetch_mode": "html",
+      "coverage_tags": [
+        "pro_government",
+        "politics"
+      ]
+    },
+    "news.am": {
+      "fetch_mode": "rss",
+      "coverage_tags": [
+        "mainstream",
+        "multilingual"
+      ]
+    },
+    "aysor.am": {
+      "fetch_mode": "rss",
+      "coverage_tags": [
+        "mainstream"
+      ]
+    },
+    "azatutyun.am": {
+      "fetch_mode": "rss",
+      "trust_weight": 0.85,
+      "coverage_tags": [
+        "independent",
+        "watchdog"
+      ]
+    },
+    "hetq.am": {
+      "fetch_mode": "rss",
+      "trust_weight": 0.9,
+      "coverage_tags": [
+        "investigations",
+        "watchdog"
+      ]
+    },
+    "civilnet.am": {
+      "fetch_mode": "rss",
+      "coverage_tags": [
+        "independent",
+        "analysis"
+      ]
+    },
+    "factor.am": {
+      "fetch_mode": "rss",
+      "coverage_tags": [
+        "interviews",
+        "watchdog"
+      ]
+    },
+    "aravot.am": {
+      "fetch_mode": "html",
+      "coverage_tags": [
+        "independent"
+      ]
+    },
+    "hraparak.am": {
+      "fetch_mode": "html",
+      "coverage_tags": [
+        "opposition_adjacent"
+      ]
+    },
+    "168.am": {
+      "fetch_mode": "html",
+      "coverage_tags": [
+        "opposition_adjacent"
+      ]
+    },
+    "oc-media.org": {
+      "fetch_mode": "rss",
+      "source_type": "external",
+      "armenia_relevance_default": 0.5,
+      "coverage_tags": [
+        "external",
+        "regional"
+      ]
+    },
+    "eurasianet.org": {
+      "fetch_mode": "html",
+      "source_type": "external",
+      "armenia_relevance_default": 0.5,
+      "coverage_tags": [
+        "external",
+        "regional"
+      ]
+    }
+  }
+}
