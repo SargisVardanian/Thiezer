@@ -61,6 +61,8 @@ SCHEMA_V3_FILE = GRAPH_DIR / "schema-v3.json"
 GRAPH_MIGRATION_REPORT = GRAPH_MIGRATIONS_DIR / "latest-report.json"
 RELATION_TYPES_FILE = GRAPH_DIR / "relation-types.json"
 LOCAL_MODEL_CONFIG = SYSTEM_DIR / "local-model-config.json"
+ENTITY_REGISTRY_FILE = GRAPH_DIR / "entity-registry.json"
+CLAIMS_LOG_FILE = GRAPH_DIR / "claims.jsonl"
 LEGACY_ENTITIES = GRAPH_DIR / "entities.json"
 LEGACY_RELATIONS = GRAPH_DIR / "relations.json"
 LEGACY_RELATION_TYPES = GRAPH_DIR / "relation-types.json"
@@ -71,6 +73,15 @@ DEFAULT_HEADERS = {
 }
 
 PUBLIC_POST_CHAT_HANDLE = "@thiezerarm"
+
+
+def canonical_graph_path() -> Path:
+    override = os.environ.get("THIEZER_CANONICAL_GRAPH_PATH", "").strip()
+    return Path(override).expanduser().resolve() if override else CANONICAL_GRAPH
+
+
+def canonical_graph_is_overridden() -> bool:
+    return bool(os.environ.get("THIEZER_CANONICAL_GRAPH_PATH", "").strip())
 
 OPS_VERBOSE_EVENT_TYPES = {
     "run_started",
@@ -229,6 +240,74 @@ RELATION_TYPES = [
     "publicly_opposed",
 ]
 
+ENTITY_TYPE_ALIASES = {
+    "person": "PERSON",
+    "people": "PERSON",
+    "persons": "PERSON",
+    "office": "OFFICE",
+    "offices": "OFFICE",
+    "role": "OFFICE",
+    "roles": "OFFICE",
+    "organization": "GOVERNMENT_BODY",
+    "organizations": "GOVERNMENT_BODY",
+    "org": "GOVERNMENT_BODY",
+    "orgs": "GOVERNMENT_BODY",
+    "institution": "GOVERNMENT_BODY",
+    "institutions": "GOVERNMENT_BODY",
+    "government_body": "GOVERNMENT_BODY",
+    "party": "PARTY",
+    "parties": "PARTY",
+    "faction": "FACTION",
+    "factions": "FACTION",
+    "company": "COMPANY",
+    "companies": "COMPANY",
+    "ngo": "NGO",
+    "media": "MEDIA_OUTLET",
+    "media_outlet": "MEDIA_OUTLET",
+    "court": "COURT",
+    "law": "LAW",
+    "event": "EVENT",
+    "location": "LOCATION",
+    "region": "LOCATION",
+    "country": "LOCATION",
+    "place": "LOCATION",
+    "places": "LOCATION",
+    "document": "DOCUMENT",
+    "source": "SOURCE",
+}
+
+ENTITY_TYPES = [
+    "PERSON",
+    "OFFICE",
+    "GOVERNMENT_BODY",
+    "PARTY",
+    "FACTION",
+    "COMPANY",
+    "NGO",
+    "MEDIA_OUTLET",
+    "COURT",
+    "LAW",
+    "EVENT",
+    "LOCATION",
+    "DOCUMENT",
+    "SOURCE",
+]
+
+INCOMPATIBLE_ENTITY_TYPES = {
+    ("PERSON", "OFFICE"),
+    ("PERSON", "PARTY"),
+    ("PERSON", "FACTION"),
+    ("PERSON", "COMPANY"),
+    ("PERSON", "GOVERNMENT_BODY"),
+    ("PERSON", "MEDIA_OUTLET"),
+    ("OFFICE", "PARTY"),
+    ("OFFICE", "FACTION"),
+    ("OFFICE", "COMPANY"),
+    ("OFFICE", "MEDIA_OUTLET"),
+    ("PARTY", "FACTION"),
+    ("COMPANY", "GOVERNMENT_BODY"),
+}
+
 
 def iso_now() -> str:
     return datetime.now(timezone.utc).replace(microsecond=0).isoformat()
@@ -252,12 +331,26 @@ def ensure_layout() -> None:
     if not CHANNEL_MIRROR_FILE.exists():
         write_json(CHANNEL_MIRROR_FILE, {"updated_at": iso_now(), "targets": {}})
 
-    if not CANONICAL_GRAPH.exists():
+    graph_path = canonical_graph_path()
+    if not graph_path.exists():
         from graph_domain import default_graph_bundle
 
-        write_json(CANONICAL_GRAPH, default_graph_bundle())
+        write_json(graph_path, default_graph_bundle())
     if not EVIDENCE_LOG.exists():
         EVIDENCE_LOG.write_text("", encoding="utf-8")
+    if not CLAIMS_LOG_FILE.exists():
+        CLAIMS_LOG_FILE.write_text("", encoding="utf-8")
+    if not ENTITY_REGISTRY_FILE.exists():
+        write_json(
+            ENTITY_REGISTRY_FILE,
+            {
+                "version": 1,
+                "updated_at": iso_now(),
+                "entity_types": ENTITY_TYPES,
+                "entities": [],
+                "indexes": {"alias_to_entity_id": {}},
+            },
+        )
     if not RELATION_TYPES_FILE.exists():
         write_json(RELATION_TYPES_FILE, relation_types_payload())
     if not SCHEMA_FILE.exists():
@@ -340,7 +433,7 @@ def load_json(path: Path, default: Any) -> Any:
 
 def write_json(path: Path, payload: Any) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
-    if path == CANONICAL_GRAPH and isinstance(payload, dict):
+    if path.resolve() == canonical_graph_path().resolve() and isinstance(payload, dict):
         from graph_domain import merge_graph_bundle
 
         existing = load_json(path, {})
@@ -446,6 +539,195 @@ def canonical_person_key(value: str) -> str:
     if len(parts) >= 2 and parts[0].endswith("."):
         parts = parts[1:]
     return " ".join(parts)
+
+
+def normalize_entity_type(value: str) -> str:
+    key = normalize_text(str(value or "")).replace("-", "_").replace(" ", "_")
+    return ENTITY_TYPE_ALIASES.get(key, key.upper() if key.upper() in ENTITY_TYPES else "")
+
+
+def entity_types_compatible(left: str, right: str) -> bool:
+    left_type = normalize_entity_type(left)
+    right_type = normalize_entity_type(right)
+    if not left_type or not right_type:
+        return True
+    if left_type == right_type:
+        return True
+    return (left_type, right_type) not in INCOMPATIBLE_ENTITY_TYPES and (right_type, left_type) not in INCOMPATIBLE_ENTITY_TYPES
+
+
+def graph_entity_type(entity: dict[str, Any]) -> str:
+    raw = (
+        entity.get("entity_type")
+        or entity.get("type")
+        or entity.get("category")
+        or entity.get("subtype")
+        or entity.get("kind")
+        or ""
+    )
+    normalized = normalize_entity_type(str(raw))
+    if normalized:
+        return normalized
+    entity_id = str(entity.get("id") or "")
+    if entity_id.startswith("person-") or entity_id.startswith("person:"):
+        return "PERSON"
+    if entity_id.startswith("office-") or entity_id.startswith("office:"):
+        return "OFFICE"
+    if entity_id.startswith("party-") or entity_id.startswith("party:"):
+        return "PARTY"
+    return ""
+
+
+def _registry_entity_from_graph(entity: dict[str, Any]) -> dict[str, Any]:
+    entity_id = str(entity.get("id") or "").strip()
+    canonical_name = str(entity.get("canonical_name") or entity.get("name") or entity.get("label") or entity_id).strip()
+    aliases = [
+        str(alias).strip()
+        for alias in (entity.get("aliases") or [])
+        if str(alias or "").strip()
+    ]
+    for candidate in (canonical_name, str(entity.get("label") or ""), str(entity.get("name") or "")):
+        if candidate and candidate not in aliases:
+            aliases.append(candidate)
+    return {
+        "id": entity_id,
+        "entity_type": graph_entity_type(entity) or "DOCUMENT",
+        "canonical_name": canonical_name,
+        "aliases": sorted(set(aliases)),
+        "external_ids": dict(entity.get("external_ids") or {}),
+        "merge_history": list(entity.get("merge_history") or []),
+        "source_graph_id": entity_id,
+        "updated_at": str(entity.get("updated_at") or iso_now()),
+    }
+
+
+def build_entity_registry(graph: dict[str, Any] | None = None) -> dict[str, Any]:
+    graph = graph or load_graph()
+    entities: list[dict[str, Any]] = []
+    seen: set[str] = set()
+    for entity in list(graph.get("entities", []) or []) + list(graph.get("vertices", []) or []):
+        if not isinstance(entity, dict):
+            continue
+        entity_id = str(entity.get("id") or "").strip()
+        if not entity_id or entity_id in seen:
+            continue
+        seen.add(entity_id)
+        entities.append(_registry_entity_from_graph(entity))
+    alias_to_entity_id: dict[str, str] = {}
+    for entity in entities:
+        for alias in [entity.get("canonical_name", ""), *(entity.get("aliases") or [])]:
+            for key in {normalize_text(str(alias)), canonical_name_key(str(alias)), canonical_person_key(str(alias))}:
+                if key:
+                    alias_to_entity_id.setdefault(key, str(entity["id"]))
+    return {
+        "version": 1,
+        "updated_at": iso_now(),
+        "entity_types": ENTITY_TYPES,
+        "entities": sorted(entities, key=lambda item: (item.get("entity_type", ""), item.get("canonical_name", ""))),
+        "indexes": {"alias_to_entity_id": alias_to_entity_id},
+    }
+
+
+def load_entity_registry(graph: dict[str, Any] | None = None) -> dict[str, Any]:
+    registry = load_json(ENTITY_REGISTRY_FILE, {})
+    if isinstance(registry, dict) and isinstance(registry.get("entities"), list):
+        return registry
+    return build_entity_registry(graph)
+
+
+def write_entity_registry(graph: dict[str, Any] | None = None) -> dict[str, Any]:
+    registry = build_entity_registry(graph)
+    write_json(ENTITY_REGISTRY_FILE, registry)
+    return registry
+
+
+def _alias_bucket_for_entity_type(entity_type: str) -> str:
+    normalized = normalize_entity_type(entity_type)
+    if normalized == "PERSON":
+        return "people"
+    if normalized == "LOCATION":
+        return "places"
+    return "orgs"
+
+
+def append_claim_records(claims: list[dict[str, Any]], path: Path | None = None) -> list[dict[str, Any]]:
+    path = path or CLAIMS_LOG_FILE
+    rows: list[dict[str, Any]] = []
+    for claim in claims:
+        if not isinstance(claim, dict):
+            continue
+        subject = str(claim.get("subject_vertex_id") or claim.get("subject_id") or claim.get("subject_text") or "").strip()
+        obj = str(claim.get("object_vertex_id") or claim.get("object_id") or claim.get("object_text") or "").strip()
+        claim_type = str(claim.get("claim_type") or claim.get("relation_type") or claim.get("predicate") or "").strip()
+        source_url = str(claim.get("source_url") or "").strip()
+        evidence_quote = str(claim.get("evidence_quote") or "").strip()
+        claim_id = str(claim.get("id") or f"claim:{stable_hash(subject, obj, claim_type, source_url, evidence_quote)}")
+        row = {
+            "id": claim_id,
+            "claim_type": claim_type,
+            "subject_vertex_id": subject,
+            "object_vertex_id": obj,
+            "statement": str(claim.get("statement") or "").strip(),
+            "source_url": source_url,
+            "evidence_quote": evidence_quote,
+            "status": str(claim.get("status") or "candidate").strip(),
+            "observed_at": str(claim.get("observed_at") or iso_now()),
+        }
+        rows.append({**claim, **row})
+    path.parent.mkdir(parents=True, exist_ok=True)
+    with path.open("a", encoding="utf-8") as handle:
+        for row in rows:
+            handle.write(json.dumps(row, ensure_ascii=False))
+            handle.write("\n")
+    return rows
+
+
+def load_claim_records(path: Path | None = None, *, limit: int | None = None) -> list[dict[str, Any]]:
+    path = path or CLAIMS_LOG_FILE
+    if not path.exists():
+        return []
+    rows: list[dict[str, Any]] = []
+    with path.open("r", encoding="utf-8") as handle:
+        for line in handle:
+            raw = line.strip()
+            if not raw:
+                continue
+            try:
+                parsed = json.loads(raw)
+            except json.JSONDecodeError:
+                continue
+            if isinstance(parsed, dict):
+                rows.append(parsed)
+    if limit is not None and limit >= 0:
+        return rows[-limit:]
+    return rows
+
+
+def claim_records_index(claims: list[dict[str, Any]] | None = None) -> dict[str, Any]:
+    rows = claims if claims is not None else load_claim_records()
+    by_entity: dict[str, list[dict[str, Any]]] = defaultdict(list)
+    by_type: dict[str, list[dict[str, Any]]] = defaultdict(list)
+    by_source: dict[str, list[dict[str, Any]]] = defaultdict(list)
+    for claim in rows:
+        if not isinstance(claim, dict):
+            continue
+        claim_type = str(claim.get("claim_type") or claim.get("predicate") or "").strip()
+        source_url = str(claim.get("source_url") or "").strip()
+        subject_id = str(claim.get("subject_vertex_id") or claim.get("subject_id") or "").strip()
+        object_id = str(claim.get("object_vertex_id") or claim.get("object_id") or "").strip()
+        if claim_type:
+            by_type[claim_type].append(claim)
+        if source_url:
+            by_source[source_url].append(claim)
+        for entity_id in (subject_id, object_id):
+            if entity_id:
+                by_entity[entity_id].append(claim)
+    return {
+        "count": len(rows),
+        "by_entity": dict(by_entity),
+        "by_type": dict(by_type),
+        "by_source": dict(by_source),
+    }
 
 
 def slugify(value: str) -> str:
@@ -805,10 +1087,20 @@ def load_aliases() -> dict[str, set[str]]:
 
 
 def load_entity_alias_index(graph: dict[str, Any] | None = None) -> dict[str, dict[str, str]]:
-    alias_index: dict[str, dict[str, str]] = {"people": {}, "orgs": {}, "places": {}}
+    alias_index: dict[str, dict[str, str]] = {"people": {}, "orgs": {}, "places": {}, "_types": {}}
     graph = graph or load_graph()
     entity_index_by_name: dict[str, dict[str, Any]] = {}
-    for entity in graph.get("entities", []):
+    seen_entity_ids: set[str] = set()
+    for entity in list(graph.get("entities", []) or []) + list(graph.get("vertices", []) or []):
+        if not isinstance(entity, dict):
+            continue
+        entity_id = str(entity.get("id") or "").strip()
+        if entity_id and entity_id in seen_entity_ids:
+            continue
+        if entity_id:
+            seen_entity_ids.add(entity_id)
+        if entity_id:
+            alias_index["_types"][entity_id] = graph_entity_type(entity)
         names = [entity.get("name", "")] + [str(alias) for alias in entity.get("aliases", []) or []]
         for name in names:
             normalized = normalize_text(name)
@@ -820,6 +1112,21 @@ def load_entity_alias_index(graph: dict[str, Any] | None = None) -> dict[str, di
             person_canonical = canonical_person_key(name)
             if person_canonical:
                 entity_index_by_name.setdefault(person_canonical, entity)
+    registry = load_entity_registry(graph)
+    for registry_entity in registry.get("entities", []) if isinstance(registry, dict) else []:
+        if not isinstance(registry_entity, dict):
+            continue
+        entity_id = str(registry_entity.get("id") or "").strip()
+        if not entity_id:
+            continue
+        entity_type = graph_entity_type(registry_entity)
+        if entity_type:
+            alias_index["_types"][entity_id] = entity_type
+        bucket = _alias_bucket_for_entity_type(entity_type)
+        for candidate in [registry_entity.get("canonical_name", ""), *(registry_entity.get("aliases") or [])]:
+            for key in {normalize_text(str(candidate)), canonical_name_key(str(candidate)), canonical_person_key(str(candidate))}:
+                if key:
+                    alias_index[bucket].setdefault(key, entity_id)
     alias_payloads = {
         "people": ALIASES_DIR / "people.json",
         "orgs": ALIASES_DIR / "orgs.json",
@@ -850,20 +1157,46 @@ def load_entity_alias_index(graph: dict[str, Any] | None = None) -> dict[str, di
     return alias_index
 
 
-def resolve_entity(name: str, alias_index: dict[str, dict[str, str]] | dict[str, str], bucket: str = "") -> str | None:
+def _resolved_entity_type(alias_index: dict[str, dict[str, str]] | dict[str, str], entity_id: str) -> str:
+    if not isinstance(alias_index, dict):
+        return ""
+    scoped = alias_index.get("_types")
+    if isinstance(scoped, dict):
+        return str(scoped.get(entity_id) or "")
+    return ""
+
+
+def _resolution_allowed(alias_index: dict[str, dict[str, str]] | dict[str, str], entity_id: str, expected_type: str) -> bool:
+    expected = normalize_entity_type(expected_type)
+    if not expected:
+        return True
+    actual = _resolved_entity_type(alias_index, entity_id)
+    return not actual or entity_types_compatible(actual, expected)
+
+
+def resolve_entity(
+    name: str,
+    alias_index: dict[str, dict[str, str]] | dict[str, str],
+    bucket: str = "",
+    entity_type: str = "",
+) -> str | None:
     normalized = normalize_text(str(name or ""))
     if not normalized:
         return None
+    expected_type = normalize_entity_type(entity_type or bucket)
     canonical = canonical_name_key(name)
     person_canonical = canonical_person_key(name)
     if bucket:
         scoped = alias_index.get(bucket, {}) if isinstance(alias_index, dict) else {}
         if isinstance(scoped, dict) and normalized in scoped:
-            return str(scoped[normalized])
+            entity_id = str(scoped[normalized])
+            return entity_id if _resolution_allowed(alias_index, entity_id, expected_type) else None
         if isinstance(scoped, dict) and canonical in scoped:
-            return str(scoped[canonical])
+            entity_id = str(scoped[canonical])
+            return entity_id if _resolution_allowed(alias_index, entity_id, expected_type) else None
         if isinstance(scoped, dict) and person_canonical in scoped:
-            return str(scoped[person_canonical])
+            entity_id = str(scoped[person_canonical])
+            return entity_id if _resolution_allowed(alias_index, entity_id, expected_type) else None
         if isinstance(scoped, dict) and scoped:
             best_score = 0.0
             best_id: str | None = None
@@ -876,26 +1209,36 @@ def resolve_entity(name: str, alias_index: dict[str, dict[str, str]] | dict[str,
                 if score > best_score:
                     best_score = score
                     best_id = str(entity_id)
-            if best_id and best_score >= 0.88:
+            if best_id and best_score >= 0.88 and _resolution_allowed(alias_index, best_id, expected_type):
                 return best_id
         return None
     if isinstance(alias_index, dict):
         direct = alias_index.get(normalized)
-        if isinstance(direct, str):
+        if isinstance(direct, str) and _resolution_allowed(alias_index, direct, expected_type):
             return direct
         direct = alias_index.get(canonical)
-        if isinstance(direct, str):
+        if isinstance(direct, str) and _resolution_allowed(alias_index, direct, expected_type):
             return direct
         direct = alias_index.get(person_canonical)
-        if isinstance(direct, str):
+        if isinstance(direct, str) and _resolution_allowed(alias_index, direct, expected_type):
             return direct
-        for scoped in alias_index.values():
+        for scope_name, scoped in alias_index.items():
+            if scope_name == "_types":
+                continue
+            if not isinstance(scoped, dict):
+                continue
             if isinstance(scoped, dict) and normalized in scoped:
-                return str(scoped[normalized])
+                entity_id = str(scoped[normalized])
+                if _resolution_allowed(alias_index, entity_id, expected_type):
+                    return entity_id
             if isinstance(scoped, dict) and canonical in scoped:
-                return str(scoped[canonical])
+                entity_id = str(scoped[canonical])
+                if _resolution_allowed(alias_index, entity_id, expected_type):
+                    return entity_id
             if isinstance(scoped, dict) and person_canonical in scoped:
-                return str(scoped[person_canonical])
+                entity_id = str(scoped[person_canonical])
+                if _resolution_allowed(alias_index, entity_id, expected_type):
+                    return entity_id
     return None
 
 
@@ -936,29 +1279,31 @@ def relation_label_ru(relation_type: str) -> str:
 
 
 def load_graph() -> dict[str, Any]:
-    if CANONICAL_GRAPH.exists():
+    graph_path = canonical_graph_path()
+    if graph_path.exists():
         from graph_domain import migrate_graph_bundle
 
-        raw_graph = load_json(CANONICAL_GRAPH, {})
+        raw_graph = load_json(graph_path, {})
         graph, report = migrate_graph_bundle(raw_graph)
         report_status = str(report.get("status") or "") if isinstance(report, dict) else ""
         if report_status == "migrated_to_v3":
-            write_json(CANONICAL_GRAPH, graph)
-            write_json(GRAPH_MIGRATION_REPORT, report)
-            append_jsonl(
-                EVIDENCE_LOG,
-                [
-                    {
-                        "recorded_at": iso_now(),
-                        "action": "migrated_to_v3",
-                        "schema_version": 3,
-                        "old_counts": report.get("old_counts", {}),
-                        "new_counts": report.get("new_counts", {}),
-                        "claim_only_relations": report.get("claim_only_relations", 0),
-                        "canonical_edges_admitted": report.get("canonical_edges_admitted", 0),
-                    }
-                ],
-            )
+            write_json(graph_path, graph)
+            if not canonical_graph_is_overridden():
+                write_json(GRAPH_MIGRATION_REPORT, report)
+                append_jsonl(
+                    EVIDENCE_LOG,
+                    [
+                        {
+                            "recorded_at": iso_now(),
+                            "action": "migrated_to_v3",
+                            "schema_version": 3,
+                            "old_counts": report.get("old_counts", {}),
+                            "new_counts": report.get("new_counts", {}),
+                            "claim_only_relations": report.get("claim_only_relations", 0),
+                            "canonical_edges_admitted": report.get("canonical_edges_admitted", 0),
+                        }
+                    ],
+                )
         return graph
     return migrate_legacy_graph()
 
@@ -1047,13 +1392,13 @@ def migrate_legacy_graph() -> dict[str, Any]:
     graph = {
         "version": 1,
         "updated_at": iso_now(),
-        "source_of_truth": str(CANONICAL_GRAPH.relative_to(ROOT)),
+        "source_of_truth": str(canonical_graph_path().relative_to(ROOT)) if str(canonical_graph_path()).startswith(str(ROOT)) else str(canonical_graph_path()),
         "relation_types": relation_types or [{"id": item, "label": item.replace("_", " ")} for item in RELATION_TYPES],
         "entities": sorted(entities, key=lambda item: item["name"]),
         "relations": sorted(relations, key=lambda item: item["id"]),
         "story_mentions": [],
     }
-    write_json(CANONICAL_GRAPH, graph)
+    write_json(canonical_graph_path(), graph)
     if not EVIDENCE_LOG.exists():
         append_jsonl(EVIDENCE_LOG, evidence_rows)
     return graph

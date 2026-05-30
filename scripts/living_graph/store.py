@@ -14,6 +14,7 @@ if str(SCRIPT_DIR) not in sys.path:
 from pipeline_common import (  # noqa: E402
     CANONICAL_GRAPH,
     ROOT,
+    canonical_graph_path,
     fetch_url,
     iso_now,
     load_graph,
@@ -29,6 +30,10 @@ KNOWLEDGE_GRAPH_PATH = WEB_DIR / "knowledge_graph.json"
 RESEARCH_RUNS_DIR = ROOT / "content" / "system" / "research-runs"
 LATEST_RESEARCH_RUN_FILE = RESEARCH_RUNS_DIR / "latest.json"
 RESEARCH_RUNS_LOG = RESEARCH_RUNS_DIR / "runs.jsonl"
+
+
+def graph_write_path() -> Path:
+    return canonical_graph_path()
 
 
 def append_jsonl(path: Path, payload: dict[str, Any]) -> None:

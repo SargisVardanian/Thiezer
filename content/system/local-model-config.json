@@ -1,6 +1,7 @@
 {
   "runtime": {
     "primary_provider": "ollama",
+    "default_backend_mode": "ollama-native",
     "ollama_url": "http://127.0.0.1:11434",
     "ollama_options": {
       "default_num_ctx": 8192,
@@ -21,6 +22,59 @@
         "api_base": "https://openrouter.ai/api/v1",
         "api_key_env": "OPENROUTER_API_KEY"
       }
+    }
+  },
+  "backends": {
+    "ollama-native": {
+      "enabled": true,
+      "backend_type": "ollama",
+      "base_url": "http://127.0.0.1:11434",
+      "model": "gemma4:e4b",
+      "native_max_ctx": 8192,
+      "effective_max_ctx": 65536,
+      "supports_kv_compression": false,
+      "supports_prefix_cache": false,
+      "supports_speculative_decode": false,
+      "streaming": true,
+      "structured_output": true
+    },
+    "longctx-backend": {
+      "enabled": false,
+      "backend_type": "openai-compatible",
+      "base_url": "",
+      "model": "",
+      "native_max_ctx": 131072,
+      "effective_max_ctx": 131072,
+      "supports_kv_compression": true,
+      "supports_prefix_cache": false,
+      "supports_speculative_decode": false,
+      "streaming": true,
+      "structured_output": true
+    }
+  },
+  "fallback_memory_policy": {
+    "when": "required_context_exceeds_effective_backend_context_or_longctx_backend_unavailable",
+    "order": [
+      "retrieval",
+      "summarization_compaction",
+      "rolling_window",
+      "chunked_ingestion"
+    ],
+    "retrieval": {
+      "graph_context_first": true,
+      "source_quote_required": true
+    },
+    "summarization_compaction": {
+      "preserve_citations": true,
+      "preserve_open_questions": true
+    },
+    "rolling_window": {
+      "keep_recent_turns": 8,
+      "keep_system_contract": true
+    },
+    "chunked_ingestion": {
+      "chunk_tokens": 6000,
+      "overlap_tokens": 600
     }
   },
   "roles": {

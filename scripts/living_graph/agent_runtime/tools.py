@@ -10,12 +10,12 @@ from urllib.parse import urlparse
 
 try:
     from ..profiles import card_for_node
-    from ..store import CANONICAL_GRAPH, load_graph, normalize_text, short_host, stable_hash, write_json
+    from ..store import graph_write_path, load_graph, normalize_text, short_host, stable_hash, write_json
     from ..research_tools import PageFetcher, build_search_provider, emit_event, extract_page_text, extract_claims_from_page
     from .task_db import save_artifact, save_graph_diff, save_tool_call
 except ImportError:  # pragma: no cover
     from living_graph.profiles import card_for_node
-    from living_graph.store import CANONICAL_GRAPH, load_graph, normalize_text, short_host, stable_hash, write_json
+    from living_graph.store import graph_write_path, load_graph, normalize_text, short_host, stable_hash, write_json
     from living_graph.research_tools import PageFetcher, build_search_provider, emit_event, extract_page_text, extract_claims_from_page
     from living_graph.agent_runtime.task_db import save_artifact, save_graph_diff, save_tool_call
 
@@ -399,7 +399,7 @@ def propose_graph_update(run_id: str, item_id: str, proposal: dict[str, Any]) ->
             stage="admit",
             item_id=item_id,
         )
-    write_json(CANONICAL_GRAPH, graph)
+    write_json(graph_write_path(), graph)
     save_graph_diff(run_id, diff)
     save_tool_call(run_id, item_id, "propose_graph_update", {"entity_id": proposal["entity"]["id"]}, diff)
     return diff

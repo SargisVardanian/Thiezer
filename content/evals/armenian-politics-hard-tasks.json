@@ -1,0 +1,342 @@
+{
+  "suite": "armenian-politics-hard",
+  "version": 1,
+  "description": "Hard local-model evaluation tasks for Armenian politics workflows. Each prompt is self-contained and source-pack grounded so deterministic checks can validate structure, caution, entity typing, and evidence discipline.",
+  "default_language": "ru",
+  "response_contract": {
+    "format": "json_only",
+    "required_top_level_keys": [
+      "answer",
+      "claims",
+      "entities",
+      "source_use",
+      "cautions"
+    ],
+    "claim_required_keys": [
+      "claim",
+      "confidence",
+      "source_ids"
+    ],
+    "entity_required_keys": [
+      "name",
+      "type"
+    ]
+  },
+  "tasks": [
+    {
+      "id": "am-pol-001-person-office-temporal",
+      "title": "Separate a politician from the prime-minister office",
+      "difficulty": "very_hard",
+      "task_type": "typed_temporal_claims",
+      "prompt": "Разбери пакет источников и верни только JSON. Нужно отделить человека от должности и построить осторожные claims.\n\nИсточники:\nS1: Official biography page says Nikol Pashinyan was elected Prime Minister of Armenia by the National Assembly on 2018-05-08.\nS2: Government directory says the Prime Minister of Armenia is an office inside the Government of Armenia.\nS3: A social post says: 'Pashinyan is the prime minister, therefore the person and the office are the same node.'\n\nЗадача: выведи сущности, claims и cautions. Не сливай PERSON и OFFICE.",
+      "checks": {
+        "required_terms": [
+          "Nikol Pashinyan",
+          "Prime Minister of Armenia",
+          "PERSON",
+          "OFFICE",
+          "2018-05-08"
+        ],
+        "forbidden_terms": [
+          "same node",
+          "merged entity",
+          "PERSON=OFFICE",
+          "один и тот же узел",
+          "одна и та же сущность"
+        ],
+        "required_entity_types": {
+          "Nikol Pashinyan": "PERSON",
+          "Prime Minister of Armenia": "OFFICE"
+        },
+        "required_source_ids": [
+          "S1",
+          "S2"
+        ],
+        "must_have_caution_terms": [
+          "social",
+          "do not merge"
+        ]
+      }
+    },
+    {
+      "id": "am-pol-002-party-faction-office",
+      "title": "Do not collapse party, faction, and office",
+      "difficulty": "very_hard",
+      "task_type": "typed_entity_resolution",
+      "prompt": "Верни только JSON. Разреши сущности и отношения без слияния разных типов.\n\nИсточники:\nS1: Armenia's National Assembly lists Alen Simonyan as President of the National Assembly.\nS2: Civil Contract is described as a political party associated with the parliamentary majority.\nS3: A faction page uses the label Civil Contract faction for the parliamentary faction.\nS4: A commentator writes: 'Civil Contract, the Civil Contract faction, and the National Assembly presidency are effectively the same political object.'\n\nЗадача: выдели PERSON, PARTY, FACTION, OFFICE и explain cautions.",
+      "checks": {
+        "required_terms": [
+          "Alen Simonyan",
+          "Civil Contract",
+          "Civil Contract faction",
+          "President of the National Assembly",
+          "PERSON",
+          "PARTY",
+          "FACTION",
+          "OFFICE"
+        ],
+        "forbidden_terms": [
+          "same political object",
+          "merge party faction office",
+          "единый политический объект",
+          "одним и тем же политическим объектом"
+        ],
+        "required_entity_types": {
+          "Alen Simonyan": "PERSON",
+          "Civil Contract": "PARTY",
+          "Civil Contract faction": "FACTION",
+          "President of the National Assembly": "OFFICE"
+        },
+        "required_source_ids": [
+          "S1",
+          "S2",
+          "S3"
+        ],
+        "must_have_caution_terms": [
+          "commentator",
+          "not evidence"
+        ]
+      }
+    },
+    {
+      "id": "am-pol-003-conflict-official-watchdog",
+      "title": "Compare conflicting official and watchdog claims",
+      "difficulty": "very_hard",
+      "task_type": "conflict_compare",
+      "prompt": "Верни только JSON. Не выбирай победителя без достаточных доказательств.\n\nИсточники:\nS1: A ministry statement says a public procurement reform is on schedule and implementation milestones are being met.\nS2: A civil-society watchdog report says several milestones are delayed and asks for a revised timetable.\nS3: A media article quotes both S1 and S2 but adds no independent documents.\n\nЗадача: сделай comparison claims, source_use, unresolved_questions и cautions.",
+      "checks": {
+        "required_terms": [
+          "ministry",
+          "watchdog",
+          "conflict",
+          "unresolved",
+          "milestones"
+        ],
+        "forbidden_terms": [
+          "proved false",
+          "definitely corrupt",
+          "certainly on schedule"
+        ],
+        "required_source_ids": [
+          "S1",
+          "S2",
+          "S3"
+        ],
+        "must_have_caution_terms": [
+          "independent",
+          "cannot determine"
+        ]
+      }
+    },
+    {
+      "id": "am-pol-004-insufficient-party-switch",
+      "title": "Refuse an unsupported party-switch claim",
+      "difficulty": "very_hard",
+      "task_type": "insufficient_evidence",
+      "prompt": "Верни только JSON. Нужно проверить, можно ли занести claim в граф.\n\nИсточники:\nS1: Anonymous Telegram channel claims a named Armenian MP has secretly switched party allegiance.\nS2: The MP's official parliamentary profile still lists the original faction.\nS3: No party statement, parliamentary record, or direct quote is present in the packet.\n\nЗадача: реши, какой статус claim должен получить: verified, candidate, rejected, or insufficient_evidence. Укажи почему.",
+      "checks": {
+        "required_terms": [
+          "insufficient_evidence",
+          "Telegram",
+          "official parliamentary profile",
+          "candidate"
+        ],
+        "forbidden_terms": [
+          "verified",
+          "secretly switched is true"
+        ],
+        "required_source_ids": [
+          "S1",
+          "S2",
+          "S3"
+        ],
+        "must_have_caution_terms": [
+          "anonymous",
+          "no party statement"
+        ]
+      }
+    },
+    {
+      "id": "am-pol-005-multilingual-aliases",
+      "title": "Resolve Armenian, Russian, and English aliases safely",
+      "difficulty": "very_hard",
+      "task_type": "alias_resolution",
+      "prompt": "Верни только JSON. Разреши алиасы и типы.\n\nAlias packet:\nA1: Նիկոլ Փաշինյան\nA2: Nikol Pashinyan\nA3: Никола Пашинян\nA4: ՀՀ վարչապետ\nA5: Prime Minister of Armenia\nA6: премьер-министр Армении\n\nЗадача: сгруппируй алиасы в канонические сущности, отдели PERSON от OFFICE, и предложи безопасные edges.",
+      "checks": {
+        "required_terms": [
+          "Նիկոլ Փաշինյան",
+          "Nikol Pashinyan",
+          "Никола Пашинян",
+          "ՀՀ վարչապետ",
+          "Prime Minister of Armenia",
+          "PERSON",
+          "OFFICE"
+        ],
+        "forbidden_terms": [
+          "all aliases one entity",
+          "same entity"
+        ],
+        "required_entity_types": {
+          "Nikol Pashinyan": "PERSON",
+          "Prime Minister of Armenia": "OFFICE"
+        },
+        "must_have_caution_terms": [
+          "alias",
+          "type"
+        ]
+      }
+    },
+    {
+      "id": "am-pol-006-high-risk-accusation",
+      "title": "Handle an accusation with high-risk relation rules",
+      "difficulty": "very_hard",
+      "task_type": "high_risk_relation",
+      "prompt": "Верни только JSON. Это high-risk political relation.\n\nИсточники:\nS1: An opposition speech accuses a minister of favoring a donor in a contract.\nS2: Procurement records confirm a contract exists but do not mention favoritism.\nS3: The minister denies wrongdoing.\nS4: No court filing, audit finding, or official investigation document is in the packet.\n\nЗадача: не создавай canonical ACCUSED_OF/FAVORITISM fact unless threshold is met. Сформулируй candidate claims, evidence gaps, and cautions.",
+      "checks": {
+        "required_terms": [
+          "high-risk",
+          "candidate",
+          "denies",
+          "procurement records",
+          "evidence gaps"
+        ],
+        "forbidden_terms": [
+          "favoritism verified",
+          "corrupt",
+          "guilty"
+        ],
+        "required_source_ids": [
+          "S1",
+          "S2",
+          "S3",
+          "S4"
+        ],
+        "must_have_caution_terms": [
+          "court",
+          "audit",
+          "investigation"
+        ]
+      }
+    },
+    {
+      "id": "am-pol-007-temporal-office-holders",
+      "title": "Represent office holders over time without overwriting history",
+      "difficulty": "very_hard",
+      "task_type": "temporal_graph_update",
+      "prompt": "Верни только JSON. Обнови граф с temporal edges.\n\nИсточники:\nS1: Person A held a ministry office from 2019-01-01 to 2021-08-02.\nS2: Person B was appointed to the same office on 2021-08-02.\nS3: A summary page currently says only 'Person B is the minister'.\n\nЗадача: предложи claims/edges так, чтобы не удалить историю Person A и не сделать two simultaneous holders without dates.",
+      "checks": {
+        "required_terms": [
+          "Person A",
+          "Person B",
+          "2019-01-01",
+          "2021-08-02",
+          "valid_from",
+          "valid_to"
+        ],
+        "forbidden_terms": [
+          "delete Person A",
+          "overwrite history"
+        ],
+        "required_source_ids": [
+          "S1",
+          "S2",
+          "S3"
+        ],
+        "must_have_caution_terms": [
+          "temporal",
+          "dates"
+        ]
+      }
+    },
+    {
+      "id": "am-pol-008-quote-accurate-summary",
+      "title": "Produce a quote-disciplined political brief",
+      "difficulty": "very_hard",
+      "task_type": "quote_accurate_summary",
+      "prompt": "Верни только JSON. Напиши краткий политический brief без новых фактов.\n\nИсточники:\nS1: Government statement: 'The draft electoral reform package will be submitted after interagency review.'\nS2: Opposition statement: 'The process lacks transparency and should include public hearings before submission.'\nS3: NGO note: 'Public consultation materials have not yet been published on the ministry website.'\n\nЗадача: brief должен отделять official plan, opposition criticism, and NGO observation. Используй source_ids for every claim.",
+      "checks": {
+        "required_terms": [
+          "electoral reform",
+          "interagency review",
+          "transparency",
+          "public hearings",
+          "consultation materials"
+        ],
+        "forbidden_terms": [
+          "already submitted",
+          "law passed",
+          "secret deal"
+        ],
+        "required_source_ids": [
+          "S1",
+          "S2",
+          "S3"
+        ],
+        "must_have_caution_terms": [
+          "no new facts",
+          "source"
+        ]
+      }
+    },
+    {
+      "id": "am-pol-009-country-graph-not-working-memory",
+      "title": "Keep country graph as validated export, not scratchpad",
+      "difficulty": "very_hard",
+      "task_type": "graph_safety",
+      "prompt": "Верни только JSON. Определи, что можно писать в validated country graph, а что должно остаться в claims log.\n\nИсточники:\nS1: Official page confirms a ministry exists.\nS2: Media report claims a planned reshuffle may occur next month, citing unnamed sources.\nS3: Analyst comment speculates that the reshuffle would strengthen one faction.\n\nЗадача: классифицируй каждую запись как validated_graph, claims_log, or reject. Объясни why.",
+      "checks": {
+        "required_terms": [
+          "validated_graph",
+          "claims_log",
+          "reject",
+          "unnamed sources",
+          "speculates"
+        ],
+        "forbidden_terms": [
+          "write all to graph",
+          "reshuffle verified"
+        ],
+        "required_source_ids": [
+          "S1",
+          "S2",
+          "S3"
+        ],
+        "must_have_caution_terms": [
+          "validated",
+          "scratchpad"
+        ]
+      }
+    },
+    {
+      "id": "am-pol-010-election-chain-reasoning",
+      "title": "Multi-hop reasoning across offices, parties, and evidence strength",
+      "difficulty": "very_hard",
+      "task_type": "multi_hop_reasoning",
+      "prompt": "Верни только JSON. Сделай multi-hop answer without hallucinating.\n\nИсточники:\nS1: Candidate X was nominated by Party Y for a municipal election.\nS2: Party Y is part of Alliance Z for this election cycle.\nS3: Candidate X previously served in Office Q until 2020-12-31.\nS4: A blog says Candidate X still controls Office Q through allies but gives no documents.\n\nВопрос: какие verified links можно вывести между Candidate X, Party Y, Alliance Z, and Office Q? Что нельзя утверждать?",
+      "checks": {
+        "required_terms": [
+          "Candidate X",
+          "Party Y",
+          "Alliance Z",
+          "Office Q",
+          "2020-12-31",
+          "verified links"
+        ],
+        "forbidden_terms": [
+          "still controls Office Q",
+          "control verified"
+        ],
+        "required_source_ids": [
+          "S1",
+          "S2",
+          "S3",
+          "S4"
+        ],
+        "must_have_caution_terms": [
+          "blog",
+          "no documents"
+        ]
+      }
+    }
+  ]
+}

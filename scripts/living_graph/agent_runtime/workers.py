@@ -7,7 +7,7 @@ from typing import Any
 from urllib.parse import urlparse
 
 try:
-    from pipeline_common import canonical_person_key, load_entity_alias_index, resolve_entity
+    from pipeline_common import append_claim_records, canonical_person_key, load_entity_alias_index, resolve_entity, write_entity_registry
     from ..store import iso_now, load_graph, normalize_text
     from .context_builder import build_work_item_context
     from .government_am import GOV_MEMBERS_URL, GOV_STAFF_STRUCTURE_URL, parse_government_members_page, parse_minister_profile_page, parse_prime_minister_staff_structure_page
@@ -25,7 +25,7 @@ try:
         validate_source_quality,
     )
 except ImportError:  # pragma: no cover
-    from pipeline_common import canonical_person_key, load_entity_alias_index, resolve_entity
+    from pipeline_common import append_claim_records, canonical_person_key, load_entity_alias_index, resolve_entity, write_entity_registry
     from living_graph.store import iso_now, load_graph, normalize_text
     from living_graph.agent_runtime.context_builder import build_work_item_context
     from living_graph.agent_runtime.government_am import GOV_MEMBERS_URL, GOV_STAFF_STRUCTURE_URL, parse_government_members_page, parse_minister_profile_page, parse_prime_minister_staff_structure_page
@@ -79,6 +79,31 @@ def _org_id(prefix: str, title: str) -> str:
 
 def _government_id() -> str:
     return _org_id("institution", "Government of Armenia")
+
+
+def _record_claim_memory(run_id: str, item_id: str, claims: list[dict[str, Any]], *, stage: str, source_url: str = "") -> list[dict[str, Any]]:
+    enriched: list[dict[str, Any]] = []
+    for claim in claims:
+        if not isinstance(claim, dict):
+            continue
+        enriched.append(
+            {
+                **claim,
+                "run_id": run_id,
+                "item_id": item_id,
+                "stage": stage,
+                "source_url": str(claim.get("source_url") or source_url or "").strip(),
+                "recorded_at": iso_now(),
+            }
+        )
+    return append_claim_records(enriched) if enriched else []
+
+
+def _refresh_entity_registry_after_graph_write() -> None:
+    try:
+        write_entity_registry(load_graph())
+    except Exception:
+        pass
 
 
 ROLE_HISTORY_OFFICE_ALIASES = (
@@ -758,8 +783,10 @@ def _fetch_role_history_profile(run_id: str, item: dict[str, Any]) -> WorkItemRe
                         "updated_at": iso_now(),
                     },
                 )
+                recorded_claims = _record_claim_memory(run_id, item["item_id"], [claim], stage="staff_structure_roster", source_url=fetch["final_url"])
+                _refresh_entity_registry_after_graph_write()
                 roster_claim_count += 1
-                increment_run_summary(run_id, role_history_office_holder_claims=1)
+                increment_run_summary(run_id, role_history_office_holder_claims=1, claims_logged=len(recorded_claims))
                 save_artifact(
                     run_id,
                     item["item_id"],
@@ -1078,6 +1105,7 @@ def _extract_role_history_claims(run_id: str, item: dict[str, Any]) -> WorkItemR
             save_artifact(run_id, item["item_id"], "rejected_change", {"type": "claim", "reason": reason, "claim": claim}, ref=claim["predicate"])
             return WorkItemResult(ok=False, status="failed", error=reason, current_stage="extract_role_tenure_claims")
 
+    recorded_claims = _record_claim_memory(run_id, item["item_id"], claims, stage="extract_role_tenure_claims", source_url=profile_url)
     for claim in claims:
         save_artifact(run_id, item["item_id"], "extracted_claim", claim, ref=claim["predicate"])
 
@@ -1118,9 +1146,10 @@ def _extract_role_history_claims(run_id: str, item: dict[str, Any]) -> WorkItemR
         diff.new_node_ids.extend(entity_diff.get("new_node_ids", []))
         diff.updated_node_ids.extend(entity_diff.get("updated_node_ids", []))
 
+    _refresh_entity_registry_after_graph_write()
     coverage = dict(payload.get("coverage") or {})
     coverage["confirmed_claims"] = int(coverage.get("confirmed_claims", 0) or 0)
-    increment_run_summary(run_id, claims_extracted=len(claims), graph_updates=len(diff.new_node_ids) + len(diff.updated_node_ids) + len(diff.new_edge_ids) + len(diff.updated_edge_ids), coverage=coverage)
+    increment_run_summary(run_id, claims_extracted=len(claims), claims_logged=len(recorded_claims), graph_updates=len(diff.new_node_ids) + len(diff.updated_node_ids) + len(diff.new_edge_ids) + len(diff.updated_edge_ids), coverage=coverage)
     save_artifact(run_id, item["item_id"], "accepted_change", {"entity_id": person_id, "entity_name": entity_nodes[person_id]["name"], "graph_diff": diff.to_dict(), "coverage": coverage}, ref=person_id)
     update_run_status(
         run_id,
@@ -1177,8 +1206,8 @@ def _extract_associations(run_id: str, item: dict[str, Any]) -> WorkItemResult:
                     }
                 )
     graph["derived_relations"] = [*list(graph.get("derived_relations", []) or []), *derived][:800]
-    from pipeline_common import CANONICAL_GRAPH, write_json
-    write_json(CANONICAL_GRAPH, graph)
+    from pipeline_common import canonical_graph_path, write_json
+    write_json(canonical_graph_path(), graph)
     save_artifact(run_id, item["item_id"], "accepted_change", {"derived_relations": len(derived)}, ref="role_history_associations")
     update_run_status(run_id, "running", current_stage="extract_associations", summary_json={"derived_relations": len(derived)})
     return WorkItemResult(ok=True, status="done", current_stage="extract_associations", output={"derived_relation_count": len(derived)}, graph_diff=GraphDiff())
@@ -1396,6 +1425,7 @@ def _extract_deputy_claims(run_id: str, item: dict[str, Any]) -> WorkItemResult:
             if not ok:
                 save_artifact(run_id, item["item_id"], "rejected_change", {"type": "edge", "reason": reason, "edge": edge}, ref=edge["relation_type"])
                 return WorkItemResult(ok=False, status="failed", error=reason, current_stage="extract_deputy_claims")
+    recorded_claims = _record_claim_memory(run_id, item["item_id"], claims, stage="extract_deputy_claims", source_url=profile_url)
     diff = GraphDiff()
     base_source_url = profile_url or payload.get("source_url", "")
     base_evidence = evidence_quote
@@ -1424,12 +1454,14 @@ def _extract_deputy_claims(run_id: str, item: dict[str, Any]) -> WorkItemResult:
     diff.updated_node_ids.extend(proposal_diff.get("updated_node_ids", []))
     diff.new_edge_ids.extend(proposal_diff.get("new_edge_ids", []))
     diff.updated_edge_ids.extend(proposal_diff.get("updated_edge_ids", []))
+    _refresh_entity_registry_after_graph_write()
     for claim in claims:
         save_artifact(run_id, item["item_id"], "extracted_claim", claim, ref=claim["predicate"])
     save_artifact(run_id, item["item_id"], "accepted_change", {"entity_id": entity["id"], "graph_diff": diff.to_dict()}, ref=entity["id"])
     increment_run_summary(
         run_id,
         claims_extracted=len(claims),
+        claims_logged=len(recorded_claims),
         graph_updates=len(diff.new_node_ids) + len(diff.updated_node_ids) + len(diff.new_edge_ids) + len(diff.updated_edge_ids),
     )
     update_run_status(run_id, "running", current_stage="extract_deputy_claims")
@@ -1608,7 +1640,8 @@ def _extract_minister_claims(run_id: str, item: dict[str, Any]) -> WorkItemResul
             save_artifact(run_id, item["item_id"], "rejected_change", {"type": "claim", "reason": reason, "claim": claim}, ref=claim["predicate"])
             return WorkItemResult(ok=False, status="failed", error=reason, current_stage="extract_minister_claims")
         save_artifact(run_id, item["item_id"], "extracted_claim", claim, ref=claim["predicate"])
-    increment_run_summary(run_id, claims_extracted=len(claims))
+    recorded_claims = _record_claim_memory(run_id, item["item_id"], claims, stage="extract_minister_claims", source_url=source_url)
+    increment_run_summary(run_id, claims_extracted=len(claims), claims_logged=len(recorded_claims))
     enqueue_item(
         run_id,
         "link_minister_to_ministry",
@@ -1680,6 +1713,7 @@ def _link_minister_to_ministry(run_id: str, item: dict[str, Any]) -> WorkItemRes
     diff.updated_node_ids.extend(person_diff.get("updated_node_ids", []))
     diff.new_edge_ids.extend(person_diff.get("new_edge_ids", []))
     diff.updated_edge_ids.extend(person_diff.get("updated_edge_ids", []))
+    _refresh_entity_registry_after_graph_write()
     save_artifact(run_id, item["item_id"], "accepted_change", {"entity_id": package["person_entity"]["id"], "graph_diff": diff.to_dict()}, ref=package["person_entity"]["id"])
     increment_run_summary(
         run_id,
@@ -1725,8 +1759,8 @@ def _build_deputy_relations(run_id: str, item: dict[str, Any]) -> WorkItemResult
     graph["derived_relations"] = derived[:500]
     from graph_memory import entity_profile_card  # local import
     from pipeline_common import write_json
-    from pipeline_common import CANONICAL_GRAPH
-    write_json(CANONICAL_GRAPH, graph)
+    from pipeline_common import canonical_graph_path
+    write_json(canonical_graph_path(), graph)
     derived_ids = [row["id"] for row in derived[:500] if row.get("id")]
     save_artifact(run_id, item["item_id"], "accepted_change", {"derived_relations": len(derived_ids)}, ref="derived_relations")
     update_run_status(run_id, "running", current_stage="build_relations", summary_json={"derived_relations": len(graph["derived_relations"]), "graph_updates": len(derived_ids)})
@@ -1769,8 +1803,8 @@ def _build_government_relations(run_id: str, item: dict[str, Any]) -> WorkItemRe
             )
     graph["derived_relations"] = derived[:800]
     derived_ids = [row["id"] for row in derived if row.get("id")]
-    from pipeline_common import CANONICAL_GRAPH, write_json
-    write_json(CANONICAL_GRAPH, graph)
+    from pipeline_common import canonical_graph_path, write_json
+    write_json(canonical_graph_path(), graph)
     save_artifact(run_id, item["item_id"], "accepted_change", {"derived_relations": len(derived_ids)}, ref="derived_government_relations")
     update_run_status(run_id, "running", current_stage="build_government_relations", summary_json={"derived_relations": len(graph["derived_relations"]), "graph_updates": len(derived_ids)})
     return WorkItemResult(ok=True, status="done", current_stage="build_government_relations", output={"derived_relation_count": len(graph["derived_relations"])}, graph_diff=GraphDiff(new_edge_ids=derived_ids))

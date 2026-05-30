@@ -37,6 +37,19 @@ DEFAULT_OPENROUTER_FREE_MODELS = (
     "google/gemma-3-27b-it:free",
 )
 
+BACKEND_CAPABILITY_FIELDS = (
+    "backend_type",
+    "base_url",
+    "model",
+    "native_max_ctx",
+    "effective_max_ctx",
+    "supports_kv_compression",
+    "supports_prefix_cache",
+    "supports_speculative_decode",
+    "streaming",
+    "structured_output",
+)
+
 ROSTER_PARTY_ALIASES: dict[str, tuple[str, ...]] = {
     "party-civil-contract": (
         "civil contract",
@@ -75,6 +88,164 @@ ROSTER_PARTY_ALIASES: dict[str, tuple[str, ...]] = {
     ),
 }
 
+
+def _int_value(value: Any, default: int) -> int:
+    try:
+        parsed = int(value)
+        return parsed if parsed > 0 else default
+    except Exception:
+        return default
+
+
+def _bool_value(value: Any, default: bool = False) -> bool:
+    if isinstance(value, bool):
+        return value
+    if isinstance(value, str):
+        lowered = value.strip().lower()
+        if lowered in {"1", "true", "yes", "on"}:
+            return True
+        if lowered in {"0", "false", "no", "off"}:
+            return False
+    if value is None:
+        return default
+    return bool(value)
+
+
+def _runtime_ollama_options(model_config: dict[str, Any] | None = None) -> dict[str, Any]:
+    config = model_config if isinstance(model_config, dict) else load_model_config()
+    runtime = config.get("runtime", {}) if isinstance(config, dict) else {}
+    options = runtime.get("ollama_options", {}) if isinstance(runtime.get("ollama_options", {}), dict) else {}
+    return options
+
+
+def _runtime_ollama_url(model_config: dict[str, Any] | None = None) -> str:
+    config = model_config if isinstance(model_config, dict) else load_model_config()
+    runtime = config.get("runtime", {}) if isinstance(config, dict) else {}
+    return str(runtime.get("ollama_url") or "http://127.0.0.1:11434").rstrip("/")
+
+
+def _normalize_backend_capability(mode: str, raw: dict[str, Any], model_config: dict[str, Any]) -> dict[str, Any]:
+    runtime = model_config.get("runtime", {}) if isinstance(model_config, dict) else {}
+    ollama_options = _runtime_ollama_options(model_config)
+    default_ctx = _int_value(ollama_options.get("default_num_ctx"), 8192)
+    long_ctx = _int_value(ollama_options.get("long_num_ctx"), 65536)
+    backend_type = str(raw.get("backend_type") or raw.get("provider") or ("ollama" if mode == "ollama-native" else "")).strip()
+    native_max_ctx = _int_value(raw.get("native_max_ctx"), default_ctx if backend_type == "ollama" else long_ctx)
+    effective_max_ctx = _int_value(raw.get("effective_max_ctx"), max(native_max_ctx, long_ctx if backend_type == "ollama" else native_max_ctx))
+    model = str(raw.get("model") or "").strip()
+    if not model and backend_type == "ollama":
+        model = "gemma4:e4b"
+    base_url = str(raw.get("base_url") or "").strip()
+    if not base_url and backend_type == "ollama":
+        base_url = _runtime_ollama_url(model_config)
+    return {
+        "mode": mode,
+        "enabled": _bool_value(raw.get("enabled"), mode == "ollama-native"),
+        "backend_type": backend_type or "unknown",
+        "base_url": base_url.rstrip("/"),
+        "model": model,
+        "native_max_ctx": native_max_ctx,
+        "effective_max_ctx": effective_max_ctx,
+        "supports_kv_compression": _bool_value(raw.get("supports_kv_compression")),
+        "supports_prefix_cache": _bool_value(raw.get("supports_prefix_cache")),
+        "supports_speculative_decode": _bool_value(raw.get("supports_speculative_decode")),
+        "streaming": _bool_value(raw.get("streaming"), True),
+        "structured_output": _bool_value(raw.get("structured_output"), backend_type in {"ollama", "openai-compatible", "openrouter"}),
+    }
+
+
+def backend_capability_catalog(model_config: dict[str, Any] | None = None) -> dict[str, Any]:
+    """Return normalized backend capabilities without assuming a concrete provider."""
+    config = model_config if isinstance(model_config, dict) else load_model_config()
+    runtime = config.get("runtime", {}) if isinstance(config, dict) else {}
+    raw_backends = config.get("backends", {}) if isinstance(config, dict) else {}
+    if not isinstance(raw_backends, dict):
+        raw_backends = {}
+    synthetic_backends: dict[str, dict[str, Any]] = dict(raw_backends)
+    synthetic_backends.setdefault(
+        "ollama-native",
+        {
+            "enabled": True,
+            "backend_type": "ollama",
+            "base_url": _runtime_ollama_url(config),
+            "model": "gemma4:e4b",
+            "native_max_ctx": _int_value(_runtime_ollama_options(config).get("default_num_ctx"), 8192),
+            "effective_max_ctx": _int_value(_runtime_ollama_options(config).get("long_num_ctx"), 65536),
+            "streaming": True,
+            "structured_output": True,
+        },
+    )
+    synthetic_backends.setdefault(
+        "longctx-backend",
+        {
+            "enabled": False,
+            "backend_type": "openai-compatible",
+            "native_max_ctx": _int_value(_runtime_ollama_options(config).get("experimental_num_ctx"), 131072),
+            "effective_max_ctx": _int_value(_runtime_ollama_options(config).get("experimental_num_ctx"), 131072),
+            "supports_kv_compression": True,
+            "streaming": True,
+            "structured_output": True,
+        },
+    )
+    backends = [
+        _normalize_backend_capability(mode, raw if isinstance(raw, dict) else {}, config)
+        for mode, raw in sorted(synthetic_backends.items())
+    ]
+    fallback_policy = config.get("fallback_memory_policy", {}) if isinstance(config, dict) else {}
+    if not isinstance(fallback_policy, dict):
+        fallback_policy = {}
+    return {
+        "updated_at": iso_now(),
+        "default_mode": str(runtime.get("default_backend_mode") or "ollama-native"),
+        "backends": backends,
+        "fallback_memory_policy": fallback_policy,
+        "contract_fields": list(BACKEND_CAPABILITY_FIELDS),
+    }
+
+
+def resolve_runtime_backend(
+    *,
+    required_context: int = 0,
+    prefer_long_context: bool = False,
+    model_config: dict[str, Any] | None = None,
+) -> dict[str, Any]:
+    """Choose a backend mode and state whether memory fallback is required."""
+    catalog = backend_capability_catalog(model_config)
+    backends = [item for item in catalog["backends"] if item.get("enabled")]
+    by_mode = {str(item.get("mode")): item for item in backends}
+    default_mode = str(catalog.get("default_mode") or "ollama-native")
+    requested_ctx = max(0, int(required_context or 0))
+    long_candidates = [
+        item
+        for item in backends
+        if str(item.get("mode")) == "longctx-backend" or bool(item.get("supports_kv_compression"))
+    ]
+    selected = None
+    reason = "default_backend"
+    if prefer_long_context and long_candidates:
+        selected = max(long_candidates, key=lambda item: int(item.get("effective_max_ctx") or 0))
+        reason = "selected_long_context_backend"
+    if selected is None and default_mode in by_mode:
+        selected = by_mode[default_mode]
+    if selected is None and backends:
+        selected = max(backends, key=lambda item: int(item.get("effective_max_ctx") or 0))
+        reason = "selected_largest_enabled_backend"
+    if selected is None:
+        selected = _normalize_backend_capability("deterministic", {"enabled": True, "backend_type": "deterministic", "model": "rules"}, model_config or load_model_config())
+        reason = "no_enabled_backend"
+    effective_ctx = int(selected.get("effective_max_ctx") or 0)
+    fallback_required = bool(requested_ctx and effective_ctx and requested_ctx > effective_ctx)
+    if prefer_long_context and not long_candidates and str(selected.get("mode")) != "longctx-backend":
+        fallback_required = True
+        reason = "long_context_backend_unavailable"
+    return {
+        "backend": selected,
+        "required_context": requested_ctx,
+        "fallback_memory_required": fallback_required,
+        "fallback_memory_policy": catalog.get("fallback_memory_policy", {}),
+        "reason": reason,
+    }
+
 ROSTER_PARTY_QUERY_LABELS: dict[str, str] = {
     "party-civil-contract": "Civil Contract",
     "party-republican-party-of-armenia": "Republican Party of Armenia",
@@ -103,15 +274,11 @@ def _first_json_object(text: str) -> dict[str, Any] | None:
 
 
 def _ollama_url() -> str:
-    model_config = load_model_config()
-    runtime = model_config.get("runtime", {}) if isinstance(model_config, dict) else {}
-    return str(runtime.get("ollama_url") or "http://127.0.0.1:11434").rstrip("/")
+    return _runtime_ollama_url()
 
 
 def _ollama_num_ctx(prompt: str = "", *, long_task: bool = False) -> int:
-    model_config = load_model_config()
-    runtime = model_config.get("runtime", {}) if isinstance(model_config, dict) else {}
-    options = runtime.get("ollama_options", {}) if isinstance(runtime.get("ollama_options", {}), dict) else {}
+    options = _runtime_ollama_options()
     default_num_ctx = int(options.get("default_num_ctx", 8192) or 8192)
     long_num_ctx = int(options.get("long_num_ctx", 65536) or 65536)
     experimental_num_ctx = int(options.get("experimental_num_ctx", 131072) or 131072)
@@ -134,6 +301,7 @@ def _native_model_id(provider: str, model_id: str) -> str:
 def command_model_catalog() -> dict[str, Any]:
     model_config = load_model_config()
     chain = active_chain_snapshot(model_config)
+    backend_catalog = backend_capability_catalog(model_config)
     openrouter_available = bool(os.environ.get("OPENROUTER_API_KEY", "").strip())
     configured_modes = list(model_config.get("command_models", [])) if isinstance(model_config, dict) else []
     preferred_models = list(model_config.get("preferred_models", [])) if isinstance(model_config, dict) else []
@@ -196,6 +364,7 @@ def command_model_catalog() -> dict[str, Any]:
             {"id": "deterministic only", "label": "Deterministic only", "provider": "deterministic", "model": "rules", "fallback": ""},
         ],
         "active_chain": chain,
+        "backend_capabilities": backend_catalog,
         "openrouter_available": openrouter_available,
         "ollama_url": _ollama_url(),
         "default_mode": default_mode,
@@ -252,12 +421,20 @@ def resolve_command_model(mode: str = "auto", requested_model: str = "") -> dict
         fallback_used = True
         reason = "deterministic_only"
 
+    backend_resolution = resolve_runtime_backend(
+        required_context=0,
+        prefer_long_context=False,
+        model_config=load_model_config(),
+    )
     return {
         "mode": normalized_mode,
         "provider": provider,
         "model": model,
         "fallback_used": fallback_used,
         "reason": reason,
+        "backend": backend_resolution["backend"],
+        "fallback_memory_required": backend_resolution["fallback_memory_required"],
+        "fallback_memory_policy": backend_resolution["fallback_memory_policy"],
         "catalog": catalog,
     }
 
@@ -1107,6 +1284,9 @@ def plan_command_workflow(
             "model": selection["model"],
             "fallback_used": fallback_used,
             "reason": selection["reason"],
+            "backend": selection.get("backend", {}),
+            "fallback_memory_required": bool(selection.get("fallback_memory_required", False)),
+            "fallback_memory_policy": selection.get("fallback_memory_policy", {}),
             "openrouter_available": command_model_catalog().get("openrouter_available", False),
         },
         "workflow": base_plan.get("workflow", "topic_deep_research"),

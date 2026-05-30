@@ -12,7 +12,18 @@ from scripts.living_graph.research_tools import claim_extractor
 from scripts.living_graph.research_tools.temporal_planner import build_role_queries, extract_year_range, month_windows, year_windows
 from scripts.living_graph.research_tools.search_provider import DeterministicOfficialSearchProvider
 from scripts.living_graph.research_tools.source_registry import load_source_registry_snapshot
-from scripts.pipeline_common import canonical_person_key, resolve_entity
+from scripts import model_runtime
+from scripts.pipeline_common import (
+    append_claim_records,
+    build_entity_registry,
+    canonical_graph_path,
+    canonical_person_key,
+    claim_records_index,
+    entity_types_compatible,
+    load_claim_records,
+    load_entity_alias_index,
+    resolve_entity,
+)
 
 
 ROSTER_HTML = """
@@ -92,10 +103,15 @@ class AgentRuntimeTests(unittest.TestCase):
         self.db_path = root / "tasks.sqlite"
         self.latest_path = root / "latest.json"
         self.runs_log = root / "runs.jsonl"
+        self.claims_log = root / "claims.jsonl"
+        self.graph_path = root / "country-graph.json"
         self.patches = [
+            patch.dict("os.environ", {"THIEZER_CANONICAL_GRAPH_PATH": str(self.graph_path)}),
             patch.object(task_db, "DB_PATH", self.db_path),
             patch.object(runtime, "LATEST_RESEARCH_RUN_FILE", self.latest_path),
             patch.object(runtime, "RESEARCH_RUNS_LOG", self.runs_log),
+            patch.object(workers, "append_claim_records", side_effect=lambda claims: append_claim_records(claims, path=self.claims_log)),
+            patch.object(workers, "write_entity_registry", return_value={}),
             patch.object(
                 claim_extractor,
                 "call_parser_model",
@@ -334,7 +350,7 @@ class AgentRuntimeTests(unittest.TestCase):
 
         with patch.object(workers, "fetch_url_logged", side_effect=fake_fetch):
             with patch("scripts.living_graph.research_tools.claim_extractor.call_parser_model", return_value=fake_model):
-                runtime.run_steps(started["run_id"], max_steps=3)
+                runtime.run_steps(started["run_id"], max_steps=4)
                 trace = runtime.latest_trace()
 
         self.assertGreaterEqual(int(trace["run"].get("search_queries", 0)), 1)
@@ -344,6 +360,9 @@ class AgentRuntimeTests(unittest.TestCase):
         self.assertGreaterEqual(len(trace["trace"].get("search_hits", [])), 1)
         self.assertFalse(trace["run"].get("limited_search_mode"))
         self.assertGreaterEqual(int(trace["run"].get("event_count", 0)), 1)
+        self.assertGreaterEqual(int(trace["run"].get("claims_logged", 0)), 1)
+        self.assertTrue(self.claims_log.exists())
+        self.assertGreaterEqual(len(self.claims_log.read_text(encoding="utf-8").strip().splitlines()), 1)
 
     def test_role_title_person_vertex_is_rejected(self):
         with patch.object(workers, "load_graph", return_value={"vertices": [], "edges": [], "claims": [], "sources": [], "evidence": []}):
@@ -393,6 +412,127 @@ class AgentRuntimeTests(unittest.TestCase):
         self.assertEqual(resolve_entity("Araik Harutyunyan", alias_index, bucket="people"), "person-arayik-harutyunyan")
         self.assertEqual(resolve_entity("Arayik Harutyunyan", alias_index, bucket="people"), "person-arayik-harutyunyan")
         self.assertNotEqual(canonical_person_key("Araik Harutyunyan"), "")
+
+    def test_entity_resolution_refuses_person_office_merge(self):
+        alias_index = {
+            "people": {"prime minister of armenia": "office-prime-minister-armenia"},
+            "orgs": {},
+            "places": {},
+            "_types": {"office-prime-minister-armenia": "OFFICE"},
+        }
+        self.assertIsNone(resolve_entity("Prime Minister of Armenia", alias_index, bucket="people", entity_type="PERSON"))
+        self.assertEqual(resolve_entity("Prime Minister of Armenia", alias_index, bucket="people", entity_type="OFFICE"), "office-prime-minister-armenia")
+        self.assertFalse(entity_types_compatible("PERSON", "OFFICE"))
+
+    def test_entity_registry_records_typed_aliases(self):
+        registry = build_entity_registry(
+            {
+                "entities": [
+                    {
+                        "id": "person-nikol-pashinyan",
+                        "name": "Nikol Pashinyan",
+                        "category": "person",
+                        "aliases": ["Никол Пашинян"],
+                    },
+                    {
+                        "id": "office-prime-minister-armenia",
+                        "name": "Prime Minister of Armenia",
+                        "category": "office",
+                        "aliases": ["Премьер-министр Армении"],
+                    },
+                ]
+            }
+        )
+        by_id = {item["id"]: item for item in registry["entities"]}
+        self.assertEqual(by_id["person-nikol-pashinyan"]["entity_type"], "PERSON")
+        self.assertEqual(by_id["office-prime-minister-armenia"]["entity_type"], "OFFICE")
+        self.assertEqual(registry["indexes"]["alias_to_entity_id"]["nikol pashinyan"], "person-nikol-pashinyan")
+
+    def test_entity_alias_index_uses_entity_registry(self):
+        graph = {
+            "entities": [],
+            "vertices": [],
+        }
+        registry = build_entity_registry(
+            {
+                "entities": [
+                    {
+                        "id": "person-nikol-pashinyan",
+                        "name": "Nikol Pashinyan",
+                        "category": "person",
+                        "aliases": ["Նիկոլ Փաշինյան", "Никол Пашинян"],
+                    },
+                    {
+                        "id": "office-prime-minister-armenia",
+                        "name": "Prime Minister of Armenia",
+                        "category": "office",
+                        "aliases": ["ՀՀ վարչապետ"],
+                    },
+                ]
+            }
+        )
+        with patch("scripts.pipeline_common.load_entity_registry", return_value=registry):
+            alias_index = load_entity_alias_index(graph)
+        self.assertEqual(resolve_entity("Նիկոլ Փաշինյան", alias_index, bucket="people", entity_type="PERSON"), "person-nikol-pashinyan")
+        self.assertEqual(resolve_entity("ՀՀ վարչապետ", alias_index, bucket="orgs", entity_type="OFFICE"), "office-prime-minister-armenia")
+        self.assertIsNone(resolve_entity("ՀՀ վարչապետ", alias_index, bucket="people", entity_type="PERSON"))
+
+    def test_claim_records_are_append_only_candidates(self):
+        claim_path = Path(self.tempdir.name) / "claims.jsonl"
+        first = append_claim_records(
+            [
+                {
+                    "claim_type": "HOLDS_OFFICE",
+                    "subject_vertex_id": "person-nikol-pashinyan",
+                    "object_vertex_id": "office-prime-minister-armenia",
+                    "source_url": "https://www.gov.am/",
+                    "evidence_quote": "Prime Minister Nikol Pashinyan",
+                }
+            ],
+            path=claim_path,
+        )
+        second = append_claim_records([{"claim_type": "MEMBER_OF", "subject_vertex_id": "person-a", "object_vertex_id": "party-b"}], path=claim_path)
+        lines = claim_path.read_text(encoding="utf-8").strip().splitlines()
+        self.assertEqual(len(lines), 2)
+        self.assertEqual(first[0]["status"], "candidate")
+        self.assertEqual(second[0]["claim_type"], "MEMBER_OF")
+        loaded = load_claim_records(claim_path)
+        index = claim_records_index(loaded)
+        self.assertEqual(index["count"], 2)
+        self.assertEqual(len(index["by_entity"]["person-a"]), 1)
+        self.assertEqual(len(index["by_type"]["HOLDS_OFFICE"]), 1)
+
+    def test_backend_capability_catalog_exposes_long_context_contract(self):
+        config = {
+                "runtime": {
+                    "default_backend_mode": "ollama-native",
+                    "ollama_url": "http://127.0.0.1:11434",
+                    "ollama_options": {"default_num_ctx": 8192, "long_num_ctx": 65536, "experimental_num_ctx": 131072},
+                },
+                "backends": {
+                    "ollama-native": {"enabled": True, "backend_type": "ollama", "model": "gemma4:e4b"},
+                    "longctx-backend": {
+                        "enabled": False,
+                        "backend_type": "openai-compatible",
+                        "native_max_ctx": 131072,
+                        "effective_max_ctx": 131072,
+                        "supports_kv_compression": True,
+                    },
+                },
+            }
+        catalog = model_runtime.backend_capability_catalog(config)
+        by_mode = {item["mode"]: item for item in catalog["backends"]}
+        self.assertIn("ollama-native", by_mode)
+        self.assertIn("longctx-backend", by_mode)
+        self.assertFalse(by_mode["ollama-native"]["supports_kv_compression"])
+        self.assertTrue(by_mode["longctx-backend"]["supports_kv_compression"])
+        resolved = model_runtime.resolve_runtime_backend(required_context=131072, prefer_long_context=True, model_config=config)
+        self.assertEqual(resolved["backend"]["mode"], "ollama-native")
+        self.assertTrue(resolved["fallback_memory_required"])
+        self.assertEqual(resolved["reason"], "long_context_backend_unavailable")
+
+    def test_runtime_graph_path_is_isolated_for_tests(self):
+        self.assertEqual(canonical_graph_path(), self.graph_path.resolve())
 
     def test_canonical_person_display_name_prefers_existing_graph_vertex(self):
         graph = {

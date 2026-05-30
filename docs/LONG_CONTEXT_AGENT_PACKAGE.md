@@ -81,6 +81,22 @@ The model config is tiered:
 
 Current implementation keeps the provider/model contract separate from orchestration.
 
+Runtime backends are now represented explicitly in `content/system/local-model-config.json`:
+
+- `ollama-native`: current local Ollama path, no KV-cache compression claim
+- `longctx-backend`: disabled placeholder for an OpenAI-compatible long-context backend
+
+The backend contract records `backend_type`, `base_url`, `model`, native/effective context, KV compression, prefix cache, speculative decode, streaming, and structured-output support. If the selected backend cannot carry the requested context, the runtime exposes the fallback memory policy: retrieval, summarization/compaction, rolling window, and chunked ingestion.
+
+### Entity and claim memory
+
+Thiezer now has two first-class pre-graph artifacts:
+
+- `content/graph/entity-registry.json`: typed canonical entity registry with aliases, external IDs, and merge history slots
+- `content/graph/claims.jsonl`: append-only candidate claim log before canonical edge admission
+
+Entity resolution is type-aware. A `PERSON` candidate cannot resolve to an `OFFICE`; roles and people must be connected through typed temporal edges such as `HOLDS_OFFICE`, not merged into one node.
+
 ### UI
 
 Research Run panel now shows:
@@ -104,6 +120,8 @@ The graph view also highlights updated nodes/edges.
 - `scripts/living_graph/agent_runtime/workers.py`
 - `scripts/living_graph/agent_runtime/task_db.py`
 - `scripts/living_graph/agent_runtime/runtime.py`
+- `scripts/model_runtime.py`
+- `scripts/pipeline_common.py`
 - `scripts/run_graph_web.py`
 - `web/graph-viewer/app.js`
 
@@ -113,7 +131,7 @@ Run these after touching research/runtime code:
 
 ```bash
 python3 -m unittest -q test_agent_runtime.py test_graph_rag_contracts.py
-python3 -m py_compile scripts/living_graph/research_tools/claim_extractor.py scripts/living_graph/agent_runtime/workers.py scripts/living_graph/agent_runtime/task_db.py scripts/run_graph_web.py
+python3 -m py_compile scripts/model_runtime.py scripts/pipeline_common.py scripts/living_graph/research_tools/claim_extractor.py scripts/living_graph/agent_runtime/workers.py scripts/living_graph/agent_runtime/task_db.py scripts/run_graph_web.py
 node --check web/graph-viewer/app.js
 python3 scripts/audit_graph.py content/graph/country-graph.json
 ```
@@ -137,9 +155,8 @@ Success means the live trace shows:
 
 ## External evidence pack reviewed
 
-- Google Research TurboQuant blog, 2025: https://research.google/blog/turboquant-redefining-ai-efficiency-with-extreme-compression/
+- Google Research TurboQuant blog, 2026: https://research.google/blog/turboquant-redefining-ai-efficiency-with-extreme-compression/
 - TurboQuant paper, 2025: https://arxiv.org/abs/2504.19874
 - Ollama context length docs: https://docs.ollama.com/context-length
 - Ollama issue #15051: https://github.com/ollama/ollama/issues/15051
 - TurboQuant backend reference: https://github.com/0xSero/turboquant
-

@@ -17,6 +17,8 @@
     "perspectives",
     "narratives",
     "story_mentions",
+    "entity_registry",
+    "claims_log",
     "runtime",
     "indexes",
     "migration"
@@ -79,5 +81,15 @@
     "status",
     "interpretive_degree",
     "publication_risk"
+  ],
+  "entity_registry_fields": [
+    "id",
+    "entity_type",
+    "canonical_name",
+    "aliases",
+    "external_ids",
+    "merge_history",
+    "source_graph_id",
+    "updated_at"
   ]
 }

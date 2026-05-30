@@ -11,13 +11,15 @@ SCRIPT_DIR = Path(__file__).resolve().parent
 if str(SCRIPT_DIR) not in sys.path:
     sys.path.insert(0, str(SCRIPT_DIR))
 
+from graph_domain import migrate_graph_bundle  # noqa: E402
 from graph_memory import graph_profile_quality  # noqa: E402
-from pipeline_common import load_graph  # noqa: E402
+from pipeline_common import CANONICAL_GRAPH, load_json  # noqa: E402
 
 
 def main() -> int:
-    _ = Path(sys.argv[1]).resolve() if len(sys.argv) > 1 else None
-    graph = load_graph()
+    graph_path = Path(sys.argv[1]).resolve() if len(sys.argv) > 1 else CANONICAL_GRAPH
+    raw_graph = load_json(graph_path, {})
+    graph, _ = migrate_graph_bundle(raw_graph if isinstance(raw_graph, dict) else {})
     vertices = graph.get("vertices", []) or []
     edges = graph.get("edges", []) or []
     claims = graph.get("claims", []) or []

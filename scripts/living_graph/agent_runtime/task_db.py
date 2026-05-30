@@ -729,6 +729,7 @@ def build_research_trace(run_id: str) -> dict[str, Any]:
         "roles_checked": coverage.get("roles_checked", run["summary_json"].get("roles_checked", [])),
         "sources_checked": coverage.get("sources_checked", run["summary_json"].get("sources_checked", [])),
         "confirmed_claims": coverage.get("confirmed_claims", run["summary_json"].get("claims_extracted", 0)),
+        "claims_logged": run["summary_json"].get("claims_logged", 0),
         "role_history_office_holder_claims": run["summary_json"].get("role_history_office_holder_claims", coverage.get("confirmed_claims", 0)),
         "rejected_claims": coverage.get("rejected_claims", len(rejected_changes)),
         "unresolved_candidates": coverage.get("unresolved_candidates", 0),

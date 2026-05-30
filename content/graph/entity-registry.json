@@ -1,0 +1,442 @@
+{
+  "version": 1,
+  "updated_at": "2026-05-30T11:02:40+00:00",
+  "entity_types": [
+    "PERSON",
+    "OFFICE",
+    "GOVERNMENT_BODY",
+    "PARTY",
+    "FACTION",
+    "COMPANY",
+    "NGO",
+    "MEDIA_OUTLET",
+    "COURT",
+    "LAW",
+    "EVENT",
+    "LOCATION",
+    "DOCUMENT",
+    "SOURCE"
+  ],
+  "entities": [
+    {
+      "id": "institution-advisers-to-prime-minister",
+      "entity_type": "GOVERNMENT_BODY",
+      "canonical_name": "Advisers to Prime Minister",
+      "aliases": [
+        "Advisers to Prime Minister"
+      ],
+      "external_ids": {},
+      "merge_history": [],
+      "source_graph_id": "institution-advisers-to-prime-minister",
+      "updated_at": "2026-05-09T09:27:57+00:00"
+    },
+    {
+      "id": "institution-appointed-advisers-to-prime-minister-pro-bono",
+      "entity_type": "GOVERNMENT_BODY",
+      "canonical_name": "Appointed Advisers to Prime Minister pro bono",
+      "aliases": [
+        "Appointed Advisers to Prime Minister pro bono"
+      ],
+      "external_ids": {},
+      "merge_history": [],
+      "source_graph_id": "institution-appointed-advisers-to-prime-minister-pro-bono",
+      "updated_at": "2026-05-09T09:27:57+00:00"
+    },
+    {
+      "id": "institution-assistants-to-the-prime-minister",
+      "entity_type": "GOVERNMENT_BODY",
+      "canonical_name": "Assistants to the Prime Minister",
+      "aliases": [
+        "Assistants to the Prime Minister"
+      ],
+      "external_ids": {},
+      "merge_history": [],
+      "source_graph_id": "institution-assistants-to-the-prime-minister",
+      "updated_at": "2026-05-09T09:27:58+00:00"
+    },
+    {
+      "id": "institution-chief-adviser-to-the-prime-minister",
+      "entity_type": "GOVERNMENT_BODY",
+      "canonical_name": "Chief Adviser to the Prime Minister",
+      "aliases": [
+        "Chief Adviser to the Prime Minister"
+      ],
+      "external_ids": {},
+      "merge_history": [],
+      "source_graph_id": "institution-chief-adviser-to-the-prime-minister",
+      "updated_at": "2026-05-09T09:27:57+00:00"
+    },
+    {
+      "id": "institution-curriculum-vitae",
+      "entity_type": "GOVERNMENT_BODY",
+      "canonical_name": "Curriculum Vitae",
+      "aliases": [
+        "Curriculum Vitae"
+      ],
+      "external_ids": {},
+      "merge_history": [],
+      "source_graph_id": "institution-curriculum-vitae",
+      "updated_at": "2026-05-09T09:28:30+00:00"
+    },
+    {
+      "id": "institution-department-for-relations-with-the-national-assembly",
+      "entity_type": "GOVERNMENT_BODY",
+      "canonical_name": "Department for Relations with the National Assembly",
+      "aliases": [
+        "Department for Relations with the National Assembly"
+      ],
+      "external_ids": {},
+      "merge_history": [],
+      "source_graph_id": "institution-department-for-relations-with-the-national-assembly",
+      "updated_at": "2026-05-30T11:02:15+00:00"
+    },
+    {
+      "id": "institution-press-secretary-of-prime-minister",
+      "entity_type": "GOVERNMENT_BODY",
+      "canonical_name": "Press Secretary of Prime Minister",
+      "aliases": [
+        "Press Secretary of Prime Minister"
+      ],
+      "external_ids": {},
+      "merge_history": [],
+      "source_graph_id": "institution-press-secretary-of-prime-minister",
+      "updated_at": "2026-05-09T09:27:57+00:00"
+    },
+    {
+      "id": "office-chief-protocol-officer-for-the-prime-minister",
+      "entity_type": "OFFICE",
+      "canonical_name": "Chief Protocol Officer for the Prime Minister",
+      "aliases": [
+        "Chief Protocol Officer for the Prime Minister"
+      ],
+      "external_ids": {},
+      "merge_history": [],
+      "source_graph_id": "office-chief-protocol-officer-for-the-prime-minister",
+      "updated_at": "2026-05-09T09:27:57+00:00"
+    },
+    {
+      "id": "office-chief-of-staff",
+      "entity_type": "OFFICE",
+      "canonical_name": "Chief of Staff",
+      "aliases": [
+        "Chief of Staff"
+      ],
+      "external_ids": {},
+      "merge_history": [],
+      "source_graph_id": "office-chief-of-staff",
+      "updated_at": "2026-05-30T11:02:14+00:00"
+    },
+    {
+      "id": "office-chief-of-staff-of-the-prime-minister",
+      "entity_type": "OFFICE",
+      "canonical_name": "Chief of Staff of the Prime Minister",
+      "aliases": [
+        "Chief of Staff of the Prime Minister"
+      ],
+      "external_ids": {},
+      "merge_history": [],
+      "source_graph_id": "office-chief-of-staff-of-the-prime-minister",
+      "updated_at": "2026-05-30T11:02:14+00:00"
+    },
+    {
+      "id": "office-deputy-chiefs-of-prime-minister-staff",
+      "entity_type": "OFFICE",
+      "canonical_name": "Deputy Chiefs of Prime Minister Staff",
+      "aliases": [
+        "Deputy Chiefs of Prime Minister Staff"
+      ],
+      "external_ids": {},
+      "merge_history": [],
+      "source_graph_id": "office-deputy-chiefs-of-prime-minister-staff",
+      "updated_at": "2026-05-30T11:02:15+00:00"
+    },
+    {
+      "id": "person-anahit-stephanyan",
+      "entity_type": "PERSON",
+      "canonical_name": "Anahit Stephanyan",
+      "aliases": [
+        "Anahit Stephanyan"
+      ],
+      "external_ids": {},
+      "merge_history": [],
+      "source_graph_id": "person-anahit-stephanyan",
+      "updated_at": "2026-05-30T11:02:15+00:00"
+    },
+    {
+      "id": "person-anzhela-kzhdryan",
+      "entity_type": "PERSON",
+      "canonical_name": "Anzhela Kzhdryan",
+      "aliases": [
+        "Anzhela Kzhdryan"
+      ],
+      "external_ids": {},
+      "merge_history": [],
+      "source_graph_id": "person-anzhela-kzhdryan",
+      "updated_at": "2026-05-09T09:27:57+00:00"
+    },
+    {
+      "id": "person-aram-khachatryan",
+      "entity_type": "PERSON",
+      "canonical_name": "Aram Khachatryan",
+      "aliases": [
+        "Aram Khachatryan"
+      ],
+      "external_ids": {},
+      "merge_history": [],
+      "source_graph_id": "person-aram-khachatryan",
+      "updated_at": "2026-05-09T09:27:57+00:00"
+    },
+    {
+      "id": "person-arayik-harutyunyan",
+      "entity_type": "PERSON",
+      "canonical_name": "Arayik Harutyunyan",
+      "aliases": [
+        "Arayik Harutyunyan"
+      ],
+      "external_ids": {},
+      "merge_history": [],
+      "source_graph_id": "person-arayik-harutyunyan",
+      "updated_at": "2026-05-30T11:02:14+00:00"
+    },
+    {
+      "id": "person-armenak-khachatryan",
+      "entity_type": "PERSON",
+      "canonical_name": "Armenak Khachatryan",
+      "aliases": [
+        "Armenak Khachatryan"
+      ],
+      "external_ids": {},
+      "merge_history": [],
+      "source_graph_id": "person-armenak-khachatryan",
+      "updated_at": "2026-05-30T11:02:14+00:00"
+    },
+    {
+      "id": "person-arsen-mikhaylov",
+      "entity_type": "PERSON",
+      "canonical_name": "Arsen Mikhaylov",
+      "aliases": [
+        "Arsen Mikhaylov"
+      ],
+      "external_ids": {},
+      "merge_history": [],
+      "source_graph_id": "person-arsen-mikhaylov",
+      "updated_at": "2026-05-09T09:27:58+00:00"
+    },
+    {
+      "id": "person-artak-kamalyan",
+      "entity_type": "PERSON",
+      "canonical_name": "Artak Kamalyan",
+      "aliases": [
+        "Artak Kamalyan"
+      ],
+      "external_ids": {},
+      "merge_history": [],
+      "source_graph_id": "person-artak-kamalyan",
+      "updated_at": "2026-05-09T09:27:57+00:00"
+    },
+    {
+      "id": "person-artashes-toumanian",
+      "entity_type": "PERSON",
+      "canonical_name": "Artashes Toumanian",
+      "aliases": [
+        "Artashes Toumanian"
+      ],
+      "external_ids": {},
+      "merge_history": [],
+      "source_graph_id": "person-artashes-toumanian",
+      "updated_at": "2026-05-09T09:27:57+00:00"
+    },
+    {
+      "id": "person-artur-hovsepyan",
+      "entity_type": "PERSON",
+      "canonical_name": "Artur Hovsepyan",
+      "aliases": [
+        "Artur Hovsepyan"
+      ],
+      "external_ids": {},
+      "merge_history": [],
+      "source_graph_id": "person-artur-hovsepyan",
+      "updated_at": "2026-05-30T11:02:15+00:00"
+    },
+    {
+      "id": "person-david-gevorgyan",
+      "entity_type": "PERSON",
+      "canonical_name": "David Gevorgyan",
+      "aliases": [
+        "David Gevorgyan"
+      ],
+      "external_ids": {},
+      "merge_history": [],
+      "source_graph_id": "person-david-gevorgyan",
+      "updated_at": "2026-05-09T09:27:58+00:00"
+    },
+    {
+      "id": "person-ester-sahakyan",
+      "entity_type": "PERSON",
+      "canonical_name": "Ester Sahakyan",
+      "aliases": [
+        "Ester Sahakyan"
+      ],
+      "external_ids": {},
+      "merge_history": [],
+      "source_graph_id": "person-ester-sahakyan",
+      "updated_at": "2026-05-09T09:27:57+00:00"
+    },
+    {
+      "id": "person-gagik-isakhanyan",
+      "entity_type": "PERSON",
+      "canonical_name": "Gagik Isakhanyan",
+      "aliases": [
+        "Gagik Isakhanyan"
+      ],
+      "external_ids": {},
+      "merge_history": [],
+      "source_graph_id": "person-gagik-isakhanyan",
+      "updated_at": "2026-05-09T09:27:58+00:00"
+    },
+    {
+      "id": "person-karine-davoyan",
+      "entity_type": "PERSON",
+      "canonical_name": "Karine Davoyan",
+      "aliases": [
+        "Karine Davoyan"
+      ],
+      "external_ids": {},
+      "merge_history": [],
+      "source_graph_id": "person-karine-davoyan",
+      "updated_at": "2026-05-09T09:27:58+00:00"
+    },
+    {
+      "id": "person-lilit-makunts",
+      "entity_type": "PERSON",
+      "canonical_name": "Lilit Makunts",
+      "aliases": [
+        "Lilit Makunts"
+      ],
+      "external_ids": {},
+      "merge_history": [],
+      "source_graph_id": "person-lilit-makunts",
+      "updated_at": "2026-05-09T09:27:57+00:00"
+    },
+    {
+      "id": "person-nazeli-baghdasaryan",
+      "entity_type": "PERSON",
+      "canonical_name": "Nazeli Baghdasaryan",
+      "aliases": [
+        "Nazeli Baghdasaryan"
+      ],
+      "external_ids": {},
+      "merge_history": [],
+      "source_graph_id": "person-nazeli-baghdasaryan",
+      "updated_at": "2026-05-09T09:27:57+00:00"
+    },
+    {
+      "id": "person-sargis-torosyan",
+      "entity_type": "PERSON",
+      "canonical_name": "Sargis Torosyan",
+      "aliases": [
+        "Sargis Torosyan"
+      ],
+      "external_ids": {},
+      "merge_history": [],
+      "source_graph_id": "person-sargis-torosyan",
+      "updated_at": "2026-05-09T09:27:57+00:00"
+    },
+    {
+      "id": "person-site-map",
+      "entity_type": "PERSON",
+      "canonical_name": "Site Map",
+      "aliases": [
+        "Site Map"
+      ],
+      "external_ids": {},
+      "merge_history": [],
+      "source_graph_id": "person-site-map",
+      "updated_at": "2026-05-09T09:28:30+00:00"
+    },
+    {
+      "id": "person-suren-maghakyan",
+      "entity_type": "PERSON",
+      "canonical_name": "Suren Maghakyan",
+      "aliases": [
+        "Suren Maghakyan"
+      ],
+      "external_ids": {},
+      "merge_history": [],
+      "source_graph_id": "person-suren-maghakyan",
+      "updated_at": "2026-05-09T09:27:57+00:00"
+    },
+    {
+      "id": "person-taron-chakhoyan",
+      "entity_type": "PERSON",
+      "canonical_name": "Taron Chakhoyan",
+      "aliases": [
+        "Taron Chakhoyan"
+      ],
+      "external_ids": {},
+      "merge_history": [],
+      "source_graph_id": "person-taron-chakhoyan",
+      "updated_at": "2026-05-09T09:27:57+00:00"
+    },
+    {
+      "id": "person-vahram-dumanyan",
+      "entity_type": "PERSON",
+      "canonical_name": "Vahram Dumanyan",
+      "aliases": [
+        "Vahram Dumanyan"
+      ],
+      "external_ids": {},
+      "merge_history": [],
+      "source_graph_id": "person-vahram-dumanyan",
+      "updated_at": "2026-05-09T09:27:57+00:00"
+    },
+    {
+      "id": "person-zaruhi-matevosyan",
+      "entity_type": "PERSON",
+      "canonical_name": "Zaruhi Matevosyan",
+      "aliases": [
+        "Zaruhi Matevosyan"
+      ],
+      "external_ids": {},
+      "merge_history": [],
+      "source_graph_id": "person-zaruhi-matevosyan",
+      "updated_at": "2026-05-09T09:27:57+00:00"
+    }
+  ],
+  "indexes": {
+    "alias_to_entity_id": {
+      "deputy chiefs of prime minister staff": "office-deputy-chiefs-of-prime-minister-staff",
+      "armenak khachatryan": "person-armenak-khachatryan",
+      "artur hovsepyan": "person-artur-hovsepyan",
+      "sargis torosyan": "person-sargis-torosyan",
+      "taron chakhoyan": "person-taron-chakhoyan",
+      "zaruhi matevosyan": "person-zaruhi-matevosyan",
+      "chief adviser to the prime minister": "institution-chief-adviser-to-the-prime-minister",
+      "artak kamalyan": "person-artak-kamalyan",
+      "lilit makunts": "person-lilit-makunts",
+      "advisers to prime minister": "institution-advisers-to-prime-minister",
+      "aram khachatryan": "person-aram-khachatryan",
+      "artashes toumanian": "person-artashes-toumanian",
+      "vahram dumanyan": "person-vahram-dumanyan",
+      "appointed advisers to prime minister pro bono": "institution-appointed-advisers-to-prime-minister-pro-bono",
+      "anzhela kzhdryan": "person-anzhela-kzhdryan",
+      "suren maghakyan": "person-suren-maghakyan",
+      "press secretary of prime minister": "institution-press-secretary-of-prime-minister",
+      "nazeli baghdasaryan": "person-nazeli-baghdasaryan",
+      "chief protocol officer for the prime minister": "office-chief-protocol-officer-for-the-prime-minister",
+      "ester sahakyan": "person-ester-sahakyan",
+      "assistants to the prime minister": "institution-assistants-to-the-prime-minister",
+      "arsen mikhaylov": "person-arsen-mikhaylov",
+      "curriculum vitae": "institution-curriculum-vitae",
+      "site map": "person-site-map",
+      "david gevorgyan": "person-david-gevorgyan",
+      "gagik isakhanyan": "person-gagik-isakhanyan",
+      "karine davoyan": "person-karine-davoyan",
+      "department for relations with the national assembly": "institution-department-for-relations-with-the-national-assembly",
+      "anahit stephanyan": "person-anahit-stephanyan",
+      "arayik harutyunyan": "person-arayik-harutyunyan",
+      "chief of staff of the prime minister": "office-chief-of-staff-of-the-prime-minister",
+      "chief of staff": "office-chief-of-staff"
+    }
+  }
+}
