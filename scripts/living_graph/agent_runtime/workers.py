@@ -1856,14 +1856,55 @@ def _generic_topic_research(run_id: str, item: dict[str, Any]) -> WorkItemResult
     if not query:
         save_artifact(run_id, item["item_id"], "rejected_change", {"reason": "empty_generic_query"}, ref="generic")
         return WorkItemResult(ok=False, status="failed_retryable", error="empty_generic_query", current_stage="generic_topic_research")
-    search_results = search_web_logged(run_id, item["item_id"], query, max_results=5)
-    increment_run_summary(run_id, search_queries=1)
+    seed_queries = [str(row).strip() for row in payload.get("seed_queries", []) or [] if str(row).strip()]
+    expected_claim_types = [str(row).strip() for row in payload.get("expected_claim_types", []) or [] if str(row).strip()]
+    suggested_source_types = [str(row).strip() for row in payload.get("suggested_source_types", []) or [] if str(row).strip()]
+    query_plan: list[str] = []
+    for candidate in [query, *seed_queries]:
+        normalized = normalize_text(candidate)
+        if normalized and normalized not in {normalize_text(row) for row in query_plan}:
+            query_plan.append(candidate)
+    budget_pages = max(1, min(25, int(payload.get("budget_pages") or payload.get("budget") or 5)))
+    per_query_results = max(3, min(8, budget_pages))
+    search_results: list[dict[str, Any]] = []
+    seen_urls: set[str] = set()
+    search_count = 0
+    for planned_query in query_plan[:6]:
+        results = search_web_logged(run_id, item["item_id"], planned_query, max_results=per_query_results)
+        search_count += 1
+        for result in results:
+            url = str(result.get("url") or "").strip()
+            if not url or url in seen_urls:
+                continue
+            seen_urls.add(url)
+            search_results.append({**result, "planned_query": planned_query})
+            if len(search_results) >= budget_pages:
+                break
+        if len(search_results) >= budget_pages:
+            break
+    increment_run_summary(run_id, search_queries=search_count)
+    save_artifact(
+        run_id,
+        item["item_id"],
+        "research_question_plan",
+        {
+            "question_id": payload.get("question_id", ""),
+            "question_type": payload.get("question_type", ""),
+            "target_entities": payload.get("target_entities", []),
+            "expected_claim_types": expected_claim_types,
+            "suggested_source_types": suggested_source_types,
+            "query_plan": query_plan,
+            "budget_pages": budget_pages,
+            "search_results": len(search_results),
+        },
+        ref=str(payload.get("question_id") or query),
+    )
     if not search_results:
-        save_artifact(run_id, item["item_id"], "rejected_change", {"reason": "no_search_results", "query": query}, ref=query)
+        save_artifact(run_id, item["item_id"], "rejected_change", {"reason": "no_search_results", "query": query, "query_plan": query_plan}, ref=query)
         return WorkItemResult(ok=False, status="failed_retryable", error="no_search_results", current_stage="generic_topic_research")
     extracted_claims: list[dict[str, Any]] = []
     accepted_sources = 0
-    for result in search_results[:3]:
+    for result in search_results[:budget_pages]:
         url = str(result.get("url") or "").strip()
         if not url:
             continue
@@ -1884,16 +1925,25 @@ def _generic_topic_research(run_id: str, item: dict[str, Any]) -> WorkItemResult
             page_text=page.get("text", "")[:16000],
             page_title=page.get("title", ""),
             source_type="web",
-            context={"search_result": result, "query": query},
+            context={
+                "search_result": result,
+                "query": query,
+                "planned_query": result.get("planned_query", ""),
+                "question_id": payload.get("question_id", ""),
+                "question_type": payload.get("question_type", ""),
+                "expected_claim_types": expected_claim_types,
+                "suggested_source_types": suggested_source_types,
+                "target_entities": payload.get("target_entities", []),
+            },
         )
         extracted_claims.extend(extraction.get("claims", []) or [])
     if not extracted_claims:
-        save_artifact(run_id, item["item_id"], "rejected_change", {"reason": "no_extractable_claims", "query": query, "accepted_sources": accepted_sources}, ref=query)
+        save_artifact(run_id, item["item_id"], "rejected_change", {"reason": "no_extractable_claims", "query": query, "query_plan": query_plan, "accepted_sources": accepted_sources}, ref=query)
         increment_run_summary(run_id, rejected_sources=1)
         return WorkItemResult(ok=False, status="failed_retryable", error="no_extractable_claims", current_stage="generic_topic_research")
     increment_run_summary(run_id, accepted_sources=accepted_sources, claims_extracted=len(extracted_claims))
-    save_artifact(run_id, item["item_id"], "accepted_change", {"query": query, "accepted_sources": accepted_sources, "claims": extracted_claims[:10]}, ref=query)
-    return WorkItemResult(ok=True, status="done", current_stage="generic_topic_research", output={"query": query, "accepted_sources": accepted_sources, "claims_extracted": len(extracted_claims)}, graph_diff=GraphDiff())
+    save_artifact(run_id, item["item_id"], "accepted_change", {"query": query, "query_plan": query_plan, "accepted_sources": accepted_sources, "claims": extracted_claims[:10]}, ref=query)
+    return WorkItemResult(ok=True, status="done", current_stage="generic_topic_research", output={"query": query, "query_plan": query_plan, "accepted_sources": accepted_sources, "claims_extracted": len(extracted_claims)}, graph_diff=GraphDiff())
 
 
 def execute_item(run_id: str, item: dict[str, Any]) -> WorkItemResult:

@@ -903,6 +903,56 @@ class AgentRuntimeTests(unittest.TestCase):
         self.assertEqual(loaded[0]["attempt_count"], 3)
         self.assertEqual(loaded[0]["status"], "failed")
 
+    def test_generic_research_uses_queue_seed_queries_and_budget(self):
+        started = runtime.start_run(
+            "Complete a source-backed biography profile for Person D.",
+            {
+                "budget_pages": 2,
+                "max_depth": 1,
+                "question_id": "q-seed",
+                "question_type": "biography_completion",
+                "target_entities": ["person-d"],
+                "expected_claim_types": ["biography_fact"],
+                "suggested_source_types": ["official", "media"],
+                "seed_queries": ["Person D biography Armenia", "Person D պաշտոն կենսագրություն"],
+            },
+        )
+
+        searched_queries: list[str] = []
+
+        def fake_search(run_id, item_id, query, *, domains=None, max_results=10):
+            searched_queries.append(query)
+            if query.startswith("Complete a source-backed"):
+                return []
+            return [
+                {"url": f"https://example.org/{len(searched_queries)}", "title": f"Source {len(searched_queries)}", "snippet": "Person D profile"},
+                {"url": "https://example.org/duplicate", "title": "Duplicate", "snippet": "duplicate"},
+            ]
+
+        def fake_fetch(run_id, item_id, url):
+            return {"body": "<html><title>Profile</title><body>Person D served in public office.</body></html>", "final_url": url, "content_type": "text/html"}
+
+        def fake_extract(run_id, item_id, **kwargs):
+            self.assertEqual(kwargs["context"]["question_id"], "q-seed")
+            self.assertEqual(kwargs["context"]["expected_claim_types"], ["biography_fact"])
+            self.assertIn(kwargs["context"]["planned_query"], searched_queries)
+            return {"claims": [{"statement": "Person D served in public office.", "source_url": kwargs["source_url"]}]}
+
+        with patch.object(workers, "search_web_logged", side_effect=fake_search):
+            with patch.object(workers, "fetch_url_logged", side_effect=fake_fetch):
+                with patch.object(workers, "extract_claims_logged", side_effect=fake_extract):
+                    trace = runtime.run_steps(started["run_id"], max_steps=1)
+
+        self.assertTrue(trace["ok"])
+        self.assertGreaterEqual(len(searched_queries), 1)
+        self.assertIn("Person D biography Armenia", searched_queries)
+        artifacts = task_db.list_artifacts(started["run_id"])
+        plans = [row["payload_json"] for row in artifacts if row["artifact_type"] == "research_question_plan"]
+        self.assertEqual(len(plans), 1)
+        self.assertEqual(plans[0]["question_id"], "q-seed")
+        self.assertEqual(plans[0]["budget_pages"], 2)
+        self.assertIn("Person D պաշտոն կենսագրություն", plans[0]["query_plan"])
+
 
 class FrontendContractTests(unittest.TestCase):
     def test_minister_status_copy_does_not_default_to_completed(self):

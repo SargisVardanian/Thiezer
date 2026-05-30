@@ -117,8 +117,9 @@ def classify_user_query(query: str) -> str:
     return "generic_topic_research"
 
 
-def create_initial_plan(query: str, run_id: str) -> dict[str, Any]:
+def create_initial_plan(query: str, run_id: str, budget_json: dict[str, Any] | None = None) -> dict[str, Any]:
     run_type = classify_user_query(query)
+    budget = dict(budget_json or {})
     stages: list[str]
     if run_type == "role_history_enrichment":
         stages = [
@@ -156,5 +157,21 @@ def create_initial_plan(query: str, run_id: str) -> dict[str, Any]:
         enqueue_item(run_id, "discover_parliament_roster", "Discover parliament roster", {"query": query}, priority=10)
     else:
         stages = ["discover_sources", "bounded_research", "graph_update"]
-        enqueue_item(run_id, "generic_topic_research", "Generic topic research", {"query": query}, priority=10)
+        enqueue_item(
+            run_id,
+            "generic_topic_research",
+            "Generic topic research",
+            {
+                "query": query,
+                "budget_pages": budget.get("budget_pages"),
+                "max_depth": budget.get("max_depth"),
+                "question_id": budget.get("question_id", ""),
+                "question_type": budget.get("question_type", ""),
+                "target_entities": budget.get("target_entities", []),
+                "expected_claim_types": budget.get("expected_claim_types", []),
+                "suggested_source_types": budget.get("suggested_source_types", []),
+                "seed_queries": budget.get("seed_queries", []),
+            },
+            priority=10,
+        )
     return {"run_type": run_type, "stages": stages, "role_history_context": extract_role_history_context(query) if run_type == "role_history_enrichment" else {}}

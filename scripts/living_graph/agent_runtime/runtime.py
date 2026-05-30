@@ -171,7 +171,7 @@ def _persist_trace(run_id: str) -> dict[str, Any]:
 def start_run(query: str, budget_json: dict[str, Any]) -> dict[str, Any]:
     run_type = classify_user_query(query)
     run_id = create_run(query, run_type, budget_json)
-    plan = create_initial_plan(query, run_id)
+    plan = create_initial_plan(query, run_id, budget_json)
     _, search_meta = build_search_provider()
     model_config = load_model_config()
     chain = active_chain_snapshot(model_config)
