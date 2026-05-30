@@ -1,3 +1,4 @@
+import json
 import re
 import sqlite3
 import tempfile
@@ -13,6 +14,7 @@ from scripts.living_graph.research_tools.temporal_planner import build_role_quer
 from scripts.living_graph.research_tools.search_provider import DeterministicOfficialSearchProvider
 from scripts.living_graph.research_tools.source_registry import load_source_registry_snapshot
 from scripts.living_graph.question_generator import generate_research_questions
+from scripts.living_graph.research_queue import load_question_queue, mark_question_status, next_queued_question, question_to_run_payload, start_next_question_run
 from scripts.living_graph.subgraph_builder import build_subgraph
 from scripts import national_graph_cycle
 from scripts import model_runtime
@@ -153,6 +155,10 @@ class AgentRuntimeTests(unittest.TestCase):
         self.assertEqual(trace["run"].get("requested_entities"), ["persons", "offices", "institutions", "companies", "parties"])
         self.assertEqual(trace["run"].get("temporal_granularity"), "year")
         self.assertNotIn("infer", str(trace["run"].get("target_entity", "")).lower())
+
+    def test_complete_biography_prompt_does_not_match_mp_substring(self):
+        started = runtime.start_run("Complete a source-backed biography profile for Artur Hovsepyan.", {"budget_pages": 7, "max_depth": 2})
+        self.assertEqual(started["run_type"], "generic_topic_research")
 
     def test_temporal_planner_builds_year_and_month_windows(self):
         self.assertEqual(extract_year_range("2018-2026"), (2018, 2026))
@@ -765,6 +771,60 @@ class AgentRuntimeTests(unittest.TestCase):
         self.assertEqual(report["stale_claims_detected"], 1)
         self.assertGreaterEqual(report["questions_generated"], 1)
         self.assertEqual(report["subgraphs_updated"], 1)
+
+    def test_research_queue_marks_question_running_and_builds_payload(self):
+        queue_path = Path(self.tempdir.name) / "queue.jsonl"
+        question = {
+            "id": "q-1",
+            "question": "Complete a source-backed biography profile for Person A.",
+            "question_type": "biography_completion",
+            "target_entities": ["person-a"],
+            "expected_claim_types": ["biography_fact"],
+            "suggested_source_types": ["official", "media"],
+            "priority_score": 0.9,
+            "budget_estimate": {"pages": 7, "max_depth": 2},
+            "search_queries": {"en": ["Person A biography Armenia"], "ru": ["Person A биография Армения"]},
+            "status": "queued",
+            "created_at": "2026-05-30T00:00:00+00:00",
+        }
+        queue_path.write_text(json.dumps(question, ensure_ascii=False) + "\n", encoding="utf-8")
+        loaded = load_question_queue(queue_path)
+        self.assertEqual(next_queued_question(loaded)["id"], "q-1")
+        query, payload = question_to_run_payload(question)
+        self.assertIn("Person A", query)
+        self.assertEqual(payload["question_id"], "q-1")
+        self.assertEqual(payload["target_entities"], ["person-a"])
+        self.assertEqual(payload["budget_pages"], 7)
+        updated = mark_question_status("q-1", "running", run_id="run-1", path=queue_path)
+        self.assertEqual(updated["status"], "running")
+        self.assertEqual(updated["run_id"], "run-1")
+
+    def test_research_queue_can_advance_runtime_steps(self):
+        queue_path = Path(self.tempdir.name) / "queue.jsonl"
+        question = {
+            "id": "q-2",
+            "question": "Complete a source-backed biography profile for Person B.",
+            "question_type": "biography_completion",
+            "target_entities": ["person-b"],
+            "priority_score": 0.8,
+            "budget_estimate": {"pages": 3, "max_depth": 1},
+            "status": "queued",
+            "created_at": "2026-05-30T00:00:00+00:00",
+        }
+        queue_path.write_text(json.dumps(question, ensure_ascii=False) + "\n", encoding="utf-8")
+
+        def fake_start_run(query, payload):
+            self.assertEqual(payload["question_id"], "q-2")
+            return {"run_id": "run-2", "run_type": "generic_topic_research"}
+
+        with patch.object(runtime, "start_run", side_effect=fake_start_run):
+            with patch.object(runtime, "run_steps", return_value={"status": "failed_retryable"}):
+                receipt = start_next_question_run(queue_path=queue_path, run_steps=1)
+
+        self.assertEqual(receipt["status"], "advanced")
+        self.assertEqual(receipt["question_status"], "retryable_failed")
+        loaded = load_question_queue(queue_path)
+        self.assertEqual(loaded[0]["status"], "retryable_failed")
 
 
 class FrontendContractTests(unittest.TestCase):

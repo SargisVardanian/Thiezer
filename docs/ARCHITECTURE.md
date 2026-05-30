@@ -70,6 +70,7 @@ Publish only happens after the graph stage writes the latest graph snapshot and 
 4. Build compact subgraphs for the highest-priority seed entities.
 5. Write `content/system/subgraphs/latest.json`.
 6. Write `content/system/national-graph-operator-report.json` with counters, failures, and next recommended tasks.
+7. Optionally consume the highest-priority queued question with `scripts/national_graph_cycle.py --consume-next`, which starts one bounded agent-runtime run and writes an exploration queue receipt.
 
 The fetch/research workers consume the queue later. This keeps daily orchestration auditable and prevents the LLM from inventing relations to fill gaps.
 

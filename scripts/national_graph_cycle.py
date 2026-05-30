@@ -16,6 +16,7 @@ if str(SCRIPT_DIR) not in sys.path:
 
 from pipeline_common import SYSTEM_DIR, iso_now, load_graph, write_json  # noqa: E402
 from living_graph.question_generator import generate_research_questions, write_question_queue  # noqa: E402
+from living_graph.research_queue import start_next_question_run  # noqa: E402
 from living_graph.store import edge_rows, node_rows  # noqa: E402
 from living_graph.subgraph_builder import build_priority_subgraphs, write_subgraph_bundle  # noqa: E402
 
@@ -79,12 +80,23 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--question-limit", type=int, default=50)
     parser.add_argument("--subgraph-limit", type=int, default=5)
     parser.add_argument("--dry-run", action="store_true")
+    parser.add_argument("--consume-next", action="store_true", help="Start a bounded agent run from the highest-priority queued question")
+    parser.add_argument("--run-steps", type=int, default=0, help="When consuming a question, immediately execute this many runtime work items")
     parser.add_argument("--json", action="store_true", help="Print full JSON report")
     return parser
 
 
 def main() -> int:
     args = build_parser().parse_args()
+    if args.consume_next:
+        receipt = start_next_question_run(run_steps=args.run_steps)
+        if args.json:
+            print(json.dumps(receipt, ensure_ascii=False, indent=2))
+        else:
+            print(f"queue_consume_status: {receipt['status']}")
+            print(f"question_id: {receipt.get('question_id', '')}")
+            print(f"run_id: {receipt.get('run_id', '')}")
+        return 0
     report = run_cycle(args)
     if args.json:
         print(json.dumps(report, ensure_ascii=False, indent=2))

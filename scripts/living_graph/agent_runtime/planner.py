@@ -65,6 +65,19 @@ ROLE_HISTORY_ROLE_GROUPS = [
 ]
 
 
+def _contains_marker(text: str, marker: str) -> bool:
+    marker = marker.lower().strip()
+    if not marker:
+        return False
+    if re.fullmatch(r"[a-z0-9]+", marker):
+        return bool(re.search(rf"\b{re.escape(marker)}\b", text))
+    return marker in text
+
+
+def _contains_any_marker(text: str, markers: list[str] | tuple[str, ...]) -> bool:
+    return any(_contains_marker(text, marker) for marker in markers)
+
+
 def extract_role_history_context(query: str) -> dict[str, Any]:
     blob = query.lower()
     date_from, date_to = extract_year_range(query)
@@ -95,11 +108,11 @@ def extract_role_history_context(query: str) -> dict[str, Any]:
 
 def classify_user_query(query: str) -> str:
     lowered = query.lower()
-    if any(marker in lowered for marker in ROLE_HISTORY_MARKERS):
+    if _contains_any_marker(lowered, ROLE_HISTORY_MARKERS):
         return "role_history_enrichment"
-    if any(marker in lowered for marker in GOVERNMENT_MARKERS):
+    if _contains_any_marker(lowered, GOVERNMENT_MARKERS):
         return "government_ministers_enrichment"
-    if any(marker in lowered for marker in PARLIAMENT_MARKERS):
+    if _contains_any_marker(lowered, PARLIAMENT_MARKERS):
         return "parliament_roster_enrichment"
     return "generic_topic_research"
 

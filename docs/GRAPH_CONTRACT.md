@@ -67,6 +67,13 @@ Generate queue, subgraphs, and operator report:
 python3 scripts/national_graph_cycle.py --question-limit 50 --subgraph-limit 5
 ```
 
+Start one bounded runtime run from the highest-priority queued question:
+
+```bash
+python3 scripts/national_graph_cycle.py --consume-next --json
+python3 scripts/national_graph_cycle.py --consume-next --run-steps 1 --json
+```
+
 Inspect without writing:
 
 ```bash
