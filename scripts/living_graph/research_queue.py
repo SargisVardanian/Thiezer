@@ -40,8 +40,27 @@ def write_question_queue(rows: list[dict[str, Any]], path: Path = EXPLORATION_QU
             handle.write(json.dumps(row, ensure_ascii=False, sort_keys=True) + "\n")
 
 
+RETRYABLE_STATUSES = {"queued", "retryable_failed"}
+def _attempt_count(row: dict[str, Any]) -> int:
+    try:
+        return max(0, int(row.get("attempt_count") or 0))
+    except Exception:
+        return 0
+
+
+def _max_attempts(row: dict[str, Any]) -> int:
+    try:
+        return max(1, int(row.get("max_attempts") or 3))
+    except Exception:
+        return 3
+
+
 def next_queued_question(rows: list[dict[str, Any]]) -> dict[str, Any] | None:
-    queued = [row for row in rows if str(row.get("status") or "queued") == "queued"]
+    queued = [
+        row
+        for row in rows
+        if str(row.get("status") or "queued") in RETRYABLE_STATUSES and _attempt_count(row) < _max_attempts(row)
+    ]
     if not queued:
         return None
     return sorted(queued, key=lambda row: (-float(row.get("priority_score") or 0.0), str(row.get("created_at") or ""), str(row.get("id") or "")))[0]
@@ -59,6 +78,23 @@ def mark_question_status(question_id: str, status: str, *, run_id: str = "", err
             row["run_id"] = run_id
         if error:
             row["error"] = error
+        updated = dict(row)
+        break
+    if updated:
+        write_question_queue(rows, path)
+    return updated
+
+
+def mark_question_attempt(question_id: str, *, run_id: str, path: Path = EXPLORATION_QUEUE_FILE) -> dict[str, Any]:
+    rows = load_question_queue(path)
+    updated: dict[str, Any] = {}
+    for row in rows:
+        if str(row.get("id") or "") != question_id:
+            continue
+        row["attempt_count"] = _attempt_count(row) + 1
+        row["status"] = "running"
+        row["run_id"] = run_id
+        row["updated_at"] = iso_now()
         updated = dict(row)
         break
     if updated:
@@ -117,7 +153,7 @@ def start_next_question_run(*, queue_path: Path = EXPLORATION_QUEUE_FILE, receip
     try:
         run = runtime.start_run(query, payload)
         question_id = str(question.get("id") or "")
-        mark_question_status(question_id, "running", run_id=run["run_id"], path=queue_path)
+        mark_question_attempt(question_id, run_id=run["run_id"], path=queue_path)
         trace: dict[str, Any] = {}
         final_question_status = "running"
         if run_steps > 0:
@@ -126,7 +162,10 @@ def start_next_question_run(*, queue_path: Path = EXPLORATION_QUEUE_FILE, receip
             if run_status in {"completed", "completed_no_changes", "completed_with_warnings", "no_results"}:
                 final_question_status = "completed"
             elif run_status == "failed_retryable":
-                final_question_status = "retryable_failed"
+                current_rows = load_question_queue(queue_path)
+                current = next((row for row in current_rows if str(row.get("id") or "") == question_id), {})
+                attempts_after_run = _attempt_count(current) if current else _attempt_count(question) + 1
+                final_question_status = "retryable_failed" if attempts_after_run < _max_attempts(current or question) else "failed"
             elif run_status == "failed":
                 final_question_status = "failed"
             mark_question_status(question_id, final_question_status, run_id=run["run_id"], path=queue_path)

@@ -16,12 +16,13 @@ if str(SCRIPT_DIR) not in sys.path:
 
 from pipeline_common import SYSTEM_DIR, iso_now, load_graph, write_json  # noqa: E402
 from living_graph.question_generator import generate_research_questions, write_question_queue  # noqa: E402
-from living_graph.research_queue import start_next_question_run  # noqa: E402
+from living_graph.research_queue import load_question_queue, start_next_question_run  # noqa: E402
 from living_graph.store import edge_rows, node_rows  # noqa: E402
 from living_graph.subgraph_builder import build_priority_subgraphs, write_subgraph_bundle  # noqa: E402
 
 
 OPERATOR_REPORT_FILE = SYSTEM_DIR / "national-graph-operator-report.json"
+QUEUE_STATE_FIELDS = ("status", "run_id", "attempt_count", "max_attempts", "updated_at", "error")
 
 
 def _count_status(rows: list[dict[str, Any]], status: str) -> int:
@@ -63,9 +64,26 @@ def build_operator_report(
     }
 
 
+def preserve_queue_state(new_questions: list[dict[str, Any]], existing_questions: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    existing_by_id = {str(row.get("id") or ""): row for row in existing_questions if str(row.get("id") or "")}
+    merged: list[dict[str, Any]] = []
+    for question in new_questions:
+        existing = existing_by_id.get(str(question.get("id") or ""), {})
+        row = dict(question)
+        for field in QUEUE_STATE_FIELDS:
+            if field in existing:
+                row[field] = existing[field]
+        if "max_attempts" not in row:
+            row["max_attempts"] = 3
+        merged.append(row)
+    return merged
+
+
 def run_cycle(args: argparse.Namespace) -> dict[str, Any]:
     graph = load_graph()
     questions = generate_research_questions(graph, limit=args.question_limit)
+    existing_questions = load_question_queue()
+    questions = preserve_queue_state(questions, existing_questions)
     subgraphs = build_priority_subgraphs(graph, questions, limit=args.subgraph_limit)
     report = build_operator_report(graph, questions=questions, subgraphs=subgraphs, dry_run=args.dry_run)
     if not args.dry_run:

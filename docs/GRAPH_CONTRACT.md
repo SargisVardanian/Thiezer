@@ -67,6 +67,8 @@ Generate queue, subgraphs, and operator report:
 python3 scripts/national_graph_cycle.py --question-limit 50 --subgraph-limit 5
 ```
 
+Repeated daily runs preserve queue execution metadata (`status`, `run_id`, `attempt_count`, `max_attempts`) for stable question IDs, so retries and completed questions are not silently reset by graph-gap regeneration.
+
 Start one bounded runtime run from the highest-priority queued question:
 
 ```bash

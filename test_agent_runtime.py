@@ -14,7 +14,7 @@ from scripts.living_graph.research_tools.temporal_planner import build_role_quer
 from scripts.living_graph.research_tools.search_provider import DeterministicOfficialSearchProvider
 from scripts.living_graph.research_tools.source_registry import load_source_registry_snapshot
 from scripts.living_graph.question_generator import generate_research_questions
-from scripts.living_graph.research_queue import load_question_queue, mark_question_status, next_queued_question, question_to_run_payload, start_next_question_run
+from scripts.living_graph.research_queue import load_question_queue, mark_question_attempt, mark_question_status, next_queued_question, question_to_run_payload, start_next_question_run
 from scripts.living_graph.subgraph_builder import build_subgraph
 from scripts import national_graph_cycle
 from scripts import model_runtime
@@ -772,6 +772,33 @@ class AgentRuntimeTests(unittest.TestCase):
         self.assertGreaterEqual(report["questions_generated"], 1)
         self.assertEqual(report["subgraphs_updated"], 1)
 
+    def test_national_graph_cycle_preserves_existing_queue_state(self):
+        merged = national_graph_cycle.preserve_queue_state(
+            [
+                {
+                    "id": "q-1",
+                    "question": "Updated question text",
+                    "status": "queued",
+                    "priority_score": 0.9,
+                }
+            ],
+            [
+                {
+                    "id": "q-1",
+                    "status": "retryable_failed",
+                    "run_id": "run-old",
+                    "attempt_count": 2,
+                    "max_attempts": 4,
+                    "updated_at": "2026-05-30T00:00:00+00:00",
+                }
+            ],
+        )
+        self.assertEqual(merged[0]["question"], "Updated question text")
+        self.assertEqual(merged[0]["status"], "retryable_failed")
+        self.assertEqual(merged[0]["run_id"], "run-old")
+        self.assertEqual(merged[0]["attempt_count"], 2)
+        self.assertEqual(merged[0]["max_attempts"], 4)
+
     def test_research_queue_marks_question_running_and_builds_payload(self):
         queue_path = Path(self.tempdir.name) / "queue.jsonl"
         question = {
@@ -798,6 +825,30 @@ class AgentRuntimeTests(unittest.TestCase):
         updated = mark_question_status("q-1", "running", run_id="run-1", path=queue_path)
         self.assertEqual(updated["status"], "running")
         self.assertEqual(updated["run_id"], "run-1")
+        attempted = mark_question_attempt("q-1", run_id="run-2", path=queue_path)
+        self.assertEqual(attempted["attempt_count"], 1)
+        self.assertEqual(attempted["run_id"], "run-2")
+
+    def test_research_queue_retries_retryable_until_attempt_limit(self):
+        rows = [
+            {
+                "id": "q-retry",
+                "question": "Retry me",
+                "status": "retryable_failed",
+                "priority_score": 0.9,
+                "attempt_count": 1,
+                "max_attempts": 3,
+            },
+            {
+                "id": "q-terminal",
+                "question": "Do not retry me",
+                "status": "retryable_failed",
+                "priority_score": 1.0,
+                "attempt_count": 3,
+                "max_attempts": 3,
+            },
+        ]
+        self.assertEqual(next_queued_question(rows)["id"], "q-retry")
 
     def test_research_queue_can_advance_runtime_steps(self):
         queue_path = Path(self.tempdir.name) / "queue.jsonl"
@@ -825,6 +876,32 @@ class AgentRuntimeTests(unittest.TestCase):
         self.assertEqual(receipt["question_status"], "retryable_failed")
         loaded = load_question_queue(queue_path)
         self.assertEqual(loaded[0]["status"], "retryable_failed")
+        self.assertEqual(loaded[0]["attempt_count"], 1)
+
+    def test_research_queue_marks_failed_after_attempt_limit(self):
+        queue_path = Path(self.tempdir.name) / "queue.jsonl"
+        question = {
+            "id": "q-3",
+            "question": "Complete a source-backed biography profile for Person C.",
+            "question_type": "biography_completion",
+            "target_entities": ["person-c"],
+            "priority_score": 0.8,
+            "budget_estimate": {"pages": 3, "max_depth": 1},
+            "status": "retryable_failed",
+            "attempt_count": 2,
+            "max_attempts": 3,
+            "created_at": "2026-05-30T00:00:00+00:00",
+        }
+        queue_path.write_text(json.dumps(question, ensure_ascii=False) + "\n", encoding="utf-8")
+
+        with patch.object(runtime, "start_run", return_value={"run_id": "run-3", "run_type": "generic_topic_research"}):
+            with patch.object(runtime, "run_steps", return_value={"status": "failed_retryable"}):
+                receipt = start_next_question_run(queue_path=queue_path, run_steps=1)
+
+        self.assertEqual(receipt["question_status"], "failed")
+        loaded = load_question_queue(queue_path)
+        self.assertEqual(loaded[0]["attempt_count"], 3)
+        self.assertEqual(loaded[0]["status"], "failed")
 
 
 class FrontendContractTests(unittest.TestCase):
