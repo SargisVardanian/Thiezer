@@ -369,6 +369,49 @@ def _deterministic_fallback(query: str, target_name: str, source_url: str, page_
     return ClaimExtractionResult(claims=claims, profile_updates=[], model_meta={"provider": "deterministic", "model": "rules"}, raw_model_output="", fallback_used=True)
 
 
+def _fast_biography_extraction(*, query: str, target_name: str, source_url: str, page_text: str, page_title: str = "", context: dict[str, Any] | None = None) -> ClaimExtractionResult | None:
+    ctx = context or {}
+    expected = {str(item).lower() for item in ctx.get("expected_claim_types", []) or []}
+    question_type = str(ctx.get("question_type") or "").lower()
+    blob = normalize_text(f"{query} {page_title} {page_text[:2000]}")
+    if "biography_fact" not in expected and "biography" not in question_type and "biography" not in blob and "биограф" not in blob and "կենսագր" not in blob:
+        return None
+    candidate = target_name if _is_human_name_candidate(target_name) else ""
+    if not candidate:
+        names = _extract_person_names(page_text, page_title)
+        candidate = names[0] if names else ""
+    if not candidate or not _is_human_name_candidate(candidate):
+        return None
+    candidate_blob = normalize_text(candidate)
+    if candidate_blob and candidate_blob not in normalize_text(f"{page_title} {page_text[:6000]}"):
+        return None
+    evidence = page_text[:420].strip()
+    if not evidence:
+        return None
+    claim = {
+        "claim_type": "biography",
+        "subject_id_hint": "",
+        "subject_name": candidate,
+        "object_id_hint": "",
+        "object_name": "",
+        "relation_type": "other",
+        "statement": f"{candidate} has source-backed biographical information in {page_title or source_url}.",
+        "date_from": "",
+        "date_to": "",
+        "confidence": 0.58,
+        "evidence_quote": evidence,
+        "source_url": source_url,
+    }
+    profile_update = {
+        "entity_name": candidate,
+        "overview": f"Biographical source candidate from {page_title or source_url}.",
+        "biography_or_history": [evidence],
+        "current_roles_or_functions": [],
+        "timeline_items": [],
+    }
+    return ClaimExtractionResult(claims=[claim], profile_updates=[profile_update], model_meta={"provider": "deterministic", "model": "biography_fast_path"}, raw_model_output="", fallback_used=True)
+
+
 def extract_claims_from_page(*, query: str, target_name: str, source_url: str, page_text: str, page_title: str = "", source_type: str = "official", context: dict[str, Any] | None = None, timeout: int = 12) -> ClaimExtractionResult:
     normalized_target_name = target_name if _is_human_name_candidate(target_name) else ""
     prompt = f"""
@@ -419,6 +462,9 @@ Schema:
     fast_path = _fast_role_history_extraction(query=query, target_name=normalized_target_name or target_name, source_url=source_url, page_text=page_text, page_title=page_title)
     if fast_path is not None:
         return fast_path
+    biography_fast_path = _fast_biography_extraction(query=query, target_name=normalized_target_name or target_name, source_url=source_url, page_text=page_text, page_title=page_title, context=context)
+    if biography_fast_path is not None:
+        return biography_fast_path
     parsed, meta = call_parser_model(page_text, prompt, timeout=timeout)
     raw_model_output = str(meta.get("raw") or "")
     if isinstance(parsed, dict):

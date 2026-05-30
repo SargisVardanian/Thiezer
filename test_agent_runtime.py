@@ -511,6 +511,21 @@ class AgentRuntimeTests(unittest.TestCase):
         self.assertEqual(len(index["by_entity"]["person-a"]), 1)
         self.assertEqual(len(index["by_type"]["HOLDS_OFFICE"]), 1)
 
+    def test_biography_fast_path_extracts_candidate_claim(self):
+        result = claim_extractor.extract_claims_from_page(
+            query="Complete a source-backed biography profile for Artur Hovsepyan.",
+            target_name="Artur Hovsepyan",
+            source_url="https://example.org/person-d",
+            page_title="Artur Hovsepyan biography",
+            page_text="Artur Hovsepyan was born in Yerevan and worked in public administration before joining a civic program.",
+            source_type="media",
+            context={"question_type": "biography_completion", "expected_claim_types": ["biography_fact"]},
+        )
+        self.assertTrue(result.fallback_used)
+        self.assertEqual(result.claims[0]["claim_type"], "biography")
+        self.assertEqual(result.claims[0]["subject_name"], "Artur Hovsepyan")
+        self.assertEqual(result.model_meta["model"], "biography_fast_path")
+
     def test_backend_capability_catalog_exposes_long_context_contract(self):
         config = {
                 "runtime": {
@@ -905,7 +920,7 @@ class AgentRuntimeTests(unittest.TestCase):
 
     def test_generic_research_uses_queue_seed_queries_and_budget(self):
         started = runtime.start_run(
-            "Complete a source-backed biography profile for Person D.",
+            "Complete a source-backed biography profile for Person Doe.",
             {
                 "budget_pages": 2,
                 "max_depth": 1,
@@ -914,7 +929,7 @@ class AgentRuntimeTests(unittest.TestCase):
                 "target_entities": ["person-d"],
                 "expected_claim_types": ["biography_fact"],
                 "suggested_source_types": ["official", "media"],
-                "seed_queries": ["Person D biography Armenia", "Person D պաշտոն կենսագրություն"],
+                "seed_queries": ["Person Doe biography Armenia", "Person Doe պաշտոն կենսագրություն"],
             },
         )
 
@@ -925,18 +940,19 @@ class AgentRuntimeTests(unittest.TestCase):
             if query.startswith("Complete a source-backed"):
                 return []
             return [
-                {"url": f"https://example.org/{len(searched_queries)}", "title": f"Source {len(searched_queries)}", "snippet": "Person D profile"},
+                {"url": f"https://example.org/{len(searched_queries)}", "title": f"Source {len(searched_queries)}", "snippet": "Person Doe profile"},
                 {"url": "https://example.org/duplicate", "title": "Duplicate", "snippet": "duplicate"},
             ]
 
         def fake_fetch(run_id, item_id, url):
-            return {"body": "<html><title>Profile</title><body>Person D served in public office.</body></html>", "final_url": url, "content_type": "text/html"}
+            return {"body": "<html><title>Profile</title><body>Person Doe served in public office.</body></html>", "final_url": url, "content_type": "text/html"}
 
         def fake_extract(run_id, item_id, **kwargs):
             self.assertEqual(kwargs["context"]["question_id"], "q-seed")
             self.assertEqual(kwargs["context"]["expected_claim_types"], ["biography_fact"])
             self.assertIn(kwargs["context"]["planned_query"], searched_queries)
-            return {"claims": [{"statement": "Person D served in public office.", "source_url": kwargs["source_url"]}]}
+            self.assertEqual(kwargs["target_name"], "Person Doe")
+            return {"claims": [{"statement": "Person Doe served in public office.", "source_url": kwargs["source_url"]}]}
 
         with patch.object(workers, "search_web_logged", side_effect=fake_search):
             with patch.object(workers, "fetch_url_logged", side_effect=fake_fetch):
@@ -945,13 +961,31 @@ class AgentRuntimeTests(unittest.TestCase):
 
         self.assertTrue(trace["ok"])
         self.assertGreaterEqual(len(searched_queries), 1)
-        self.assertIn("Person D biography Armenia", searched_queries)
+        self.assertIn("Person Doe biography Armenia", searched_queries)
         artifacts = task_db.list_artifacts(started["run_id"])
         plans = [row["payload_json"] for row in artifacts if row["artifact_type"] == "research_question_plan"]
         self.assertEqual(len(plans), 1)
         self.assertEqual(plans[0]["question_id"], "q-seed")
         self.assertEqual(plans[0]["budget_pages"], 2)
-        self.assertIn("Person D պաշտոն կենսագրություն", plans[0]["query_plan"])
+        self.assertIn("Person Doe պաշտոն կենսագրություն", plans[0]["query_plan"])
+
+    def test_generic_research_with_sources_but_no_claims_completes_no_changes(self):
+        started = runtime.start_run(
+            "Complete a source-backed biography profile for Person Empty.",
+            {"budget_pages": 1, "max_depth": 1, "seed_queries": ["Person Empty biography Armenia"]},
+        )
+
+        with patch.object(workers, "search_web_logged", return_value=[{"url": "https://example.org/empty", "title": "Empty profile"}]):
+            with patch.object(workers, "fetch_url_logged", return_value={"body": "<html><body>Navigation only</body></html>", "final_url": "https://example.org/empty", "content_type": "text/html"}):
+                with patch.object(workers, "extract_claims_logged", return_value={"claims": []}):
+                    trace = runtime.run_steps(started["run_id"], max_steps=1)
+
+        self.assertEqual(trace["status"], "completed_no_changes")
+        artifacts = task_db.list_artifacts(started["run_id"])
+        rejected = [row["payload_json"] for row in artifacts if row["artifact_type"] == "rejected_change"]
+        self.assertEqual(rejected[0]["reason"], "no_extractable_claims")
+        self.assertEqual(rejected[0]["accepted_sources"], 1)
+        self.assertEqual(rejected[0]["attempted_sources"][0]["url"], "https://example.org/empty")
 
 
 class FrontendContractTests(unittest.TestCase):

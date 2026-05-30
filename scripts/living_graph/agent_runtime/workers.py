@@ -1882,6 +1882,17 @@ def _generic_topic_research(run_id: str, item: dict[str, Any]) -> WorkItemResult
                 break
         if len(search_results) >= budget_pages:
             break
+    target_name = str(payload.get("target_name") or "").strip()
+    if not target_name:
+        for pattern in (
+            r"\bfor\s+([A-ZԱ-Ֆ][A-Za-zԱ-Ֆա-ֆև'’.-]+(?:\s+[A-ZԱ-Ֆ][A-Za-zԱ-Ֆա-ֆև'’.-]+){1,3})\b",
+            r"\babout\s+([A-ZԱ-Ֆ][A-Za-zԱ-Ֆա-ֆև'’.-]+(?:\s+[A-ZԱ-Ֆ][A-Za-zԱ-Ֆա-ֆև'’.-]+){1,3})\b",
+        ):
+            match = re.search(pattern, query)
+            if match:
+                target_name = re.sub(r"\s+", " ", match.group(1)).strip(" .,:;")
+                break
+    target_name = target_name or query
     increment_run_summary(run_id, search_queries=search_count)
     save_artifact(
         run_id,
@@ -1904,10 +1915,12 @@ def _generic_topic_research(run_id: str, item: dict[str, Any]) -> WorkItemResult
         return WorkItemResult(ok=False, status="failed_retryable", error="no_search_results", current_stage="generic_topic_research")
     extracted_claims: list[dict[str, Any]] = []
     accepted_sources = 0
+    attempted_sources: list[dict[str, str]] = []
     for result in search_results[:budget_pages]:
         url = str(result.get("url") or "").strip()
         if not url:
             continue
+        attempted_sources.append({"url": url, "title": str(result.get("title") or "").strip(), "planned_query": str(result.get("planned_query") or "").strip()})
         try:
             fetch = fetch_url_logged(run_id, item["item_id"], url)
         except Exception:
@@ -1920,7 +1933,7 @@ def _generic_topic_research(run_id: str, item: dict[str, Any]) -> WorkItemResult
             run_id,
             item["item_id"],
             query=query,
-            target_name=str(payload.get("target_name") or query),
+            target_name=target_name,
             source_url=page.get("url") or fetch["final_url"],
             page_text=page.get("text", "")[:16000],
             page_title=page.get("title", ""),
@@ -1938,8 +1951,10 @@ def _generic_topic_research(run_id: str, item: dict[str, Any]) -> WorkItemResult
         )
         extracted_claims.extend(extraction.get("claims", []) or [])
     if not extracted_claims:
-        save_artifact(run_id, item["item_id"], "rejected_change", {"reason": "no_extractable_claims", "query": query, "query_plan": query_plan, "accepted_sources": accepted_sources}, ref=query)
-        increment_run_summary(run_id, rejected_sources=1)
+        save_artifact(run_id, item["item_id"], "rejected_change", {"reason": "no_extractable_claims", "query": query, "query_plan": query_plan, "accepted_sources": accepted_sources, "attempted_sources": attempted_sources[:10]}, ref=query)
+        increment_run_summary(run_id, rejected_sources=1, accepted_sources=accepted_sources)
+        if accepted_sources > 0:
+            return WorkItemResult(ok=True, status="done", current_stage="generic_topic_research", output={"query": query, "query_plan": query_plan, "accepted_sources": accepted_sources, "claims_extracted": 0, "no_changes_reason": "no_extractable_claims"}, graph_diff=GraphDiff())
         return WorkItemResult(ok=False, status="failed_retryable", error="no_extractable_claims", current_stage="generic_topic_research")
     increment_run_summary(run_id, accepted_sources=accepted_sources, claims_extracted=len(extracted_claims))
     save_artifact(run_id, item["item_id"], "accepted_change", {"query": query, "query_plan": query_plan, "accepted_sources": accepted_sources, "claims": extracted_claims[:10]}, ref=query)
