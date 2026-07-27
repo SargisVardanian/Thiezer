@@ -114,7 +114,7 @@ def angular_separation_deg(
 
 
 def airmass_kasten_young(altitude_deg: float) -> float:
-    """Kasten–Young relative optical air mass.
+    """Kasten-Young relative optical air mass.
 
     Returns infinity at or below the geometric horizon.
     """
