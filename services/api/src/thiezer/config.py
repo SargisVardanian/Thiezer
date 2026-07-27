@@ -17,7 +17,9 @@ class Settings(BaseSettings):
     environment: str = "development"
     log_level: str = "INFO"
     database_url: str = "postgresql+asyncpg://thiezer:thiezer@localhost:5432/thiezer"
-    open_meteo_base_url: AnyHttpUrl = Field(default="https://api.open-meteo.com/v1")
+    open_meteo_base_url: AnyHttpUrl = Field(
+        default=AnyHttpUrl("https://api.open-meteo.com/v1")
+    )
     open_meteo_api_key: str | None = None
 
 
