@@ -6,7 +6,6 @@ from logging.config import fileConfig
 from alembic import context
 from sqlalchemy import pool
 from sqlalchemy.ext.asyncio import async_engine_from_config
-
 from thiezer.config import get_settings
 
 config = context.config
