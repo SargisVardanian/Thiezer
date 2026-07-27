@@ -76,6 +76,14 @@ def _bounded(value: float) -> float:
     return min(1.0, max(0.0, value))
 
 
+def _component_strength(value: float) -> str:
+    if value >= 0.75:
+        return "strong"
+    if value < 0.4:
+        return "weak"
+    return "moderate"
+
+
 def weights_for(target: TargetKind, mode: ObservationMode) -> dict[str, float]:
     weights = dict(_BASE_WEIGHTS[target])
     if mode == ObservationMode.WIDE_ANGLE_CAMERA:
@@ -146,8 +154,7 @@ def calculate_sky_score(
         - 0.15 * (1.0 - values["confidence"])
     )
     explanations = [
-        f"{component.name}:{'strong' if component.value >= 0.75 else 'weak' if component.value < 0.4 else 'moderate'}"
-        for component in components
+        f"{component.name}:{_component_strength(component.value)}" for component in components
     ]
     return SkyScoreBreakdown(
         valid=not hard_invalid,

@@ -51,10 +51,7 @@ def greenwich_mean_sidereal_time_deg(timestamp: datetime) -> float:
     jd = julian_date(timestamp)
     t = (jd - 2451545.0) / 36525.0
     gmst = (
-        280.46061837
-        + 360.98564736629 * (jd - 2451545.0)
-        + 0.000387933 * t**2
-        - t**3 / 38710000.0
+        280.46061837 + 360.98564736629 * (jd - 2451545.0) + 0.000387933 * t**2 - t**3 / 38710000.0
     )
     return gmst % 360.0
 
@@ -81,17 +78,15 @@ def equatorial_to_horizontal(
     latitude = math.radians(latitude_deg)
     declination = math.radians(declination_deg)
 
-    sin_altitude = (
-        math.sin(latitude) * math.sin(declination)
-        + math.cos(latitude) * math.cos(declination) * math.cos(hour_angle)
-    )
+    sin_altitude = math.sin(latitude) * math.sin(declination) + math.cos(latitude) * math.cos(
+        declination
+    ) * math.cos(hour_angle)
     altitude = math.asin(max(-1.0, min(1.0, sin_altitude)))
 
     y = -math.sin(hour_angle) * math.cos(declination)
-    x = (
-        math.sin(declination) * math.cos(latitude)
-        - math.cos(declination) * math.sin(latitude) * math.cos(hour_angle)
-    )
+    x = math.sin(declination) * math.cos(latitude) - math.cos(declination) * math.sin(
+        latitude
+    ) * math.cos(hour_angle)
     azimuth = math.atan2(y, x)
     return math.degrees(azimuth) % 360.0, math.degrees(altitude)
 
@@ -106,15 +101,12 @@ def angular_separation_deg(
     dec1 = math.radians(dec1_deg)
     ra2 = math.radians(ra2_deg)
     dec2 = math.radians(dec2_deg)
-    cosine = (
-        math.sin(dec1) * math.sin(dec2)
-        + math.cos(dec1) * math.cos(dec2) * math.cos(ra1 - ra2)
-    )
+    cosine = math.sin(dec1) * math.sin(dec2) + math.cos(dec1) * math.cos(dec2) * math.cos(ra1 - ra2)
     return math.degrees(math.acos(max(-1.0, min(1.0, cosine))))
 
 
 def airmass_kasten_young(altitude_deg: float) -> float:
-    """Kasten–Young relative optical air mass.
+    """Kasten-Young relative optical air mass.
 
     Returns infinity at or below the geometric horizon.
     """
@@ -122,9 +114,7 @@ def airmass_kasten_young(altitude_deg: float) -> float:
     if altitude_deg <= 0.0:
         return math.inf
     zenith_deg = 90.0 - altitude_deg
-    denominator = math.cos(math.radians(zenith_deg)) + 0.50572 * (
-        96.07995 - zenith_deg
-    ) ** -1.6364
+    denominator = math.cos(math.radians(zenith_deg)) + 0.50572 * (96.07995 - zenith_deg) ** -1.6364
     return 1.0 / denominator
 
 
