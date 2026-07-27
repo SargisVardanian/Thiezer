@@ -1,0 +1,35 @@
+services:
+  postgres:
+    image: postgis/postgis:16-3.4
+    environment:
+      POSTGRES_DB: thiezer
+      POSTGRES_USER: thiezer
+      POSTGRES_PASSWORD: thiezer
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U thiezer -d thiezer"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+    volumes:
+      - thiezer-postgres:/var/lib/postgresql/data
+
+  api:
+    build:
+      context: .
+      dockerfile: services/api/Dockerfile
+    environment:
+      THIEZER_ENVIRONMENT: development
+      THIEZER_DATABASE_URL: postgresql+asyncpg://thiezer:thiezer@postgres:5432/thiezer
+    command: >-
+      sh -c "alembic -c services/api/alembic.ini upgrade head &&
+      uvicorn thiezer.main:app --host 0.0.0.0 --port 8000"
+    ports:
+      - "8000:8000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+volumes:
+  thiezer-postgres:
