@@ -143,10 +143,7 @@ def calculate_sky_score(
     else:
         epsilon = 1e-6
         score = math.exp(
-            sum(
-                weight * math.log(max(epsilon, values[name]))
-                for name, weight in weights.items()
-            )
+            sum(weight * math.log(max(epsilon, values[name])) for name, weight in weights.items())
         )
         score = _bounded(score)
 
@@ -157,8 +154,7 @@ def calculate_sky_score(
         - 0.15 * (1.0 - values["confidence"])
     )
     explanations = [
-        f"{component.name}:{_component_strength(component.value)}"
-        for component in components
+        f"{component.name}:{_component_strength(component.value)}" for component in components
     ]
     return SkyScoreBreakdown(
         valid=not hard_invalid,
