@@ -21,8 +21,18 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install -e '.[dev]'
-      - name: Ruff lint
-        run: ruff check .
+      - name: Ruff lint report
+        id: ruff_lint
+        continue-on-error: true
+        run: ruff check . --output-format=json > ruff-lint.json
+      - name: Upload Ruff lint report
+        uses: actions/upload-artifact@v4
+        with:
+          name: ruff-lint-report
+          path: ruff-lint.json
+      - name: Enforce Ruff lint
+        if: steps.ruff_lint.outcome == 'failure'
+        run: exit 1
       - name: Ruff format
         run: ruff format --check .
       - name: Type check
