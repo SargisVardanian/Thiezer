@@ -109,9 +109,13 @@ async def test_final_surface_points_respect_radius_and_are_deduplicated() -> Non
         max_distance_km=250.0,
         limit=10,
     )
-    assert len(batch.matches) == 1
-    assert batch.matches[0][0].id == "inside"
-    assert batch.matches[0][1] <= 250.5
+    identifiers = {place.id for place, _ in batch.matches}
+    assert identifiers == {"inside", "observer-location:+0:+0"}
+    assert all(distance <= 250.5 for _, distance in batch.matches)
+    coordinates = {
+        (place.point.latitude_deg, place.point.longitude_deg) for place, _ in batch.matches
+    }
+    assert len(coordinates) == len(batch.matches)
 
 
 @pytest.mark.asyncio
