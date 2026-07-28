@@ -48,9 +48,7 @@ class ProceduralAccessPointProvider:
                     accessibility_score=accessibility,
                     risk_score=min(
                         1.0,
-                        0.20
-                        + 0.35 * best.uncertainty
-                        + 0.20 * (1.0 - accessibility),
+                        0.20 + 0.35 * best.uncertainty + 0.20 * (1.0 - accessibility),
                     ),
                     road_access=(
                         "Surface-selected point; legal and road access require verification"
