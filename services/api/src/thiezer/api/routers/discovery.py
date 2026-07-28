@@ -62,7 +62,7 @@ async def search_recommendations(
     try:
         return await service.search(request)
     except (httpx.HTTPError, ValueError) as exc:
-        raise HTTPException(status_code=502, detail=f"forecast provider failure: {exc}") from exc
+        raise HTTPException(status_code=502, detail=f"external provider failure: {exc}") from exc
 
 
 @router.post("/stores/search", response_model=StoreSearchResponse)
@@ -70,4 +70,4 @@ async def search_stores(
     request: StoreSearchRequest,
     service: Annotated[StoreSearchService, Depends(get_store_service)],
 ) -> StoreSearchResponse:
-    return service.search(request)
+    return await service.search(request)

@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import asyncio
 from datetime import UTC, datetime
 from typing import Any
 
@@ -10,7 +11,7 @@ from thiezer.providers.weather.base import WeatherPointKey, weather_point_key
 
 
 class OpenMeteoWeatherProvider:
-    """Normalize Open-Meteo hourly forecasts and batch nearby candidate locations."""
+    """Normalize Open-Meteo forecasts with bounded automatic chunking."""
 
     _HOURLY_FIELDS = (
         "cloud_cover",
@@ -26,6 +27,7 @@ class OpenMeteoWeatherProvider:
         "wind_gusts_10m",
         "surface_pressure",
     )
+    _MAX_POINTS_PER_BATCH = 25
 
     def __init__(
         self,
@@ -33,6 +35,7 @@ class OpenMeteoWeatherProvider:
         base_url: str,
         api_key: str | None = None,
         client: httpx.AsyncClient | None = None,
+        concurrency: int = 3,
     ) -> None:
         self._base_url = base_url.rstrip("/")
         self._api_key = api_key
@@ -42,8 +45,10 @@ class OpenMeteoWeatherProvider:
             limits=httpx.Limits(max_connections=10, max_keepalive_connections=5),
             follow_redirects=False,
         )
+        self._semaphore = asyncio.Semaphore(max(1, concurrency))
+        self.batch_calls = 0
 
-    async def __aenter__(self) -> OpenMeteoWeatherProvider:
+    async def __aenter__(self) -> "OpenMeteoWeatherProvider":
         return self
 
     async def __aexit__(self, *_: object) -> None:
@@ -73,13 +78,44 @@ class OpenMeteoWeatherProvider:
         points: list[GeoPoint],
         start_utc: datetime,
         end_utc: datetime,
+        elevations_m: list[float] | None = None,
     ) -> dict[WeatherPointKey, list[HourlySkyCondition]]:
         _validate_bounds(start_utc, end_utc)
         if not points:
             return {}
-        if len(points) > 25:
-            raise ValueError("at most 25 locations can be requested in one weather batch")
+        if elevations_m is not None and len(elevations_m) != len(points):
+            raise ValueError("elevations_m must have the same length as points")
+        elevations: list[float | None] = (
+            list(elevations_m) if elevations_m is not None else [None] * len(points)
+        )
+        chunks = [
+            (
+                points[index : index + self._MAX_POINTS_PER_BATCH],
+                elevations[index : index + self._MAX_POINTS_PER_BATCH],
+            )
+            for index in range(0, len(points), self._MAX_POINTS_PER_BATCH)
+        ]
+        batches = await asyncio.gather(
+            *(
+                self._fetch_batch(
+                    points=point_chunk,
+                    elevations_m=elevation_chunk,
+                    start_utc=start_utc,
+                    end_utc=end_utc,
+                )
+                for point_chunk, elevation_chunk in chunks
+            )
+        )
+        return {key: forecast for batch in batches for key, forecast in batch.items()}
 
+    async def _fetch_batch(
+        self,
+        *,
+        points: list[GeoPoint],
+        elevations_m: list[float | None],
+        start_utc: datetime,
+        end_utc: datetime,
+    ) -> dict[WeatherPointKey, list[HourlySkyCondition]]:
         params: dict[str, str | float] = {
             "latitude": ",".join(f"{point.latitude_deg:.6f}" for point in points),
             "longitude": ",".join(f"{point.longitude_deg:.6f}" for point in points),
@@ -89,10 +125,19 @@ class OpenMeteoWeatherProvider:
             "start_date": start_utc.astimezone(UTC).date().isoformat(),
             "end_date": end_utc.astimezone(UTC).date().isoformat(),
         }
+        if all(value is not None for value in elevations_m):
+            params["elevation"] = ",".join(
+                f"{value:.1f}" for value in elevations_m if value is not None
+            )
         if self._api_key:
             params["apikey"] = self._api_key
 
-        response = await self._client.get(f"{self._base_url}/forecast", params=params)
+        async with self._semaphore:
+            response = await self._client.get(
+                f"{self._base_url}/forecast",
+                params=params,
+            )
+            self.batch_calls += 1
         response.raise_for_status()
         if len(response.content) > 20_000_000:
             raise ValueError("provider response exceeds safety limit")
@@ -100,7 +145,6 @@ class OpenMeteoWeatherProvider:
         payloads = raw_payload if isinstance(raw_payload, list) else [raw_payload]
         if len(payloads) != len(points):
             raise ValueError("provider returned an unexpected number of locations")
-
         return {
             weather_point_key(point): self._normalize(
                 payload=_require_dict(payload),
@@ -129,7 +173,6 @@ class OpenMeteoWeatherProvider:
         times = hourly.get("time")
         if not isinstance(times, list):
             raise ValueError("missing hourly time array")
-
         returned_point = GeoPoint(
             latitude_deg=float(payload["latitude"]),
             longitude_deg=float(payload["longitude"]),
@@ -152,11 +195,23 @@ class OpenMeteoWeatherProvider:
                         hourly["relative_humidity_2m"][index]
                     ),
                     dew_point_c=float(hourly["dew_point_2m"][index]),
-                    precipitation_mm=max(0.0, float(hourly["precipitation"][index])),
+                    precipitation_mm=max(
+                        0.0,
+                        float(hourly["precipitation"][index]),
+                    ),
                     visibility_m=max(0.0, float(hourly["visibility"][index])),
-                    wind_speed_mps=max(0.0, float(hourly["wind_speed_10m"][index])),
-                    wind_gust_mps=max(0.0, float(hourly["wind_gusts_10m"][index])),
-                    pressure_hpa=max(0.01, float(hourly["surface_pressure"][index])),
+                    wind_speed_mps=max(
+                        0.0,
+                        float(hourly["wind_speed_10m"][index]),
+                    ),
+                    wind_gust_mps=max(
+                        0.0,
+                        float(hourly["wind_gusts_10m"][index]),
+                    ),
+                    pressure_hpa=max(
+                        0.01,
+                        float(hourly["surface_pressure"][index]),
+                    ),
                     provider="open_meteo",
                     model_name=str(model_name) if model_name else None,
                     run_timestamp_utc=None,

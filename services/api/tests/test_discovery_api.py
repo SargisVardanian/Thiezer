@@ -3,10 +3,11 @@ from datetime import UTC, datetime, timedelta
 from conftest import FakeAstronomyProvider, FakeWeatherProvider, make_place
 from fastapi.testclient import TestClient
 
-from thiezer.api.dependencies import get_recommendation_service
+from thiezer.api.dependencies import get_recommendation_service, get_store_service
 from thiezer.main import app
-from thiezer.repositories.seed import SeedPlaceRepository
+from thiezer.repositories.seed import SeedPlaceRepository, SeedStoreRepository
 from thiezer.services.recommendations import RecommendationService
+from thiezer.services.stores import StoreSearchService
 
 
 def test_targets_endpoint_lists_requested_targets() -> None:
@@ -24,18 +25,22 @@ def test_targets_endpoint_lists_requested_targets() -> None:
     } <= identifiers
 
 
-def test_store_search_returns_route_for_physical_store() -> None:
-    with TestClient(app) as client:
-        response = client.post(
-            "/v1/stores/search",
-            json={
-                "user_location": {"latitude_deg": 40.1772, "longitude_deg": 44.5035},
-                "scope": "country",
-                "country_code": "AM",
-                "max_distance_km": 300,
-                "max_results": 10,
-            },
-        )
+def test_store_search_returns_route_for_physical_store_without_live_network() -> None:
+    app.dependency_overrides[get_store_service] = lambda: StoreSearchService(SeedStoreRepository())
+    try:
+        with TestClient(app) as client:
+            response = client.post(
+                "/v1/stores/search",
+                json={
+                    "user_location": {"latitude_deg": 40.1772, "longitude_deg": 44.5035},
+                    "scope": "country",
+                    "country_code": "AM",
+                    "max_distance_km": 300,
+                    "max_results": 10,
+                },
+            )
+    finally:
+        app.dependency_overrides.clear()
     assert response.status_code == 200
     body = response.json()
     physical = next(item for item in body["results"] if item["distance_km"] is not None)
@@ -70,8 +75,7 @@ def test_recommendation_api_uses_injected_services_without_live_network() -> Non
                     "observation_mode": "naked_eye",
                     "start_utc": start.isoformat(),
                     "end_utc": (start + timedelta(hours=3)).isoformat(),
-                    "scope": "country",
-                    "country_code": "AM",
+                    "scope": "adaptive",
                     "max_distance_km": 200,
                     "minimum_score": 0.1,
                 },
@@ -81,3 +85,4 @@ def test_recommendation_api_uses_injected_services_without_live_network() -> Non
     assert response.status_code == 200
     body = response.json()
     assert body["results"][0]["place"]["id"] == "api-site"
+    assert body["search_radius_km"] == 200

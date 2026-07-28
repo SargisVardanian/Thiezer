@@ -23,6 +23,7 @@ class WeatherProvider(Protocol):
         points: list[GeoPoint],
         start_utc: datetime,
         end_utc: datetime,
+        elevations_m: list[float] | None = None,
     ) -> dict[WeatherPointKey, list[HourlySkyCondition]]: ...
 
     async def aclose(self) -> None: ...

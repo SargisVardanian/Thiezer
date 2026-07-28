@@ -13,6 +13,7 @@ from thiezer.domain.contracts import (
     RecommendationSearchRequest,
     RecommendationSearchResponse,
     SkyScoreBreakdown,
+    TargetKind,
     VerificationStatus,
     WarningCode,
 )
@@ -21,7 +22,7 @@ from thiezer.domain.geospatial import build_route_handoffs
 from thiezer.domain.quality import build_score_inputs
 from thiezer.domain.scoring import calculate_sky_score
 from thiezer.providers.weather.base import WeatherProvider, weather_point_key
-from thiezer.repositories.seed import PlaceRepository
+from thiezer.repositories.base import PlaceRepository
 
 
 @dataclass(frozen=True, slots=True)
@@ -47,23 +48,28 @@ class RecommendationService:
         self,
         request: RecommendationSearchRequest,
     ) -> RecommendationSearchResponse:
-        candidates = self._places.search(
+        batch = await self._places.search(
             user_location=request.user_location,
             scope=request.scope,
             country_code=request.country_code,
             max_distance_km=request.max_distance_km,
             limit=request.max_candidates,
+            include_unverified=request.include_unverified,
         )
+        candidates = batch.matches
         generated_at = datetime.now(UTC)
         if not candidates:
+            warnings = [*batch.warnings, WarningCode.NO_CANDIDATE_PLACES]
             return RecommendationSearchResponse(
                 generated_at_utc=generated_at,
                 target=request.target,
                 scope=request.scope,
-                coverage_country_codes=self._places.coverage_country_codes,
+                search_radius_km=request.max_distance_km,
+                coverage_country_codes=batch.coverage_country_codes,
+                discovery_sources=batch.discovery_sources,
                 results=[],
-                warnings=[WarningCode.NO_CANDIDATE_PLACES],
-                provider_attributions=[],
+                warnings=list(dict.fromkeys(warnings)),
+                provider_attributions=batch.attributions,
             )
 
         forecast_by_point = await self._weather.get_hourly_forecasts(
@@ -72,7 +78,7 @@ class RecommendationService:
             end_utc=request.end_utc,
         )
         ranked: list[RankedPlace] = []
-        attributions: set[str] = set()
+        attributions: set[str] = set(batch.attributions)
         places_with_weather = 0
 
         for place, distance_km in candidates:
@@ -92,8 +98,13 @@ class RecommendationService:
             if window is None:
                 continue
             warnings = list(window.score_breakdown.warnings)
-            if place.verification_status == VerificationStatus.UNVERIFIED_SEED:
+            if place.verification_status in {
+                VerificationStatus.UNVERIFIED_SEED,
+                VerificationStatus.UNVERIFIED_DISCOVERED,
+            }:
                 warnings.append(WarningCode.UNVERIFIED_PLACE)
+            if place.darkness_model != "viirs_raster":
+                warnings.append(WarningCode.DARKNESS_IS_PROXY)
             ranked.append(
                 RankedPlace(
                     rank=1,
@@ -121,23 +132,26 @@ class RecommendationService:
         )
         results = [
             result.model_copy(update={"rank": index}) for index, result in enumerate(ranked, 1)
-        ]
-        results = results[: request.max_results]
-        response_warnings: list[WarningCode] = []
+        ][: request.max_results]
+
+        response_warnings = list(batch.warnings)
         if not results:
-            response_warnings.append(
-                WarningCode.WEATHER_UNAVAILABLE
-                if places_with_weather == 0
-                else WarningCode.TARGET_NOT_VISIBLE_IN_SCOPE
-            )
+            if places_with_weather == 0:
+                response_warnings.append(WarningCode.WEATHER_UNAVAILABLE)
+            elif request.target == TargetKind.ALPHA_CENTAURI:
+                response_warnings.append(WarningCode.TARGET_NOT_VISIBLE_IN_SCOPE)
+            else:
+                response_warnings.append(WarningCode.NO_OBSERVATION_WINDOW)
 
         return RecommendationSearchResponse(
             generated_at_utc=generated_at,
             target=request.target,
             scope=request.scope,
-            coverage_country_codes=self._places.coverage_country_codes,
+            search_radius_km=request.max_distance_km,
+            coverage_country_codes=batch.coverage_country_codes,
+            discovery_sources=batch.discovery_sources,
             results=results,
-            warnings=response_warnings,
+            warnings=list(dict.fromkeys(response_warnings)),
             provider_attributions=sorted(attributions),
         )
 
@@ -239,9 +253,7 @@ def _explain(
         *[
             ExplanationItem(
                 code=f"component_{component.name}",
-                message=(
-                    f"{component.name.replace('_', ' ')} score is {component.value * 100:.0f}%."
-                ),
+                message=f"{component.name.replace('_', ' ')} score is {component.value * 100:.0f}%.",
                 impact="positive",
             )
             for component in strongest

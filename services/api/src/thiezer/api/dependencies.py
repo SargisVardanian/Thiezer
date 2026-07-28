@@ -1,51 +1,27 @@
 from __future__ import annotations
 
-from collections.abc import AsyncIterator
-from functools import lru_cache
+from fastapi import Request
 
-from thiezer.config import get_settings
-from thiezer.domain.ephemeris import SkyfieldAstronomyProvider
-from thiezer.providers.weather.open_meteo import OpenMeteoWeatherProvider
-from thiezer.repositories.seed import SeedPlaceRepository, SeedStoreRepository
+from thiezer.api.resources import AppResources
 from thiezer.services.recommendations import RecommendationService
 from thiezer.services.stores import StoreSearchService
 from thiezer.services.visibility import VisibilityService
 
 
-@lru_cache(maxsize=1)
-def get_place_repository() -> SeedPlaceRepository:
-    return SeedPlaceRepository()
+def get_resources(request: Request) -> AppResources:
+    resources = getattr(request.app.state, "resources", None)
+    if not isinstance(resources, AppResources):
+        raise RuntimeError("application resources are not initialized")
+    return resources
 
 
-@lru_cache(maxsize=1)
-def get_store_repository() -> SeedStoreRepository:
-    return SeedStoreRepository()
+def get_recommendation_service(request: Request) -> RecommendationService:
+    return get_resources(request).recommendation_service
 
 
-@lru_cache(maxsize=1)
-def get_astronomy_provider() -> SkyfieldAstronomyProvider:
-    return SkyfieldAstronomyProvider()
+def get_store_service(request: Request) -> StoreSearchService:
+    return get_resources(request).store_service
 
 
-async def get_recommendation_service() -> AsyncIterator[RecommendationService]:
-    settings = get_settings()
-    weather = OpenMeteoWeatherProvider(
-        base_url=str(settings.open_meteo_base_url),
-        api_key=settings.open_meteo_api_key,
-    )
-    try:
-        yield RecommendationService(
-            place_repository=get_place_repository(),
-            weather_provider=weather,
-            astronomy_provider=get_astronomy_provider(),
-        )
-    finally:
-        await weather.aclose()
-
-
-def get_store_service() -> StoreSearchService:
-    return StoreSearchService(get_store_repository())
-
-
-def get_visibility_service() -> VisibilityService:
-    return VisibilityService(get_astronomy_provider())
+def get_visibility_service(request: Request) -> VisibilityService:
+    return get_resources(request).visibility_service

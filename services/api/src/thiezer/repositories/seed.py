@@ -2,7 +2,6 @@ from __future__ import annotations
 
 import json
 from importlib.resources import files
-from typing import Protocol
 
 from pydantic import TypeAdapter
 
@@ -11,49 +10,17 @@ from thiezer.domain.contracts import (
     EquipmentStore,
     GeoPoint,
     SearchScope,
+    VerificationStatus,
 )
 from thiezer.domain.geospatial import haversine_distance_km
-
-
-class PlaceRepository(Protocol):
-    @property
-    def coverage_country_codes(self) -> list[str]: ...
-
-    def search(
-        self,
-        *,
-        user_location: GeoPoint,
-        scope: SearchScope,
-        country_code: str | None,
-        max_distance_km: float,
-        limit: int,
-    ) -> list[tuple[CandidatePlace, float]]: ...
-
-
-class StoreRepository(Protocol):
-    @property
-    def coverage_country_codes(self) -> list[str]: ...
-
-    def search(
-        self,
-        *,
-        user_location: GeoPoint,
-        scope: SearchScope,
-        country_code: str | None,
-        max_distance_km: float,
-        limit: int,
-    ) -> list[tuple[EquipmentStore, float | None]]: ...
+from thiezer.repositories.base import PlaceSearchBatch, StoreSearchBatch
 
 
 class SeedPlaceRepository:
     def __init__(self, places: list[CandidatePlace] | None = None) -> None:
         self._places = places if places is not None else _load_places()
 
-    @property
-    def coverage_country_codes(self) -> list[str]:
-        return sorted({place.country_code for place in self._places})
-
-    def search(
+    async def search(
         self,
         *,
         user_location: GeoPoint,
@@ -61,34 +28,43 @@ class SeedPlaceRepository:
         country_code: str | None,
         max_distance_km: float,
         limit: int,
-    ) -> list[tuple[CandidatePlace, float]]:
+        include_unverified: bool = True,
+    ) -> PlaceSearchBatch:
         matches: list[tuple[CandidatePlace, float]] = []
         for place in self._places:
             if scope == SearchScope.COUNTRY and place.country_code != country_code:
                 continue
+            if not include_unverified and place.verification_status not in {
+                VerificationStatus.VERIFIED,
+                VerificationStatus.PARTNER_VERIFIED,
+            }:
+                continue
             distance = haversine_distance_km(user_location, place.point)
             if distance <= max_distance_km:
                 matches.append((place, distance))
-        # Cheap first-stage ranking before any weather call: retain nearby locations while
-        # allowing a materially darker site to beat a slightly closer urban site.
         matches.sort(
             key=lambda item: (
                 item[1] / max_distance_km - 0.30 * item[0].darkness_score,
                 item[1],
             )
         )
-        return matches[:limit]
+        coverage = sorted(
+            {place.country_code for place, _ in matches if place.country_code is not None}
+        )
+        return PlaceSearchBatch(
+            matches=matches[:limit],
+            coverage_country_codes=coverage,
+            discovery_sources=["packaged_seed"],
+            attributions=["Thiezer packaged seed data"],
+            warnings=[],
+        )
 
 
 class SeedStoreRepository:
     def __init__(self, stores: list[EquipmentStore] | None = None) -> None:
         self._stores = stores if stores is not None else _load_stores()
 
-    @property
-    def coverage_country_codes(self) -> list[str]:
-        return sorted({store.country_code for store in self._stores})
-
-    def search(
+    async def search(
         self,
         *,
         user_location: GeoPoint,
@@ -96,7 +72,7 @@ class SeedStoreRepository:
         country_code: str | None,
         max_distance_km: float,
         limit: int,
-    ) -> list[tuple[EquipmentStore, float | None]]:
+    ) -> StoreSearchBatch:
         matches: list[tuple[EquipmentStore, float | None]] = []
         for store in self._stores:
             if scope == SearchScope.COUNTRY and store.country_code != country_code:
@@ -109,7 +85,16 @@ class SeedStoreRepository:
             if distance is None or distance <= max_distance_km:
                 matches.append((store, distance))
         matches.sort(key=lambda item: (item[1] is None, item[1] or float("inf"), item[0].name))
-        return matches[:limit]
+        coverage = sorted(
+            {store.country_code for store, _ in matches if store.country_code is not None}
+        )
+        return StoreSearchBatch(
+            matches=matches[:limit],
+            coverage_country_codes=coverage,
+            discovery_sources=["packaged_seed"],
+            attributions=["Thiezer packaged seed data"],
+            warnings=[],
+        )
 
 
 def _load_places() -> list[CandidatePlace]:
