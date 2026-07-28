@@ -26,17 +26,14 @@ def test_targets_endpoint_lists_requested_targets() -> None:
 
 
 def test_store_search_returns_route_for_physical_store_without_live_network() -> None:
-    app.dependency_overrides[get_store_service] = lambda: StoreSearchService(
-        SeedStoreRepository()
-    )
+    app.dependency_overrides[get_store_service] = lambda: StoreSearchService(SeedStoreRepository())
     try:
         with TestClient(app) as client:
             response = client.post(
                 "/v1/stores/search",
                 json={
                     "user_location": {"latitude_deg": 40.1772, "longitude_deg": 44.5035},
-                    "scope": "country",
-                    "country_code": "AM",
+                    "scope": "adaptive",
                     "max_distance_km": 300,
                     "max_results": 10,
                 },
@@ -87,4 +84,4 @@ def test_recommendation_api_uses_injected_services_without_live_network() -> Non
     assert response.status_code == 200
     body = response.json()
     assert body["results"][0]["place"]["id"] == "api-site"
-    assert body["search_radius_km"] == 200
+    assert body["results"][0]["travel_utility"]["utility_version"] == "v1"
