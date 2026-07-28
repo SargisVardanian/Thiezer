@@ -54,9 +54,7 @@ def build_resources(settings: Settings) -> AppResources:
         ),
         limits=httpx.Limits(max_connections=24, max_keepalive_connections=12),
         follow_redirects=False,
-        headers={
-            "User-Agent": "Thiezer/0.4 (+https://github.com/SargisVardanian/Thiezer)"
-        },
+        headers={"User-Agent": "Thiezer/0.4 (+https://github.com/SargisVardanian/Thiezer)"},
     )
     static_layers = _build_static_layers(settings)
     if settings.overpass_enabled:
