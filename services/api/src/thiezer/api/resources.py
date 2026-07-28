@@ -21,6 +21,7 @@ from thiezer.providers.catalogs.gaia import GaiaCatalogProvider
 from thiezer.providers.catalogs.ned import NedCatalogProvider
 from thiezer.providers.catalogs.simbad import simbad_fixture
 from thiezer.providers.catalogs.skyfield import SkyfieldPresetCatalogProvider
+from thiezer.providers.catalogs.tap import TapClient
 from thiezer.providers.catalogs.vizier import VizierCatalogProvider
 from thiezer.providers.places.overpass import OverpassDiscoveryProvider
 from thiezer.providers.static_layers.base import StaticLayerProvider
@@ -106,16 +107,19 @@ def build_resources(settings: Settings) -> AppResources:
         static_layers=static_layers,
     )
     astronomy = SkyfieldAstronomyProvider()
+    celestial_resolution = _build_celestial_resolution(client)
+    celestial_visibility = CelestialVisibilityService(celestial_resolution)
     recommendation_service = RecommendationService(
         place_repository=SurfacePlaceRepository(surface_search),
         weather_provider=elevation_weather,
         astronomy_provider=astronomy,
+        celestial_resolution=celestial_resolution,
+        celestial_visibility=celestial_visibility,
     )
     store_repository = AdaptiveStoreRepository(
         seed_repository=SeedStoreRepository(),
         discovery_provider=store_overpass,
     )
-    celestial_resolution = _build_celestial_resolution()
     return AppResources(
         client=client,
         static_layers=static_layers,
@@ -125,7 +129,7 @@ def build_resources(settings: Settings) -> AppResources:
         store_service=StoreSearchService(store_repository),
         visibility_service=VisibilityService(astronomy),
         celestial_resolution=celestial_resolution,
-        celestial_visibility=CelestialVisibilityService(celestial_resolution),
+        celestial_visibility=celestial_visibility,
         query_jobs=EphemeralQueryJobs(
             recommendation_service, ttl_seconds=settings.query_ttl_seconds
         ),
@@ -147,12 +151,8 @@ def _build_static_layers(settings: Settings) -> StaticLayerProvider:
     return ProceduralSurfaceLayerProvider()
 
 
-def _build_celestial_resolution() -> CelestialResolutionService:
-    """Offline fixtures make the default local runtime deterministic and network-free.
-
-    Production deployments may replace these adapters with configured TAP clients; only the
-    normalized object contract reaches API callers.
-    """
+def _build_celestial_resolution(client: httpx.AsyncClient) -> CelestialResolutionService:
+    """Build query-driven provider adapters with small fixtures only as deterministic fallback."""
     host = CelestialObject(
         identifier=CelestialObjectId(provider=CatalogSource.SIMBAD, object_id="51 Peg"),
         name="51 Pegasi",
@@ -189,12 +189,23 @@ def _build_celestial_resolution() -> CelestialResolutionService:
     )
     return CelestialResolutionService(
         {
-            CatalogSource.SIMBAD: simbad_fixture(),
-            CatalogSource.GAIA: GaiaCatalogProvider(),
-            CatalogSource.VIZIER: VizierCatalogProvider(fixtures={"m 42": m42, "m42": m42}),
-            CatalogSource.NED: NedCatalogProvider(fixtures={"m 31": m31, "m31": m31}),
+            CatalogSource.SIMBAD: simbad_fixture(
+                tap=TapClient("https://simbad.cds.unistra.fr/simbad/sim-tap/sync", client)
+            ),
+            CatalogSource.GAIA: GaiaCatalogProvider(
+                tap=TapClient("https://gea.esac.esa.int/tap-server/tap/sync", client)
+            ),
+            CatalogSource.VIZIER: VizierCatalogProvider(
+                tap=TapClient("https://tapvizier.cds.unistra.fr/TAPVizieR/tap/sync", client),
+                fixtures={"m 42": m42, "m42": m42},
+            ),
+            CatalogSource.NED: NedCatalogProvider(
+                tap=TapClient("https://ned.ipac.caltech.edu/tap/sync", client),
+                fixtures={"m 31": m31, "m31": m31},
+            ),
             CatalogSource.EXOPLANET_ARCHIVE: ExoplanetArchiveProvider(
-                fixtures={"51 peg b": planet, "dimidium": planet}
+                tap=TapClient("https://exoplanetarchive.ipac.caltech.edu/TAP/sync", client),
+                fixtures={"51 peg b": planet, "dimidium": planet},
             ),
             CatalogSource.SKYFIELD: SkyfieldPresetCatalogProvider(),
         }

@@ -49,3 +49,11 @@ def adql_literal(value: str) -> str:
     if not value or len(value) > 256 or "\x00" in value:
         raise ValueError("invalid catalog identifier")
     return "'" + value.replace("'", "''") + "'"
+
+
+def adql_contains_literal(value: str) -> str:
+    """Build the sole permitted user-controlled LIKE literal for fixed query templates."""
+    if not value or len(value) > 120 or "\x00" in value:
+        raise ValueError("invalid catalog search")
+    escaped = value.replace("\\", "\\\\").replace("%", "\\%").replace("_", "\\_")
+    return adql_literal(f"%{escaped}%")

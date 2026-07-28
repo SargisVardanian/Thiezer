@@ -6,7 +6,7 @@ from dataclasses import dataclass
 from datetime import UTC, datetime, timedelta
 from enum import StrEnum
 
-from thiezer.domain.contracts import RecommendationSearchRequest
+from thiezer.domain.contracts import RecommendationSearchRequest, RecommendationSearchResponse
 from thiezer.services.recommendations import RecommendationService
 
 
@@ -34,6 +34,7 @@ class QueryJob:
     created_at_utc: datetime
     expires_at_utc: datetime
     error: str | None = None
+    result: RecommendationSearchResponse | None = None
     task: asyncio.Task[None] | None = None
 
 
@@ -81,11 +82,12 @@ class EphemeralQueryJobs:
             job.stage = QueryJobStage.FETCHING_WEATHER
             await asyncio.sleep(0)
             job.stage = QueryJobStage.CALCULATING_ASTRONOMY
-            await self._service.search(request)
+            result = await self._service.search(request)
             job.stage = QueryJobStage.CHECKING_ACCESS
             await asyncio.sleep(0)
             job.stage = QueryJobStage.RANKING
             await asyncio.sleep(0)
+            job.result = result
             job.stage = QueryJobStage.COMPLETED
         except asyncio.CancelledError:
             job.stage = QueryJobStage.CANCELLED
@@ -102,4 +104,7 @@ def job_payload(job: QueryJob) -> dict[str, object]:
         "created_at_utc": job.created_at_utc,
         "expires_at_utc": job.expires_at_utc,
         "error": job.error,
+        "result": job.result.model_dump(mode="json")
+        if job.stage == QueryJobStage.COMPLETED and job.result
+        else None,
     }

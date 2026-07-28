@@ -7,7 +7,7 @@ from thiezer.domain.celestial_objects import (
     CelestialObjectClass,
     CelestialObjectId,
 )
-from thiezer.providers.catalogs.tap import TapClient, adql_literal
+from thiezer.providers.catalogs.tap import TapClient, adql_contains_literal, adql_literal
 
 
 class SimbadCatalogProvider:
@@ -32,11 +32,11 @@ class SimbadCatalogProvider:
         ]
         if fixture_matches or self._tap is None:
             return fixture_matches
-        literal = adql_literal(query.strip())
+        literal = adql_contains_literal(query.strip())
         rows = await self._tap.query(
             "SELECT TOP 20 basic.oid, basic.main_id, basic.ra, basic.dec, basic.otype "
             "FROM basic JOIN ident ON basic.oid = ident.oidref "
-            f"WHERE ident.id = {literal}",
+            f"WHERE ident.id LIKE {literal}",
             max_rows=limit,
         )
         return [_from_row(row) for row in rows]
@@ -76,7 +76,7 @@ def _number(value: object) -> float:
     return float(value)
 
 
-def simbad_fixture() -> SimbadCatalogProvider:
+def simbad_fixture(*, tap: TapClient | None = None) -> SimbadCatalogProvider:
     def item(
         object_id: str,
         name: str,
@@ -157,4 +157,4 @@ def simbad_fixture() -> SimbadCatalogProvider:
         for value in objects
         for alias in (value.identifier.object_id, value.name, *value.aliases)
     }
-    return SimbadCatalogProvider(records)
+    return SimbadCatalogProvider(records, tap=tap)

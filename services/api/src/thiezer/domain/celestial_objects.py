@@ -23,6 +23,11 @@ class CelestialObjectClass(StrEnum):
     CLUSTER = "cluster"
     EXOPLANET = "exoplanet"
     SOLAR_SYSTEM_BODY = "solar_system_body"
+    ASTEROID = "asteroid"
+    COMET = "comet"
+    DWARF_PLANET = "dwarf_planet"
+    NATURAL_SATELLITE = "natural_satellite"
+    SPACECRAFT = "spacecraft"
     OTHER = "other"
 
 
@@ -55,11 +60,17 @@ class CelestialMotion(BaseModel):
 class CelestialPhotometry(BaseModel):
     visual_magnitude: float | None = None
     gaia_g_magnitude: float | None = None
+    gaia_bp_magnitude: float | None = None
+    gaia_rp_magnitude: float | None = None
 
 
 class CelestialPhysicalProperties(BaseModel):
     distance_parsec: float | None = Field(default=None, ge=0)
     spectral_type: str | None = None
+    redshift: float | None = None
+    angular_major_axis_arcmin: float | None = Field(default=None, ge=0)
+    orbital_period_days: float | None = Field(default=None, ge=0)
+    transit_detected: bool | None = None
 
 
 class CelestialObject(BaseModel):
@@ -74,6 +85,8 @@ class CelestialObject(BaseModel):
     physical: CelestialPhysicalProperties | None = None
     host_star: CelestialObjectId | None = None
     attribution: str
+    uncertainty: tuple[str, ...] = ()
+    warnings: tuple[str, ...] = ()
 
 
 class CelestialTargetRef(BaseModel):
@@ -98,6 +111,16 @@ class CelestialVisibilityResult(BaseModel):
     altitude_deg: float
     azimuth_deg: float
     above_horizon: bool
+    airmass: float | None = Field(default=None, ge=0)
+    sun_altitude_deg: float | None = None
+    moon_altitude_deg: float | None = None
+    moon_illumination_fraction: float | None = Field(default=None, ge=0, le=1)
+    moon_separation_deg: float | None = Field(default=None, ge=0, le=180)
+    visibility_window: tuple[datetime, datetime] | None = None
+    rise_utc: datetime | None = None
+    set_utc: datetime | None = None
+    culmination_utc: datetime | None = None
+    maximum_altitude_deg: float | None = None
     capability: VisibilityCapability
     source_attributions: tuple[str, ...]
     warnings: tuple[str, ...] = ()

@@ -3,7 +3,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from datetime import UTC, datetime, timedelta
 
-from thiezer.domain.celestial_objects import CelestialTargetRef
+from thiezer.domain.celestial_objects import CelestialObject, CelestialTargetRef
 from thiezer.domain.contracts import (
     AstronomySnapshot,
     CandidatePlace,
@@ -24,6 +24,8 @@ from thiezer.domain.quality import build_score_inputs
 from thiezer.domain.scoring import calculate_sky_score
 from thiezer.providers.weather.base import WeatherProvider, weather_point_key
 from thiezer.repositories.base import PlaceRepository
+from thiezer.services.celestial_resolution import CelestialResolutionService
+from thiezer.services.celestial_visibility import CelestialVisibilityService
 
 
 @dataclass(frozen=True, slots=True)
@@ -40,16 +42,21 @@ class RecommendationService:
         place_repository: PlaceRepository,
         weather_provider: WeatherProvider,
         astronomy_provider: AstronomyProvider,
+        celestial_resolution: CelestialResolutionService | None = None,
+        celestial_visibility: CelestialVisibilityService | None = None,
     ) -> None:
         self._places = place_repository
         self._weather = weather_provider
         self._astronomy = astronomy_provider
+        self._celestial_resolution = celestial_resolution
+        self._celestial_visibility = celestial_visibility
 
     async def search(
         self,
         request: RecommendationSearchRequest,
     ) -> RecommendationSearchResponse:
         scoring_target = _scoring_target(request.target)
+        catalog_target = await self._resolve_catalog_target(request)
         batch = await self._places.search(
             user_location=request.user_location,
             scope=request.scope,
@@ -89,9 +96,10 @@ class RecommendationService:
                 continue
             places_with_weather += 1
             attributions.update(item.attribution for item in conditions)
-            samples = self._evaluate_place(
+            samples = await self._evaluate_place(
                 request=request,
                 scoring_target=scoring_target,
+                catalog_target=catalog_target,
                 place=place,
                 distance_km=distance_km,
                 conditions=conditions,
@@ -158,11 +166,12 @@ class RecommendationService:
             provider_attributions=sorted(attributions),
         )
 
-    def _evaluate_place(
+    async def _evaluate_place(
         self,
         *,
         request: RecommendationSearchRequest,
         scoring_target: TargetKind,
+        catalog_target: CelestialObject | None,
         place: CandidatePlace,
         distance_km: float,
         conditions: list[HourlySkyCondition],
@@ -170,11 +179,20 @@ class RecommendationService:
     ) -> list[_EvaluatedSample]:
         evaluated: list[_EvaluatedSample] = []
         for item in conditions:
-            astronomy = self._astronomy.snapshot(
-                target=scoring_target,
-                point=place.point,
-                timestamp_utc=item.timestamp_utc,
-            )
+            if catalog_target is None:
+                astronomy = self._astronomy.snapshot(
+                    target=scoring_target,
+                    point=place.point,
+                    timestamp_utc=item.timestamp_utc,
+                )
+            else:
+                assert self._celestial_visibility is not None
+                astronomy = await self._celestial_visibility.snapshot(
+                    target=catalog_target,
+                    point=place.point,
+                    timestamp_utc=item.timestamp_utc,
+                    scoring_target=scoring_target,
+                )
             inputs = build_score_inputs(
                 target=scoring_target,
                 mode=request.observation_mode,
@@ -192,6 +210,16 @@ class RecommendationService:
             )
             evaluated.append(_EvaluatedSample(item, astronomy, score))
         return evaluated
+
+    async def _resolve_catalog_target(
+        self, request: RecommendationSearchRequest
+    ) -> CelestialObject | None:
+        target = request.catalog_target
+        if target is None:
+            return None
+        if self._celestial_resolution is None or self._celestial_visibility is None:
+            raise ValueError("catalog target recommendations are not configured")
+        return await self._celestial_resolution.resolve(target)
 
 
 def _best_window(
