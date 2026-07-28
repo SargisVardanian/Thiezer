@@ -215,40 +215,40 @@ class _DiscoveryScreenState extends State<DiscoveryScreen> {
   Widget build(BuildContext context) {
     final body = switch (_pageIndex) {
       0 => _DiscoveryPage(
-        location: _location,
-        latitudeController: _latitudeController,
-        longitudeController: _longitudeController,
-        countryController: _countryController,
-        targets: _targets,
-        target: _target,
-        catalogObject: _catalogObject,
-        api: _api,
-        scope: _scope,
-        radiusKm: _radiusKm,
-        recommendations: _recommendations,
-        loading: _loading,
-        error: _error,
-        onTargetChanged: (value) => setState(() => _target = value),
-        onCatalogChanged: (value) => setState(() => _catalogObject = value),
-        onScopeChanged: (value) => setState(() => _scope = value),
-        onRadiusChanged: (value) => setState(() => _radiusKm = value),
-        onUseLocation: _useCurrentLocation,
-        onSearch: _searchSky,
-        onOpenUrl: _openUrl,
-      ),
+          location: _location,
+          latitudeController: _latitudeController,
+          longitudeController: _longitudeController,
+          countryController: _countryController,
+          targets: _targets,
+          target: _target,
+          catalogObject: _catalogObject,
+          api: _api,
+          scope: _scope,
+          radiusKm: _radiusKm,
+          recommendations: _recommendations,
+          loading: _loading,
+          error: _error,
+          onTargetChanged: (value) => setState(() => _target = value),
+          onCatalogChanged: (value) => setState(() => _catalogObject = value),
+          onScopeChanged: (value) => setState(() => _scope = value),
+          onRadiusChanged: (value) => setState(() => _radiusKm = value),
+          onUseLocation: _useCurrentLocation,
+          onSearch: _searchSky,
+          onOpenUrl: _openUrl,
+        ),
       1 => _StoresPage(
-        stores: _stores,
-        loading: _loading,
-        error: _error,
-        radiusKm: _radiusKm,
-        onSearch: _searchStores,
-        onOpenUrl: _openUrl,
-      ),
+          stores: _stores,
+          loading: _loading,
+          error: _error,
+          radiusKm: _radiusKm,
+          onSearch: _searchStores,
+          onOpenUrl: _openUrl,
+        ),
       _ => _SettingsPage(
-        apiController: _apiController,
-        currentApiUrl: _api.baseUrl,
-        onSave: _saveApiUrl,
-      ),
+          apiController: _apiController,
+          currentApiUrl: _api.baseUrl,
+          onSave: _saveApiUrl,
+        ),
     };
 
     return StarfieldBackground(
@@ -349,6 +349,7 @@ class _DiscoveryPage extends StatelessWidget {
           target: target,
           catalogObject: catalogObject,
           api: api,
+          point: location,
           scope: scope,
           radiusKm: radiusKm,
           loading: loading,
@@ -397,6 +398,7 @@ class _SearchControls extends StatelessWidget {
     required this.target,
     required this.catalogObject,
     required this.api,
+    required this.point,
     required this.scope,
     required this.radiusKm,
     required this.loading,
@@ -416,6 +418,7 @@ class _SearchControls extends StatelessWidget {
   final String target;
   final CelestialObject? catalogObject;
   final ThiezerApiClient api;
+  final GeoPoint point;
   final String scope;
   final double radiusKm;
   final bool loading;
@@ -454,6 +457,7 @@ class _SearchControls extends StatelessWidget {
         const SizedBox(height: 12),
         CelestialSearchField(
           api: api,
+          point: point,
           selected: catalogObject,
           onSelected: onCatalogChanged,
         ),
@@ -901,20 +905,20 @@ Color _scoreColor(double score) {
 }
 
 String _routeLabel(String provider) => switch (provider) {
-  'google_maps' => 'Google Maps',
-  'apple_maps' => 'Apple Maps',
-  'yandex_maps_web' => 'Yandex Maps',
-  _ => provider,
-};
+      'google_maps' => 'Google Maps',
+      'apple_maps' => 'Apple Maps',
+      'yandex_maps_web' => 'Yandex Maps',
+      _ => provider,
+    };
 
 String _warningLabel(String warning) => switch (warning) {
-  'unverified_place' => 'точка не проверена',
-  'darkness_is_proxy' => 'темнота оценена приближённо',
-  'low_confidence' => 'низкая уверенность прогноза',
-  'high_dew_risk' => 'риск росы',
-  'strong_wind' => 'сильный ветер',
-  _ => warning.replaceAll('_', ' '),
-};
+      'unverified_place' => 'точка не проверена',
+      'darkness_is_proxy' => 'темнота оценена приближённо',
+      'low_confidence' => 'низкая уверенность прогноза',
+      'high_dew_risk' => 'риск росы',
+      'strong_wind' => 'сильный ветер',
+      _ => warning.replaceAll('_', ' '),
+    };
 
 String _humanWarnings(List<String> warnings) {
   if (warnings.contains('target_not_visible_in_scope')) {

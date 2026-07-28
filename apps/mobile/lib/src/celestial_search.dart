@@ -8,12 +8,14 @@ import 'models.dart';
 class CelestialSearchField extends StatefulWidget {
   const CelestialSearchField({
     required this.api,
+    required this.point,
     required this.selected,
     required this.onSelected,
     super.key,
   });
 
   final ThiezerApiClient api;
+  final GeoPoint point;
   final CelestialObject? selected;
   final ValueChanged<CelestialObject?> onSelected;
 
@@ -26,6 +28,7 @@ class _CelestialSearchFieldState extends State<CelestialSearchField> {
   int _request = 0;
   List<CelestialObject> _results = const [];
   String? _error;
+  String? _visibility;
 
   @override
   void dispose() {
@@ -61,6 +64,28 @@ class _CelestialSearchFieldState extends State<CelestialSearchField> {
     });
   }
 
+  Future<void> _select(CelestialObject item) async {
+    widget.onSelected(item);
+    setState(() {
+      _results = const [];
+      _visibility = 'Считаю видимость…';
+    });
+    try {
+      final preview = await widget.api
+          .celestialVisibility(object: item, point: widget.point);
+      if (!mounted || widget.selected?.objectId != item.objectId) return;
+      final altitude = (preview['altitude_deg'] as num).toStringAsFixed(1);
+      final capability = preview['capability'] as String;
+      setState(() => _visibility = 'Высота сейчас: $altitude° · $capability');
+    } on Object {
+      if (mounted) {
+        setState(
+          () => _visibility = 'Предпросмотр видимости временно недоступен.',
+        );
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -85,6 +110,12 @@ class _CelestialSearchFieldState extends State<CelestialSearchField> {
             widget.selected!.attribution,
             style: const TextStyle(fontSize: 11, color: Colors.white60),
           ),
+          if (_visibility != null)
+            Padding(
+              padding: const EdgeInsets.only(top: 4),
+              child: Text(_visibility!,
+                  style: const TextStyle(fontSize: 12, color: Colors.white70)),
+            ),
         ],
         if (_error != null)
           Padding(
@@ -99,10 +130,7 @@ class _CelestialSearchFieldState extends State<CelestialSearchField> {
             dense: true,
             title: Text(item.name),
             subtitle: Text('${item.objectClass} · ${item.attribution}'),
-            onTap: () {
-              widget.onSelected(item);
-              setState(() => _results = const []);
-            },
+            onTap: () => _select(item),
           ),
         ),
       ],
