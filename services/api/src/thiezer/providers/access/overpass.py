@@ -139,7 +139,13 @@ out center tags;
                     source_provider=self.source_name,
                 )
             )
-        stores.sort(key=lambda store: haversine_distance_km(user_location, store.point))
+        stores.sort(
+            key=lambda store: (
+                haversine_distance_km(user_location, store.point)
+                if store.point is not None
+                else float("inf")
+            )
+        )
         return stores[:limit]
 
     async def _fetch_access_chunk(
