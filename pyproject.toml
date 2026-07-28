@@ -57,6 +57,7 @@ src = ["services/api/src"]
 
 [tool.ruff.lint]
 select = ["E", "F", "I", "B", "UP", "SIM", "RUF"]
+ignore = ["E501"]
 
 [tool.mypy]
 python_version = "3.12"
@@ -71,5 +72,11 @@ disallow_untyped_defs = true
 plugins = ["pydantic.mypy"]
 
 [[tool.mypy.overrides]]
-module = ["skyfield.*", "skyfield_data.*", "rasterio.*", "planetary_computer.*", "pystac_client.*"]
+module = [
+  "skyfield.*",
+  "skyfield_data.*",
+  "rasterio.*",
+  "planetary_computer.*",
+  "pystac_client.*",
+]
 ignore_missing_imports = true
