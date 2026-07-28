@@ -44,6 +44,7 @@ async def test_open_meteo_batches_multiple_coordinates_in_one_request() -> None:
         calls += 1
         assert request.url.params["latitude"] == "40.200000,40.400000"
         assert request.url.params["longitude"] == "44.500000,44.300000"
+        assert request.url.params["elevation"] == "1200.0,1800.0"
         return httpx.Response(200, json=[_payload(40.2, 44.5), _payload(40.4, 44.3)])
 
     client = httpx.AsyncClient(transport=httpx.MockTransport(handler))
@@ -52,9 +53,51 @@ async def test_open_meteo_batches_multiple_coordinates_in_one_request() -> None:
         points=points,
         start_utc=datetime(2026, 7, 29, 20, tzinfo=UTC),
         end_utc=datetime(2026, 7, 29, 21, tzinfo=UTC),
+        elevations_m={weather_point_key(points[0]): 1200.0, weather_point_key(points[1]): 1800.0},
     )
     await client.aclose()
 
     assert calls == 1
+    assert provider.last_batch_count == 1
     assert set(result) == {weather_point_key(point) for point in points}
     assert result[weather_point_key(points[0])][0].total_cloud_fraction == 0.1
+
+
+@pytest.mark.asyncio
+async def test_open_meteo_chunks_more_than_twenty_five_points() -> None:
+    points = [
+        GeoPoint(latitude_deg=39.0 + index * 0.001, longitude_deg=44.0)
+        for index in range(52)
+    ]
+    calls = 0
+
+    def handler(request: httpx.Request) -> httpx.Response:
+        nonlocal calls
+        calls += 1
+        latitudes = [float(value) for value in request.url.params["latitude"].split(",")]
+        longitudes = [float(value) for value in request.url.params["longitude"].split(",")]
+        return httpx.Response(
+            200,
+            json=[
+                _payload(latitude, longitude)
+                for latitude, longitude in zip(latitudes, longitudes, strict=True)
+            ],
+        )
+
+    client = httpx.AsyncClient(transport=httpx.MockTransport(handler))
+    provider = OpenMeteoWeatherProvider(
+        base_url="https://weather.test/v1",
+        client=client,
+        chunk_size=25,
+        max_concurrency=2,
+    )
+    result = await provider.get_hourly_forecasts(
+        points=points,
+        start_utc=datetime(2026, 7, 29, 20, tzinfo=UTC),
+        end_utc=datetime(2026, 7, 29, 21, tzinfo=UTC),
+    )
+    await client.aclose()
+
+    assert calls == 3
+    assert provider.last_batch_count == 3
+    assert len(result) == 52
