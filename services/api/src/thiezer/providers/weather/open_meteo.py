@@ -126,7 +126,9 @@ class OpenMeteoWeatherProvider:
             "end_date": end_utc.astimezone(UTC).date().isoformat(),
         }
         if all(value is not None for value in elevations_m):
-            params["elevation"] = ",".join(f"{float(value):.1f}" for value in elevations_m)
+            params["elevation"] = ",".join(
+                f"{value:.1f}" for value in elevations_m if value is not None
+            )
         if self._api_key:
             params["apikey"] = self._api_key
 
