@@ -50,7 +50,7 @@ class ProceduralSurfaceLayerProvider:
 
         city_pressure = sum(
             weight
-            * math.exp(-(_distance_deg(latitude, longitude, city_lat, city_lon) / radius) ** 2)
+            * math.exp(-((_distance_deg(latitude, longitude, city_lat, city_lon) / radius) ** 2))
             for city_lat, city_lon, weight, radius in (
                 (40.1772, 44.5035, 20.0, 0.55),
                 (40.7894, 43.8475, 8.0, 0.42),
@@ -72,15 +72,9 @@ class ProceduralSurfaceLayerProvider:
         sevan = ((_distance_deg(latitude, longitude, 40.35, 45.28) / 0.48) ** 2) < 1.0
         water = 0.92 if sevan else 0.01
         urban = min(0.95, city_pressure / 18.0)
-        forest = _bounded(
-            0.15
-            + 0.25 * math.sin(math.radians(longitude * 9.0))
-            - 0.10 * urban
-        )
+        forest = _bounded(0.15 + 0.25 * math.sin(math.radians(longitude * 9.0)) - 0.10 * urban)
         open_land = _bounded(0.82 - 0.65 * forest - 0.55 * urban - 0.85 * water)
-        road_distance = 0.2 + 5.0 * abs(
-            math.sin(math.radians(latitude * 19.0 + longitude * 13.0))
-        )
+        road_distance = 0.2 + 5.0 * abs(math.sin(math.radians(latitude * 19.0 + longitude * 13.0)))
         settlement_distance = min(180.0, 5.0 + 100.0 * math.exp(-city_pressure / 4.0))
         uncertainty = 0.34 if resolved >= 7 else 0.45
 
@@ -110,13 +104,13 @@ class ProceduralSurfaceLayerProvider:
     @staticmethod
     def _elevation(latitude: float, longitude: float) -> float:
         mountain = 3200.0 * math.exp(
-            -(_distance_deg(latitude, longitude, 40.53, 44.19) / 0.42) ** 2
+            -((_distance_deg(latitude, longitude, 40.53, 44.19) / 0.42) ** 2)
         )
         geghama = 2400.0 * math.exp(
-            -(_distance_deg(latitude, longitude, 40.25, 45.05) / 0.55) ** 2
+            -((_distance_deg(latitude, longitude, 40.25, 45.05) / 0.55) ** 2)
         )
         syunik = 2100.0 * math.exp(
-            -(_distance_deg(latitude, longitude, 39.25, 46.25) / 0.50) ** 2
+            -((_distance_deg(latitude, longitude, 39.25, 46.25) / 0.50) ** 2)
         )
         return max(0.0, 500.0 + mountain + geghama + syunik)
 
