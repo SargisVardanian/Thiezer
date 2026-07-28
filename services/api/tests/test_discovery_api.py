@@ -1,8 +1,8 @@
 from datetime import UTC, datetime, timedelta
 
+from conftest import FakeAstronomyProvider, FakeWeatherProvider, make_place
 from fastapi.testclient import TestClient
 
-from conftest import FakeAstronomyProvider, FakeWeatherProvider, make_place
 from thiezer.api.dependencies import get_recommendation_service
 from thiezer.main import app
 from thiezer.repositories.seed import SeedPlaceRepository

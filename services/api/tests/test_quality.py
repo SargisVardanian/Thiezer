@@ -1,6 +1,7 @@
 from datetime import UTC, datetime
 
 from conftest import make_condition, make_place
+
 from thiezer.domain.contracts import AstronomySnapshot, GeoPoint, ObservationMode, TargetKind
 from thiezer.domain.quality import (
     build_score_inputs,

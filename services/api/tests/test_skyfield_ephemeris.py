@@ -5,8 +5,8 @@ import pytest
 pytest.importorskip("skyfield")
 pytest.importorskip("skyfield_data")
 
-from thiezer.domain.contracts import GeoPoint, TargetKind  # noqa: E402
-from thiezer.domain.ephemeris import SkyfieldAstronomyProvider  # noqa: E402
+from thiezer.domain.contracts import GeoPoint, TargetKind
+from thiezer.domain.ephemeris import SkyfieldAstronomyProvider
 
 
 def test_alpha_centauri_never_rises_from_yerevan_latitude() -> None:

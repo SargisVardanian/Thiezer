@@ -1,8 +1,8 @@
 from datetime import UTC, datetime, timedelta
 
 import pytest
-
 from conftest import FakeAstronomyProvider, FakeWeatherProvider, make_place
+
 from thiezer.domain.contracts import (
     GeoPoint,
     ObservationMode,
