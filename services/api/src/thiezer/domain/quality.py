@@ -25,6 +25,7 @@ def build_score_inputs(
     distance_km: float,
     maximum_distance_km: float,
     preferences: ObservationPreferences | None = None,
+    drive_weight: float | None = None,
 ) -> ScoreInputs:
     cloud_clearance = cloud_clearance_score(conditions)
     darkness = place.darkness_score * astronomical_darkness_score(
@@ -67,16 +68,16 @@ def build_score_inputs(
         place_accessible=place.accessibility_score >= 0.25,
         normalized_drive_cost=min(1.0, max(0.0, distance_km / maximum_distance_km)),
         normalized_risk=place.risk_score,
-        drive_weight=0.30 if preferences is None or preferences.nearby_first else 0.20,
+        drive_weight=(
+            drive_weight
+            if drive_weight is not None
+            else (0.30 if preferences is None or preferences.nearby_first else 0.20)
+        ),
     )
 
 
 def cloud_clearance_score(conditions: HourlySkyCondition) -> float:
-    """Layer-aware cloud transmission proxy.
-
-    Low clouds receive the highest penalty because they tend to be optically thicker and can
-    amplify artificial skyglow near settlements. High clouds still matter, but less strongly.
-    """
+    """Layer-aware cloud transmission proxy."""
 
     optical_penalty = (
         2.8 * conditions.low_cloud_fraction
@@ -168,8 +169,6 @@ def minimum_target_altitude_deg(target: TargetKind) -> float:
 
 
 def site_altitude_score(elevation_m: float) -> float:
-    # A saturating benefit: most gains occur below roughly 2,500 m; extreme altitude is not
-    # rewarded indefinitely because safety and accessibility are represented separately.
     return _bounded(0.35 + 0.65 * (1.0 - math.exp(-max(0.0, elevation_m) / 1800.0)))
 
 
