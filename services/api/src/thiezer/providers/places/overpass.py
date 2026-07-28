@@ -5,7 +5,13 @@ from typing import Any
 
 import httpx
 
-from thiezer.domain.contracts import CandidatePlace, EquipmentStore, GeoPoint, StoreKind, VerificationStatus
+from thiezer.domain.contracts import (
+    CandidatePlace,
+    EquipmentStore,
+    GeoPoint,
+    StoreKind,
+    VerificationStatus,
+)
 from thiezer.domain.geospatial import haversine_distance_km
 
 
