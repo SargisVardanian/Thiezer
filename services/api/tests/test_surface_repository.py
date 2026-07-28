@@ -28,8 +28,8 @@ class SyntheticStaticProvider:
         result: list[SurfaceCell] = []
         for cell_id, center, resolution in zip(cell_ids, centers, resolutions, strict=True):
             parent = h3.cell_to_parent(cell_id, min(5, resolution))
-            parent_signal = (int(parent[-5:], 16) % 700) / 1000.0
-            child_signal = (int(cell_id[-4:], 16) % 30) / 3000.0
+            parent_signal = (int(parent, 16) % 700) / 1000.0
+            child_signal = (int(cell_id, 16) % 30) / 3000.0
             score = min(0.95, 0.25 + parent_signal + child_signal)
             result.append(
                 SurfaceCell(
