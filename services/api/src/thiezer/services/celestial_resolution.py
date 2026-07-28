@@ -80,4 +80,14 @@ class CelestialResolutionService:
             return (CatalogSource.VIZIER, CatalogSource.SIMBAD)
         if query.casefold() in {"sun", "moon", "mars", "jupiter"}:
             return (CatalogSource.SKYFIELD,)
+        if types and types <= {
+            CelestialObjectClass.ASTEROID,
+            CelestialObjectClass.COMET,
+            CelestialObjectClass.DWARF_PLANET,
+            CelestialObjectClass.NATURAL_SATELLITE,
+            CelestialObjectClass.SPACECRAFT,
+        }:
+            return (CatalogSource.HORIZONS,)
+        if query.casefold() in {"halley", "1p", "ceres"} or query.strip().isdecimal():
+            return (CatalogSource.HORIZONS,)
         return (CatalogSource.SIMBAD,)

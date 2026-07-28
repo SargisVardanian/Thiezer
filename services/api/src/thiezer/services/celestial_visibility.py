@@ -11,14 +11,20 @@ from thiezer.domain.celestial_objects import (
 )
 from thiezer.domain.contracts import AstronomySnapshot, GeoPoint, TargetKind
 from thiezer.domain.ephemeris import SkyfieldAstronomyProvider
+from thiezer.providers.ephemeris.horizons import HorizonsClient
 from thiezer.services.celestial_resolution import CelestialResolutionService
 
 
 class CelestialVisibilityService:
     """Compute observer-dependent catalog visibility with Skyfield's astrometry support."""
 
-    def __init__(self, resolver: CelestialResolutionService | None = None) -> None:
+    def __init__(
+        self,
+        resolver: CelestialResolutionService | None = None,
+        horizons: HorizonsClient | None = None,
+    ) -> None:
         self._resolver = resolver
+        self._horizons = horizons
         self._preset_astronomy = SkyfieldAstronomyProvider()
 
     async def get(
@@ -42,6 +48,10 @@ class CelestialVisibilityService:
                 }
             )
         if target.coordinates is None:
+            if target.identifier.provider.value == "horizons":
+                return await self._horizons_object(
+                    target=target, point=point, timestamp_utc=timestamp_utc
+                )
             return self._solar_system(target=target, point=point, timestamp_utc=timestamp_utc)
         return self._fixed_object(target=target, point=point, timestamp_utc=timestamp_utc)
 
@@ -138,6 +148,38 @@ class CelestialVisibilityService:
             capability=VisibilityCapability.DIRECT,
             source_attributions=(target.attribution,),
             warnings=target.warnings,
+        )
+
+    async def _horizons_object(
+        self, *, target: CelestialObject, point: GeoPoint, timestamp_utc: datetime
+    ) -> CelestialVisibilityResult:
+        if self._horizons is None:
+            raise ValueError("JPL Horizons visibility provider is not configured")
+        azimuth_deg, altitude_deg = await self._horizons.observer(
+            command=target.identifier.object_id,
+            latitude_deg=point.latitude_deg,
+            longitude_deg=point.longitude_deg,
+            timestamp_utc=timestamp_utc,
+        )
+        baseline = self._preset_astronomy.snapshot(
+            target=TargetKind.BEST_NIGHT_SKY, point=point, timestamp_utc=timestamp_utc
+        )
+        airmass = airmass_kasten_young(altitude_deg)
+        return CelestialVisibilityResult(
+            target=target,
+            observer=point.model_dump(),
+            timestamp_utc=_aware(timestamp_utc),
+            altitude_deg=altitude_deg,
+            azimuth_deg=azimuth_deg % 360.0,
+            above_horizon=altitude_deg > 0,
+            airmass=airmass if math.isfinite(airmass) else None,
+            sun_altitude_deg=baseline.sun_altitude_deg,
+            moon_altitude_deg=baseline.moon_altitude_deg,
+            moon_illumination_fraction=baseline.moon_illumination_fraction,
+            moon_separation_deg=None,
+            capability=VisibilityCapability.DIRECT,
+            source_attributions=(target.attribution, HorizonsClient.attribution),
+            warnings=(*target.warnings, "Moon separation is unavailable for this Horizons query."),
         )
 
 

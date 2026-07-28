@@ -154,6 +154,24 @@ async def test_gaia_motion_is_passed_to_skyfield_propagation() -> None:
     assert abs(moving.azimuth_deg - baseline.azimuth_deg) > 0.05
 
 
+@pytest.mark.asyncio
+async def test_horizons_catalog_object_uses_dynamic_observer_ephemeris() -> None:
+    halley = CelestialObject(
+        identifier=CelestialObjectId(provider=CatalogSource.HORIZONS, object_id="90000030"),
+        name="1P/Halley",
+        object_class=CelestialObjectClass.COMET,
+        attribution="NASA/JPL Horizons System",
+    )
+    result = await CelestialVisibilityService(horizons=HorizonsStub()).get(
+        target=halley,
+        point=GeoPoint(latitude_deg=40, longitude_deg=44),
+        timestamp_utc=datetime(2026, 7, 29, 20, tzinfo=UTC),
+    )
+    assert result.altitude_deg == 25.0
+    assert result.azimuth_deg == 100.0
+    assert result.moon_separation_deg is None
+
+
 class SimbadStub:
     source = CatalogSource.SIMBAD
     attribution = "SIMBAD"
@@ -166,3 +184,8 @@ class SimbadStub:
 
     async def get(self, object_id: str) -> CelestialObject | None:
         return self._item if object_id == self._item.identifier.object_id else None
+
+
+class HorizonsStub:
+    async def observer(self, **_: object) -> tuple[float, float]:
+        return 100.0, 25.0

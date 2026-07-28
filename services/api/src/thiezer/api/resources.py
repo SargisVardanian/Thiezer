@@ -23,6 +23,7 @@ from thiezer.providers.catalogs.simbad import simbad_fixture
 from thiezer.providers.catalogs.skyfield import SkyfieldPresetCatalogProvider
 from thiezer.providers.catalogs.tap import TapClient
 from thiezer.providers.catalogs.vizier import VizierCatalogProvider
+from thiezer.providers.ephemeris.horizons import HorizonsCatalogProvider, HorizonsClient
 from thiezer.providers.places.overpass import OverpassDiscoveryProvider
 from thiezer.providers.static_layers.base import StaticLayerProvider
 from thiezer.providers.static_layers.cog import CogLayerConfig, CogSurfaceLayerProvider
@@ -107,8 +108,9 @@ def build_resources(settings: Settings) -> AppResources:
         static_layers=static_layers,
     )
     astronomy = SkyfieldAstronomyProvider()
-    celestial_resolution = _build_celestial_resolution(client)
-    celestial_visibility = CelestialVisibilityService(celestial_resolution)
+    horizons = HorizonsClient(client)
+    celestial_resolution = _build_celestial_resolution(client, horizons)
+    celestial_visibility = CelestialVisibilityService(celestial_resolution, horizons)
     recommendation_service = RecommendationService(
         place_repository=SurfacePlaceRepository(surface_search),
         weather_provider=elevation_weather,
@@ -151,7 +153,9 @@ def _build_static_layers(settings: Settings) -> StaticLayerProvider:
     return ProceduralSurfaceLayerProvider()
 
 
-def _build_celestial_resolution(client: httpx.AsyncClient) -> CelestialResolutionService:
+def _build_celestial_resolution(
+    client: httpx.AsyncClient, horizons: HorizonsClient
+) -> CelestialResolutionService:
     """Build query-driven provider adapters with small fixtures only as deterministic fallback."""
     host = CelestialObject(
         identifier=CelestialObjectId(provider=CatalogSource.SIMBAD, object_id="51 Peg"),
@@ -187,6 +191,14 @@ def _build_celestial_resolution(client: httpx.AsyncClient) -> CelestialResolutio
         coordinates=CelestialCoordinates(right_ascension_deg=83.822083, declination_deg=-5.391111),
         attribution="VizieR catalogue service, CDS, Strasbourg",
     )
+    halley = CelestialObject(
+        identifier=CelestialObjectId(provider=CatalogSource.HORIZONS, object_id="90000030"),
+        name="1P/Halley",
+        aliases=("Halley", "1P"),
+        object_class=CelestialObjectClass.COMET,
+        attribution="NASA/JPL Horizons System",
+        warnings=("Position is computed dynamically by JPL Horizons.",),
+    )
     return CelestialResolutionService(
         {
             CatalogSource.SIMBAD: simbad_fixture(
@@ -206,6 +218,10 @@ def _build_celestial_resolution(client: httpx.AsyncClient) -> CelestialResolutio
             CatalogSource.EXOPLANET_ARCHIVE: ExoplanetArchiveProvider(
                 tap=TapClient("https://exoplanetarchive.ipac.caltech.edu/TAP/sync", client),
                 fixtures={"51 peg b": planet, "dimidium": planet},
+            ),
+            CatalogSource.HORIZONS: HorizonsCatalogProvider(
+                horizons,
+                fixtures={"halley": halley, "1p": halley, "90000030": halley},
             ),
             CatalogSource.SKYFIELD: SkyfieldPresetCatalogProvider(),
         }
