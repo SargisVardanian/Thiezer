@@ -1,102 +1,72 @@
 from __future__ import annotations
 
+from urllib.parse import parse_qs
+
 import httpx
 import pytest
 
-from thiezer.domain.contracts import GeoPoint, PlaceKind, VerificationStatus
-from thiezer.providers.places.overpass import OverpassDiscoveryProvider
+from thiezer.domain.contracts import GeoPoint, SurfaceCell
+from thiezer.providers.access.overpass import OverpassAccessProvider
+
+
+def _cell() -> SurfaceCell:
+    return SurfaceCell(
+        h3_index="872b5a375ffffff",
+        resolution=7,
+        center=GeoPoint(latitude_deg=40.2, longitude_deg=44.5),
+        country_code="AM",
+        elevation_m=1500.0,
+        slope_deg=3.0,
+        roughness_score=0.1,
+        viirs_radiance_nw_cm2_sr=0.2,
+        darkness_score=0.85,
+        water_fraction=0.0,
+        urban_fraction=0.05,
+        forest_fraction=0.2,
+        restricted_fraction=0.0,
+        distance_to_road_km=1.0,
+        distance_to_settlement_km=20.0,
+        horizon_openness_score=0.9,
+        static_score=0.85,
+        upper_bound=0.9,
+        uncertainty=0.1,
+        source="fixture",
+    )
 
 
 @pytest.mark.asyncio
-async def test_overpass_provider_parses_viewpoint_and_darkness_proxy() -> None:
-    payload = {
-        "elements": [
-            {
-                "type": "node",
-                "id": 1,
-                "lat": 41.0,
-                "lon": 44.0,
-                "tags": {
-                    "tourism": "viewpoint",
-                    "name": "Mountain View",
-                    "addr:country": "GE",
-                    "ele": "1800 m",
-                },
-            },
-            {
-                "type": "node",
-                "id": 2,
-                "lat": 41.1,
-                "lon": 44.1,
-                "tags": {
-                    "place": "town",
-                    "name": "Nearby Town",
-                    "population": "12000",
-                },
-            },
-        ]
-    }
+async def test_overpass_access_query_is_local_to_shortlisted_cell() -> None:
+    queries: list[str] = []
 
     def handler(request: httpx.Request) -> httpx.Response:
-        assert request.method == "POST"
-        body = request.content.decode()
-        assert "around%3A250000" in body or "around:250000" in body
-        return httpx.Response(200, json=payload)
+        payload = parse_qs(request.content.decode())
+        query = payload["data"][0]
+        queries.append(query)
+        return httpx.Response(
+            200,
+            json={
+                "elements": [
+                    {
+                        "type": "node",
+                        "id": 1,
+                        "lat": 40.201,
+                        "lon": 44.501,
+                        "tags": {"amenity": "parking", "name": "Night parking"},
+                    }
+                ]
+            },
+        )
 
     client = httpx.AsyncClient(transport=httpx.MockTransport(handler))
-    provider = OverpassDiscoveryProvider(
-        base_url="https://overpass.test/api",
-        client=client,
-    )
-    places = await provider.discover_places(
-        user_location=GeoPoint(latitude_deg=40.2, longitude_deg=44.5),
-        radius_km=250,
-        limit=5,
+    provider = OverpassAccessProvider(base_url="https://overpass.test/api", client=client)
+    result = await provider.discover_access_points(
+        cells=[_cell()],
+        radius_km=6.0,
+        limit_per_cell=3,
     )
     await client.aclose()
 
-    assert len(places) == 1
-    assert places[0].kind == PlaceKind.VIEWPOINT
-    assert places[0].country_code == "GE"
-    assert places[0].elevation_m == 1800
-    assert places[0].verification_status == VerificationStatus.UNVERIFIED_DISCOVERED
-    assert 0.0 <= places[0].darkness_score <= 1.0
-
-
-@pytest.mark.asyncio
-async def test_overpass_provider_parses_candidate_equipment_store() -> None:
-    payload = {
-        "elements": [
-            {
-                "type": "node",
-                "id": 7,
-                "lat": 40.18,
-                "lon": 44.51,
-                "tags": {
-                    "shop": "camera",
-                    "name": "Camera Lab",
-                    "website": "https://example.com",
-                    "addr:country": "AM",
-                },
-            }
-        ]
-    }
-
-    def handler(_: httpx.Request) -> httpx.Response:
-        return httpx.Response(200, json=payload)
-
-    client = httpx.AsyncClient(transport=httpx.MockTransport(handler))
-    provider = OverpassDiscoveryProvider(
-        base_url="https://overpass.test/api",
-        client=client,
-    )
-    stores = await provider.discover_stores(
-        user_location=GeoPoint(latitude_deg=40.17, longitude_deg=44.50),
-        radius_km=25,
-        limit=5,
-    )
-    await client.aclose()
-
-    assert stores[0].name == "Camera Lab"
-    assert "cameras" in stores[0].categories
-    assert stores[0].country_code == "AM"
+    assert result[_cell().h3_index][0].name == "Night parking"
+    assert queries
+    assert "around:6000" in queries[0]
+    assert "around:250000" not in queries[0]
