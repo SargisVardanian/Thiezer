@@ -19,3 +19,8 @@ claims direct visual detection of the planet.
 
 Local development uses deterministic fixtures where a provider is unavailable. Live catalog checks are
 opt-in only and must produce redacted reports.
+
+Run the opt-in connectivity smoke test with `THIEZER_LIVE_SMOKE=1 .venv/bin/python
+scripts/smoke_celestial_providers.py`. It performs one bounded query per provider and writes only
+provider status and HTTP code to `artifacts/reports/celestial_provider_smoke_redacted.json`; neither
+coordinates, raw responses, signed URLs, nor credentials are recorded.
