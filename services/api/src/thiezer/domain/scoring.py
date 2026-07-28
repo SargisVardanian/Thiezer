@@ -11,7 +11,7 @@ from thiezer.domain.contracts import (
     WarningCode,
 )
 
-SCORING_VERSION = "v1"
+SCORING_VERSION = "v2"
 
 
 @dataclass(frozen=True, slots=True)
@@ -32,6 +32,7 @@ class ScoreInputs:
     severe_cloud: bool = False
     precipitation: bool = False
     place_accessible: bool = True
+    # Retained for API/backward compatibility. Travel penalties are no longer applied here.
     normalized_drive_cost: float = 0.0
     normalized_risk: float = 0.0
 
@@ -190,19 +191,13 @@ def calculate_sky_score(
         )
         score = _bounded(score)
 
-    utility = (
-        score
-        - 0.20 * _bounded(inputs.normalized_drive_cost)
-        - 0.15 * _bounded(inputs.normalized_risk)
-        - 0.15 * (1.0 - values["confidence"])
-    )
     explanations = [
         f"{component.name}:{_component_strength(component.value)}" for component in components
     ]
     return SkyScoreBreakdown(
         valid=not hard_invalid,
         score=score,
-        utility=utility,
+        utility=score,
         components=components,
         warnings=warnings,
         explanation_codes=explanations,
