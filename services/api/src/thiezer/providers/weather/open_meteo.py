@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import asyncio
 from datetime import UTC, datetime
 from typing import Any
 
@@ -10,7 +11,7 @@ from thiezer.providers.weather.base import WeatherPointKey, weather_point_key
 
 
 class OpenMeteoWeatherProvider:
-    """Normalize Open-Meteo hourly forecasts and batch nearby candidate locations."""
+    """Normalize Open-Meteo forecasts with chunking and bounded concurrency."""
 
     _HOURLY_FIELDS = (
         "cloud_cover",
@@ -33,15 +34,24 @@ class OpenMeteoWeatherProvider:
         base_url: str,
         api_key: str | None = None,
         client: httpx.AsyncClient | None = None,
+        chunk_size: int = 25,
+        max_concurrency: int = 2,
     ) -> None:
         self._base_url = base_url.rstrip("/")
         self._api_key = api_key
         self._owns_client = client is None
         self._client = client or httpx.AsyncClient(
-            timeout=httpx.Timeout(connect=5.0, read=20.0, write=5.0, pool=5.0),
+            timeout=httpx.Timeout(connect=5.0, read=25.0, write=5.0, pool=5.0),
             limits=httpx.Limits(max_connections=10, max_keepalive_connections=5),
             follow_redirects=False,
         )
+        self._chunk_size = max(1, min(25, chunk_size))
+        self._semaphore = asyncio.Semaphore(max(1, max_concurrency))
+        self._last_batch_count = 0
+
+    @property
+    def last_batch_count(self) -> int:
+        return self._last_batch_count
 
     async def __aenter__(self) -> OpenMeteoWeatherProvider:
         return self
@@ -73,13 +83,41 @@ class OpenMeteoWeatherProvider:
         points: list[GeoPoint],
         start_utc: datetime,
         end_utc: datetime,
+        elevations_m: dict[WeatherPointKey, float] | None = None,
     ) -> dict[WeatherPointKey, list[HourlySkyCondition]]:
         _validate_bounds(start_utc, end_utc)
         if not points:
+            self._last_batch_count = 0
             return {}
-        if len(points) > 25:
-            raise ValueError("at most 25 locations can be requested in one weather batch")
+        chunks = [
+            points[index : index + self._chunk_size]
+            for index in range(0, len(points), self._chunk_size)
+        ]
+        self._last_batch_count = len(chunks)
+        results = await asyncio.gather(
+            *(
+                self._fetch_chunk(
+                    points=chunk,
+                    start_utc=start_utc,
+                    end_utc=end_utc,
+                    elevations_m=elevations_m,
+                )
+                for chunk in chunks
+            )
+        )
+        merged: dict[WeatherPointKey, list[HourlySkyCondition]] = {}
+        for result in results:
+            merged.update(result)
+        return merged
 
+    async def _fetch_chunk(
+        self,
+        *,
+        points: list[GeoPoint],
+        start_utc: datetime,
+        end_utc: datetime,
+        elevations_m: dict[WeatherPointKey, float] | None,
+    ) -> dict[WeatherPointKey, list[HourlySkyCondition]]:
         params: dict[str, str | float] = {
             "latitude": ",".join(f"{point.latitude_deg:.6f}" for point in points),
             "longitude": ",".join(f"{point.longitude_deg:.6f}" for point in points),
@@ -89,10 +127,16 @@ class OpenMeteoWeatherProvider:
             "start_date": start_utc.astimezone(UTC).date().isoformat(),
             "end_date": end_utc.astimezone(UTC).date().isoformat(),
         }
+        if elevations_m:
+            params["elevation"] = ",".join(
+                str(round(elevations_m.get(weather_point_key(point), 0.0), 1))
+                for point in points
+            )
         if self._api_key:
             params["apikey"] = self._api_key
 
-        response = await self._client.get(f"{self._base_url}/forecast", params=params)
+        async with self._semaphore:
+            response = await self._client.get(f"{self._base_url}/forecast", params=params)
         response.raise_for_status()
         if len(response.content) > 20_000_000:
             raise ValueError("provider response exceeds safety limit")
@@ -100,7 +144,6 @@ class OpenMeteoWeatherProvider:
         payloads = raw_payload if isinstance(raw_payload, list) else [raw_payload]
         if len(payloads) != len(points):
             raise ValueError("provider returned an unexpected number of locations")
-
         return {
             weather_point_key(point): self._normalize(
                 payload=_require_dict(payload),
@@ -129,7 +172,6 @@ class OpenMeteoWeatherProvider:
         times = hourly.get("time")
         if not isinstance(times, list):
             raise ValueError("missing hourly time array")
-
         returned_point = GeoPoint(
             latitude_deg=float(payload["latitude"]),
             longitude_deg=float(payload["longitude"]),
