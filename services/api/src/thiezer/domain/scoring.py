@@ -11,7 +11,7 @@ from thiezer.domain.contracts import (
     WarningCode,
 )
 
-SCORING_VERSION = "v0"
+SCORING_VERSION = "v1"
 
 
 @dataclass(frozen=True, slots=True)
@@ -25,47 +25,86 @@ class ScoreInputs:
     target_altitude: float
     accessibility: float
     confidence: float
+    altitude: float = 0.5
+    horizon_openness: float = 0.7
     sun_dark_enough: bool = True
     target_above_horizon: bool = True
     severe_cloud: bool = False
+    precipitation: bool = False
     place_accessible: bool = True
     normalized_drive_cost: float = 0.0
     normalized_risk: float = 0.0
 
 
+_PLANET_WEIGHTS = {
+    "cloud_clearance": 0.27,
+    "darkness": 0.03,
+    "transparency": 0.12,
+    "moon_conditions": 0.02,
+    "dew_margin": 0.05,
+    "wind": 0.11,
+    "target_altitude": 0.22,
+    "altitude": 0.04,
+    "horizon_openness": 0.04,
+    "accessibility": 0.04,
+    "confidence": 0.06,
+}
+
 _BASE_WEIGHTS: dict[TargetKind, dict[str, float]] = {
     TargetKind.MILKY_WAY: {
-        "cloud_clearance": 0.25,
-        "darkness": 0.22,
-        "transparency": 0.14,
-        "moon_conditions": 0.14,
-        "dew_margin": 0.06,
+        "cloud_clearance": 0.23,
+        "darkness": 0.20,
+        "transparency": 0.13,
+        "moon_conditions": 0.13,
+        "dew_margin": 0.05,
         "wind": 0.04,
-        "target_altitude": 0.08,
+        "target_altitude": 0.07,
+        "altitude": 0.04,
+        "horizon_openness": 0.04,
         "accessibility": 0.03,
         "confidence": 0.04,
     },
     TargetKind.MOON: {
-        "cloud_clearance": 0.30,
-        "darkness": 0.03,
+        "cloud_clearance": 0.29,
+        "darkness": 0.01,
         "transparency": 0.12,
-        "moon_conditions": 0.08,
-        "dew_margin": 0.06,
+        "moon_conditions": 0.02,
+        "dew_margin": 0.05,
         "wind": 0.08,
-        "target_altitude": 0.20,
-        "accessibility": 0.05,
-        "confidence": 0.08,
-    },
-    TargetKind.BRIGHT_PLANET: {
-        "cloud_clearance": 0.28,
-        "darkness": 0.05,
-        "transparency": 0.12,
-        "moon_conditions": 0.03,
-        "dew_margin": 0.06,
-        "wind": 0.12,
         "target_altitude": 0.22,
-        "accessibility": 0.04,
-        "confidence": 0.08,
+        "altitude": 0.04,
+        "horizon_openness": 0.05,
+        "accessibility": 0.05,
+        "confidence": 0.07,
+    },
+    TargetKind.MARS: dict(_PLANET_WEIGHTS),
+    TargetKind.JUPITER: dict(_PLANET_WEIGHTS),
+    TargetKind.BRIGHT_PLANET: dict(_PLANET_WEIGHTS),
+    TargetKind.ALPHA_CENTAURI: {
+        "cloud_clearance": 0.25,
+        "darkness": 0.14,
+        "transparency": 0.15,
+        "moon_conditions": 0.07,
+        "dew_margin": 0.05,
+        "wind": 0.04,
+        "target_altitude": 0.16,
+        "altitude": 0.03,
+        "horizon_openness": 0.05,
+        "accessibility": 0.02,
+        "confidence": 0.04,
+    },
+    TargetKind.BEST_NIGHT_SKY: {
+        "cloud_clearance": 0.24,
+        "darkness": 0.23,
+        "transparency": 0.15,
+        "moon_conditions": 0.11,
+        "dew_margin": 0.05,
+        "wind": 0.04,
+        "target_altitude": 0.01,
+        "altitude": 0.05,
+        "horizon_openness": 0.05,
+        "accessibility": 0.03,
+        "confidence": 0.04,
     },
 }
 
@@ -110,6 +149,8 @@ def calculate_sky_score(
         warnings.append(WarningCode.TARGET_BELOW_HORIZON)
     if inputs.severe_cloud:
         warnings.append(WarningCode.SEVERE_CLOUD)
+    if inputs.precipitation:
+        warnings.append(WarningCode.PRECIPITATION)
     if not inputs.place_accessible:
         warnings.append(WarningCode.INACCESSIBLE)
 
@@ -130,6 +171,8 @@ def calculate_sky_score(
         "dew_margin": _bounded(inputs.dew_margin),
         "wind": _bounded(inputs.wind),
         "target_altitude": _bounded(inputs.target_altitude),
+        "altitude": _bounded(inputs.altitude),
+        "horizon_openness": _bounded(inputs.horizon_openness),
         "accessibility": _bounded(inputs.accessibility),
         "confidence": _bounded(inputs.confidence),
     }

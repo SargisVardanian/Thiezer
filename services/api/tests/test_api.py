@@ -30,4 +30,4 @@ def test_score_preview() -> None:
     body = response.json()
     assert body["valid"] is True
     assert 0.0 < body["score"] <= 1.0
-    assert body["scoring_version"] == "v0"
+    assert body["scoring_version"] == "v1"
