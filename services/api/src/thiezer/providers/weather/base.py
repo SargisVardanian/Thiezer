@@ -9,6 +9,9 @@ WeatherPointKey = tuple[float, float]
 
 
 class WeatherProvider(Protocol):
+    @property
+    def last_batch_count(self) -> int: ...
+
     async def get_hourly_forecast(
         self,
         *,
@@ -23,6 +26,7 @@ class WeatherProvider(Protocol):
         points: list[GeoPoint],
         start_utc: datetime,
         end_utc: datetime,
+        elevations_m: dict[WeatherPointKey, float] | None = None,
     ) -> dict[WeatherPointKey, list[HourlySkyCondition]]: ...
 
     async def aclose(self) -> None: ...
