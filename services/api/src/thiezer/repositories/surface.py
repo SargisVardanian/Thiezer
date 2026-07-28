@@ -100,6 +100,45 @@ class SurfacePlaceRepository:
                 ),
             )
             matches.append((place, distance))
+
+        # Bright targets are often best observed without travelling. The origin is deliberately
+        # assigned extremely poor/unknown darkness so deep-sky profiles will reject it while Moon,
+        # planet and bright-star profiles can still recommend "stay here" when conditions permit.
+        origin_key = (
+            round(user_location.latitude_deg * 100_000),
+            round(user_location.longitude_deg * 100_000),
+        )
+        if origin_key not in seen_points:
+            matches.append(
+                (
+                    CandidatePlace(
+                        id=(
+                            "observer-location:"
+                            f"{origin_key[0]:+d}:{origin_key[1]:+d}"
+                        ),
+                        name="Текущая позиция",
+                        country_code=country_code if scope == SearchScope.COUNTRY else None,
+                        region=None,
+                        point=user_location,
+                        elevation_m=0.0,
+                        kind=PlaceKind.OBSERVATION_SITE,
+                        verification_status=VerificationStatus.UNVERIFIED_DISCOVERED,
+                        darkness_score=0.001,
+                        horizon_openness_score=0.50,
+                        accessibility_score=1.0,
+                        risk_score=0.05,
+                        road_access="Current observer location; local horizon is not measured",
+                        notes=(
+                            "No travel required. Darkness and local horizon are deliberately "
+                            "unknown and must not be presented as calibrated values."
+                        ),
+                        source_provider="user_origin",
+                        darkness_model="unknown_origin_proxy",
+                    ),
+                    0.0,
+                )
+            )
+
         matches.sort(key=lambda item: (item[1], -item[0].darkness_score, item[0].id))
         warnings = [WarningCode.DARKNESS_IS_PROXY] if result.darkness_is_proxy else []
         coverage = sorted({place.country_code for place, _ in matches if place.country_code})
