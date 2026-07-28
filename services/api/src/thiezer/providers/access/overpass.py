@@ -7,7 +7,11 @@ import httpx
 
 from thiezer.domain.contracts import GeoPoint
 from thiezer.domain.geospatial import haversine_distance_km
-from thiezer.domain.static_scoring import passes_static_filters, score_raw_features
+from thiezer.domain.static_scoring import (
+    StaticFilterPolicy,
+    passes_static_filters,
+    score_raw_features,
+)
 from thiezer.domain.surface import SurfaceCell, SurfaceSite
 from thiezer.providers.access.procedural import ProceduralAccessPointProvider
 from thiezer.providers.static_layers.base import StaticLayerProvider
@@ -51,7 +55,7 @@ class LocalOverpassAccessPointProvider:
         sites: list[SurfaceSite] = []
         fallback_cells: list[SurfaceCell] = []
         for cell, batch in zip(queried_cells, batches, strict=True):
-            if isinstance(batch, Exception) or not batch:
+            if isinstance(batch, BaseException) or not batch:
                 fallback_cells.append(cell)
             else:
                 sites.extend(batch)
@@ -165,6 +169,8 @@ def _element_point(element: dict[str, Any]) -> GeoPoint | None:
     if (latitude is None or longitude is None) and isinstance(center, dict):
         latitude = center.get("lat")
         longitude = center.get("lon")
+    if latitude is None or longitude is None:
+        return None
     try:
         return GeoPoint(
             latitude_deg=float(latitude),
@@ -195,9 +201,7 @@ def _region(tags: dict[str, Any]) -> str | None:
     return str(value).strip() if value else None
 
 
-def _local_point_policy():
-    from thiezer.domain.static_scoring import StaticFilterPolicy
-
+def _local_point_policy() -> StaticFilterPolicy:
     return StaticFilterPolicy(
         minimum_land_fraction=0.70,
         maximum_urban_fraction=0.25,
