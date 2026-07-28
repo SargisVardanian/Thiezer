@@ -3,6 +3,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from datetime import UTC, datetime, timedelta
 
+from thiezer.domain.celestial_objects import CelestialTargetRef
 from thiezer.domain.contracts import (
     AstronomySnapshot,
     CandidatePlace,
@@ -48,6 +49,7 @@ class RecommendationService:
         self,
         request: RecommendationSearchRequest,
     ) -> RecommendationSearchResponse:
+        scoring_target = _scoring_target(request.target)
         batch = await self._places.search(
             user_location=request.user_location,
             scope=request.scope,
@@ -89,6 +91,7 @@ class RecommendationService:
             attributions.update(item.attribution for item in conditions)
             samples = self._evaluate_place(
                 request=request,
+                scoring_target=scoring_target,
                 place=place,
                 distance_km=distance_km,
                 conditions=conditions,
@@ -138,7 +141,7 @@ class RecommendationService:
         if not results:
             if places_with_weather == 0:
                 response_warnings.append(WarningCode.WEATHER_UNAVAILABLE)
-            elif request.target == TargetKind.ALPHA_CENTAURI:
+            elif scoring_target == TargetKind.ALPHA_CENTAURI:
                 response_warnings.append(WarningCode.TARGET_NOT_VISIBLE_IN_SCOPE)
             else:
                 response_warnings.append(WarningCode.NO_OBSERVATION_WINDOW)
@@ -159,6 +162,7 @@ class RecommendationService:
         self,
         *,
         request: RecommendationSearchRequest,
+        scoring_target: TargetKind,
         place: CandidatePlace,
         distance_km: float,
         conditions: list[HourlySkyCondition],
@@ -167,12 +171,12 @@ class RecommendationService:
         evaluated: list[_EvaluatedSample] = []
         for item in conditions:
             astronomy = self._astronomy.snapshot(
-                target=request.target,
+                target=scoring_target,
                 point=place.point,
                 timestamp_utc=item.timestamp_utc,
             )
             inputs = build_score_inputs(
-                target=request.target,
+                target=scoring_target,
                 mode=request.observation_mode,
                 place=place,
                 conditions=item,
@@ -182,7 +186,7 @@ class RecommendationService:
                 maximum_distance_km=request.max_distance_km,
             )
             score = calculate_sky_score(
-                target=request.target,
+                target=scoring_target,
                 mode=request.observation_mode,
                 inputs=inputs,
             )
@@ -268,3 +272,19 @@ def _explain(
             )
         )
     return explanations
+
+
+def _scoring_target(target: TargetKind | CelestialTargetRef) -> TargetKind:
+    """Choose a conservative existing surface-scoring profile for catalog objects.
+
+    This only selects weather/darkness weights; visibility is resolved independently by
+    the celestial endpoint and never changes the catalog object's identity.
+    """
+    if isinstance(target, TargetKind):
+        return target
+    if target.preset is not None:
+        return TargetKind(target.preset)
+    # The current scoring model has two non-Solar profiles. A catalog object is never
+    # rewritten into a Solar-System identity: this internal profile is deliberately not
+    # exposed as the requested target.
+    return TargetKind.MILKY_WAY

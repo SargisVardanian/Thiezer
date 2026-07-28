@@ -4,6 +4,7 @@ from fastapi import APIRouter
 from fastapi.responses import JSONResponse
 from sqlalchemy import text
 
+from thiezer.config import get_settings
 from thiezer.persistence.database import get_engine
 
 router = APIRouter(tags=["health"])
@@ -16,6 +17,8 @@ async def live() -> dict[str, str]:
 
 @router.get("/health/ready", response_model=None)
 async def ready() -> dict[str, Any] | JSONResponse:
+    if not get_settings().database_enabled:
+        return {"status": "ready", "database": "disabled", "storage": "ephemeral"}
     try:
         async with get_engine().connect() as connection:
             await connection.execute(text("SELECT 1"))

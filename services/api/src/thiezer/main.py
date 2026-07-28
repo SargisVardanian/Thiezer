@@ -6,7 +6,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from thiezer import __version__
 from thiezer.api.resources import build_resources
-from thiezer.api.routers import discovery, health, scoring
+from thiezer.api.routers import celestial, discovery, health, scoring, search_jobs
 from thiezer.config import get_settings
 from thiezer.observability import configure_logging
 from thiezer.persistence.database import dispose_engine
@@ -47,3 +47,5 @@ if settings.cors_allow_all:
 app.include_router(health.router)
 app.include_router(scoring.router)
 app.include_router(discovery.router)
+app.include_router(celestial.router)
+app.include_router(search_jobs.router)

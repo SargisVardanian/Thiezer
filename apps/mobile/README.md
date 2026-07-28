@@ -50,6 +50,13 @@ flutter run -d <DEVICE_ID> \
 
 The UI also lets you change the API URL at runtime.
 
+## Catalog targets
+
+The discovery screen retains Moon, Mars, Jupiter, Milky Way and best-night-sky presets. The catalog
+field debounces requests for 450 ms and ignores stale responses, then shows provider attribution on
+each result. Selecting an exoplanet requests host-star visibility; it does not claim that the planet
+is directly visible.
+
 ## Validate
 
 ```bash

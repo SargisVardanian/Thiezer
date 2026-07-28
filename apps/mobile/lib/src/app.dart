@@ -5,6 +5,7 @@ import 'package:latlong2/latlong.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import 'api_client.dart';
+import 'celestial_search.dart';
 import 'location_service.dart';
 import 'models.dart';
 import 'starfield.dart';
@@ -70,6 +71,7 @@ class _DiscoveryScreenState extends State<DiscoveryScreen> {
   List<RecommendationResult> _recommendations = const [];
   List<StoreResult> _stores = const [];
   String _target = 'milky_way';
+  CelestialObject? _catalogObject;
   String _scope = 'adaptive';
   double _radiusKm = 250;
   bool _loading = false;
@@ -106,7 +108,10 @@ class _DiscoveryScreenState extends State<DiscoveryScreen> {
   void _readManualCoordinates() {
     final latitude = double.tryParse(_latitudeController.text.trim());
     final longitude = double.tryParse(_longitudeController.text.trim());
-    if (latitude == null || longitude == null || latitude.abs() > 90 || longitude.abs() > 180) {
+    if (latitude == null ||
+        longitude == null ||
+        latitude.abs() > 90 ||
+        longitude.abs() > 180) {
       setState(() => _error = 'Проверьте широту и долготу.');
       return;
     }
@@ -146,6 +151,7 @@ class _DiscoveryScreenState extends State<DiscoveryScreen> {
       final response = await _api.searchRecommendations(
         location: _location,
         target: _target,
+        catalogObject: _catalogObject,
         radiusKm: _radiusKm,
         scope: _scope,
         countryCode: _countryController.text.trim(),
@@ -193,7 +199,8 @@ class _DiscoveryScreenState extends State<DiscoveryScreen> {
 
   Future<void> _openUrl(String value) async {
     final uri = Uri.tryParse(value);
-    if (uri == null || !await launchUrl(uri, mode: LaunchMode.externalApplication)) {
+    if (uri == null ||
+        !await launchUrl(uri, mode: LaunchMode.externalApplication)) {
       if (mounted) setState(() => _error = 'Не удалось открыть ссылку.');
     }
   }
@@ -208,37 +215,40 @@ class _DiscoveryScreenState extends State<DiscoveryScreen> {
   Widget build(BuildContext context) {
     final body = switch (_pageIndex) {
       0 => _DiscoveryPage(
-          location: _location,
-          latitudeController: _latitudeController,
-          longitudeController: _longitudeController,
-          countryController: _countryController,
-          targets: _targets,
-          target: _target,
-          scope: _scope,
-          radiusKm: _radiusKm,
-          recommendations: _recommendations,
-          loading: _loading,
-          error: _error,
-          onTargetChanged: (value) => setState(() => _target = value),
-          onScopeChanged: (value) => setState(() => _scope = value),
-          onRadiusChanged: (value) => setState(() => _radiusKm = value),
-          onUseLocation: _useCurrentLocation,
-          onSearch: _searchSky,
-          onOpenUrl: _openUrl,
-        ),
+        location: _location,
+        latitudeController: _latitudeController,
+        longitudeController: _longitudeController,
+        countryController: _countryController,
+        targets: _targets,
+        target: _target,
+        catalogObject: _catalogObject,
+        api: _api,
+        scope: _scope,
+        radiusKm: _radiusKm,
+        recommendations: _recommendations,
+        loading: _loading,
+        error: _error,
+        onTargetChanged: (value) => setState(() => _target = value),
+        onCatalogChanged: (value) => setState(() => _catalogObject = value),
+        onScopeChanged: (value) => setState(() => _scope = value),
+        onRadiusChanged: (value) => setState(() => _radiusKm = value),
+        onUseLocation: _useCurrentLocation,
+        onSearch: _searchSky,
+        onOpenUrl: _openUrl,
+      ),
       1 => _StoresPage(
-          stores: _stores,
-          loading: _loading,
-          error: _error,
-          radiusKm: _radiusKm,
-          onSearch: _searchStores,
-          onOpenUrl: _openUrl,
-        ),
+        stores: _stores,
+        loading: _loading,
+        error: _error,
+        radiusKm: _radiusKm,
+        onSearch: _searchStores,
+        onOpenUrl: _openUrl,
+      ),
       _ => _SettingsPage(
-          apiController: _apiController,
-          currentApiUrl: _api.baseUrl,
-          onSave: _saveApiUrl,
-        ),
+        apiController: _apiController,
+        currentApiUrl: _api.baseUrl,
+        onSave: _saveApiUrl,
+      ),
     };
 
     return StarfieldBackground(
@@ -262,9 +272,18 @@ class _DiscoveryScreenState extends State<DiscoveryScreen> {
           selectedIndex: _pageIndex,
           onDestinationSelected: (index) => setState(() => _pageIndex = index),
           destinations: const [
-            NavigationDestination(icon: Icon(Icons.auto_awesome), label: 'Небо'),
-            NavigationDestination(icon: Icon(Icons.camera_alt_outlined), label: 'Техника'),
-            NavigationDestination(icon: Icon(Icons.settings_outlined), label: 'Настройки'),
+            NavigationDestination(
+              icon: Icon(Icons.auto_awesome),
+              label: 'Небо',
+            ),
+            NavigationDestination(
+              icon: Icon(Icons.camera_alt_outlined),
+              label: 'Техника',
+            ),
+            NavigationDestination(
+              icon: Icon(Icons.settings_outlined),
+              label: 'Настройки',
+            ),
           ],
         ),
       ),
@@ -280,12 +299,15 @@ class _DiscoveryPage extends StatelessWidget {
     required this.countryController,
     required this.targets,
     required this.target,
+    required this.catalogObject,
+    required this.api,
     required this.scope,
     required this.radiusKm,
     required this.recommendations,
     required this.loading,
     required this.error,
     required this.onTargetChanged,
+    required this.onCatalogChanged,
     required this.onScopeChanged,
     required this.onRadiusChanged,
     required this.onUseLocation,
@@ -299,12 +321,15 @@ class _DiscoveryPage extends StatelessWidget {
   final TextEditingController countryController;
   final List<TargetOption> targets;
   final String target;
+  final CelestialObject? catalogObject;
+  final ThiezerApiClient api;
   final String scope;
   final double radiusKm;
   final List<RecommendationResult> recommendations;
   final bool loading;
   final String? error;
   final ValueChanged<String> onTargetChanged;
+  final ValueChanged<CelestialObject?> onCatalogChanged;
   final ValueChanged<String> onScopeChanged;
   final ValueChanged<double> onRadiusChanged;
   final VoidCallback onUseLocation;
@@ -322,11 +347,14 @@ class _DiscoveryPage extends StatelessWidget {
           countryController: countryController,
           targets: targets,
           target: target,
+          catalogObject: catalogObject,
+          api: api,
           scope: scope,
           radiusKm: radiusKm,
           loading: loading,
           error: error,
           onTargetChanged: onTargetChanged,
+          onCatalogChanged: onCatalogChanged,
           onScopeChanged: onScopeChanged,
           onRadiusChanged: onRadiusChanged,
           onUseLocation: onUseLocation,
@@ -349,7 +377,11 @@ class _DiscoveryPage extends StatelessWidget {
         }
         return ListView(
           padding: const EdgeInsets.all(16),
-          children: [controls, const SizedBox(height: 16), SizedBox(height: 620, child: results)],
+          children: [
+            controls,
+            const SizedBox(height: 16),
+            SizedBox(height: 620, child: results),
+          ],
         );
       },
     );
@@ -363,11 +395,14 @@ class _SearchControls extends StatelessWidget {
     required this.countryController,
     required this.targets,
     required this.target,
+    required this.catalogObject,
+    required this.api,
     required this.scope,
     required this.radiusKm,
     required this.loading,
     required this.error,
     required this.onTargetChanged,
+    required this.onCatalogChanged,
     required this.onScopeChanged,
     required this.onRadiusChanged,
     required this.onUseLocation,
@@ -379,11 +414,14 @@ class _SearchControls extends StatelessWidget {
   final TextEditingController countryController;
   final List<TargetOption> targets;
   final String target;
+  final CelestialObject? catalogObject;
+  final ThiezerApiClient api;
   final String scope;
   final double radiusKm;
   final bool loading;
   final String? error;
   final ValueChanged<String> onTargetChanged;
+  final ValueChanged<CelestialObject?> onCatalogChanged;
   final ValueChanged<String> onScopeChanged;
   final ValueChanged<double> onRadiusChanged;
   final VoidCallback onUseLocation;
@@ -395,24 +433,48 @@ class _SearchControls extends StatelessWidget {
       padding: const EdgeInsets.all(16),
       shrinkWrap: true,
       children: [
-        Text('Что вы хотите увидеть?', style: Theme.of(context).textTheme.headlineSmall),
+        Text(
+          'Что вы хотите увидеть?',
+          style: Theme.of(context).textTheme.headlineSmall,
+        ),
         const SizedBox(height: 12),
         DropdownButtonFormField<String>(
           initialValue: target,
           decoration: const InputDecoration(labelText: 'Небесная цель'),
           items: targets
-              .map((item) => DropdownMenuItem(value: item.id, child: Text(item.label)))
+              .map(
+                (item) =>
+                    DropdownMenuItem(value: item.id, child: Text(item.label)),
+              )
               .toList(growable: false),
           onChanged: (value) {
             if (value != null) onTargetChanged(value);
           },
         ),
+        const SizedBox(height: 12),
+        CelestialSearchField(
+          api: api,
+          selected: catalogObject,
+          onSelected: onCatalogChanged,
+        ),
         const SizedBox(height: 16),
         SegmentedButton<String>(
           segments: const [
-            ButtonSegment(value: 'adaptive', label: Text('Рядом'), icon: Icon(Icons.radar)),
-            ButtonSegment(value: 'country', label: Text('Страна'), icon: Icon(Icons.flag_outlined)),
-            ButtonSegment(value: 'global', label: Text('Без границ'), icon: Icon(Icons.public)),
+            ButtonSegment(
+              value: 'adaptive',
+              label: Text('Рядом'),
+              icon: Icon(Icons.radar),
+            ),
+            ButtonSegment(
+              value: 'country',
+              label: Text('Страна'),
+              icon: Icon(Icons.flag_outlined),
+            ),
+            ButtonSegment(
+              value: 'global',
+              label: Text('Без границ'),
+              icon: Icon(Icons.public),
+            ),
           ],
           selected: {scope},
           onSelectionChanged: (value) => onScopeChanged(value.first),
@@ -422,7 +484,9 @@ class _SearchControls extends StatelessWidget {
           TextField(
             controller: countryController,
             textCapitalization: TextCapitalization.characters,
-            decoration: const InputDecoration(labelText: 'ISO-код страны, например AM'),
+            decoration: const InputDecoration(
+              labelText: 'ISO-код страны, например AM',
+            ),
           ),
         ],
         const SizedBox(height: 16),
@@ -431,7 +495,10 @@ class _SearchControls extends StatelessWidget {
             Expanded(
               child: TextField(
                 controller: latitudeController,
-                keyboardType: const TextInputType.numberWithOptions(decimal: true, signed: true),
+                keyboardType: const TextInputType.numberWithOptions(
+                  decimal: true,
+                  signed: true,
+                ),
                 decoration: const InputDecoration(labelText: 'Широта'),
               ),
             ),
@@ -439,7 +506,10 @@ class _SearchControls extends StatelessWidget {
             Expanded(
               child: TextField(
                 controller: longitudeController,
-                keyboardType: const TextInputType.numberWithOptions(decimal: true, signed: true),
+                keyboardType: const TextInputType.numberWithOptions(
+                  decimal: true,
+                  signed: true,
+                ),
                 decoration: const InputDecoration(labelText: 'Долгота'),
               ),
             ),
@@ -479,7 +549,10 @@ class _SearchControls extends StatelessWidget {
         ),
         if (error != null) ...[
           const SizedBox(height: 12),
-          Text(error!, style: TextStyle(color: Theme.of(context).colorScheme.error)),
+          Text(
+            error!,
+            style: TextStyle(color: Theme.of(context).colorScheme.error),
+          ),
         ],
         const SizedBox(height: 12),
         const Text(
@@ -539,18 +612,28 @@ class _ResultsPane extends StatelessWidget {
                       point: LatLng(location.latitude, location.longitude),
                       width: 38,
                       height: 38,
-                      child: const Icon(Icons.my_location, color: Colors.lightBlueAccent, size: 32),
+                      child: const Icon(
+                        Icons.my_location,
+                        color: Colors.lightBlueAccent,
+                        size: 32,
+                      ),
                     ),
                     ...recommendations.map(
                       (item) => Marker(
-                        point: LatLng(item.place.point.latitude, item.place.point.longitude),
+                        point: LatLng(
+                          item.place.point.latitude,
+                          item.place.point.longitude,
+                        ),
                         width: 46,
                         height: 46,
                         child: Tooltip(
                           message: item.place.name,
                           child: CircleAvatar(
                             backgroundColor: _scoreColor(item.bestScore),
-                            child: Text('${item.rank}', style: const TextStyle(color: Colors.black)),
+                            child: Text(
+                              '${item.rank}',
+                              style: const TextStyle(color: Colors.black),
+                            ),
                           ),
                         ),
                       ),
@@ -558,7 +641,9 @@ class _ResultsPane extends StatelessWidget {
                   ],
                 ),
                 const RichAttributionWidget(
-                  attributions: [TextSourceAttribution('OpenStreetMap contributors')],
+                  attributions: [
+                    TextSourceAttribution('OpenStreetMap contributors'),
+                  ],
                 ),
               ],
             ),
@@ -608,7 +693,10 @@ class _RecommendationCard extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(item.place.name, style: Theme.of(context).textTheme.titleMedium),
+                      Text(
+                        item.place.name,
+                        style: Theme.of(context).textTheme.titleMedium,
+                      ),
                       Text(
                         '${item.distanceKm.toStringAsFixed(1)} км · $time · ${item.place.kind}',
                         style: const TextStyle(color: Colors.white70),
@@ -623,10 +711,22 @@ class _RecommendationCard extends StatelessWidget {
               spacing: 12,
               runSpacing: 6,
               children: [
-                _Metric(label: 'Облака', value: '${(item.conditions.cloud * 100).round()}%'),
-                _Metric(label: 'Ветер', value: '${item.conditions.windMps.toStringAsFixed(1)} м/с'),
-                _Metric(label: 'Цель', value: '${item.astronomy.altitudeDeg.toStringAsFixed(0)}°'),
-                _Metric(label: 'Темнота', value: '${(item.place.darknessScore * 100).round()}%'),
+                _Metric(
+                  label: 'Облака',
+                  value: '${(item.conditions.cloud * 100).round()}%',
+                ),
+                _Metric(
+                  label: 'Ветер',
+                  value: '${item.conditions.windMps.toStringAsFixed(1)} м/с',
+                ),
+                _Metric(
+                  label: 'Цель',
+                  value: '${item.astronomy.altitudeDeg.toStringAsFixed(0)}°',
+                ),
+                _Metric(
+                  label: 'Темнота',
+                  value: '${(item.place.darknessScore * 100).round()}%',
+                ),
               ],
             ),
             if (item.warnings.isNotEmpty) ...[
@@ -678,9 +778,14 @@ class _StoresPage extends StatelessWidget {
     return ListView(
       padding: const EdgeInsets.all(16),
       children: [
-        Text('Техника поблизости', style: Theme.of(context).textTheme.headlineSmall),
+        Text(
+          'Техника поблизости',
+          style: Theme.of(context).textTheme.headlineSmall,
+        ),
         const SizedBox(height: 6),
-        Text('Камеры, оптика, электроника и outdoor-магазины в радиусе ${radiusKm.round()} км.'),
+        Text(
+          'Камеры, оптика, электроника и outdoor-магазины в радиусе ${radiusKm.round()} км.',
+        ),
         const SizedBox(height: 12),
         FilledButton.icon(
           onPressed: loading ? null : onSearch,
@@ -689,22 +794,31 @@ class _StoresPage extends StatelessWidget {
         ),
         if (error != null) ...[
           const SizedBox(height: 10),
-          Text(error!, style: TextStyle(color: Theme.of(context).colorScheme.error)),
+          Text(
+            error!,
+            style: TextStyle(color: Theme.of(context).colorScheme.error),
+          ),
         ],
         const SizedBox(height: 12),
         ...stores.map(
           (store) => Card(
             child: ListTile(
               title: Text(store.name),
-              subtitle: Text([
-                if (store.distanceKm != null) '${store.distanceKm!.toStringAsFixed(1)} км',
-                ...store.categories.take(3),
-                if (store.address != null) store.address!,
-              ].join(' · ')),
+              subtitle: Text(
+                [
+                  if (store.distanceKm != null)
+                    '${store.distanceKm!.toStringAsFixed(1)} км',
+                  ...store.categories.take(3),
+                  if (store.address != null) store.address!,
+                ].join(' · '),
+              ),
               trailing: PopupMenuButton<String>(
                 onSelected: (value) => onOpenUrl(value),
                 itemBuilder: (_) => [
-                  PopupMenuItem(value: store.website, child: const Text('Открыть сайт')),
+                  PopupMenuItem(
+                    value: store.website,
+                    child: const Text('Открыть сайт'),
+                  ),
                   ...store.routes.map(
                     (route) => PopupMenuItem(
                       value: route.url,
@@ -745,7 +859,10 @@ class _SettingsPage extends StatelessWidget {
           decoration: const InputDecoration(labelText: 'Thiezer API URL'),
         ),
         const SizedBox(height: 10),
-        FilledButton(onPressed: onSave, child: const Text('Сохранить и проверить')),
+        FilledButton(
+          onPressed: onSave,
+          child: const Text('Сохранить и проверить'),
+        ),
         const SizedBox(height: 10),
         Text('Текущий адрес: $currentApiUrl'),
         const SizedBox(height: 24),
@@ -784,20 +901,20 @@ Color _scoreColor(double score) {
 }
 
 String _routeLabel(String provider) => switch (provider) {
-      'google_maps' => 'Google Maps',
-      'apple_maps' => 'Apple Maps',
-      'yandex_maps_web' => 'Yandex Maps',
-      _ => provider,
-    };
+  'google_maps' => 'Google Maps',
+  'apple_maps' => 'Apple Maps',
+  'yandex_maps_web' => 'Yandex Maps',
+  _ => provider,
+};
 
 String _warningLabel(String warning) => switch (warning) {
-      'unverified_place' => 'точка не проверена',
-      'darkness_is_proxy' => 'темнота оценена приближённо',
-      'low_confidence' => 'низкая уверенность прогноза',
-      'high_dew_risk' => 'риск росы',
-      'strong_wind' => 'сильный ветер',
-      _ => warning.replaceAll('_', ' '),
-    };
+  'unverified_place' => 'точка не проверена',
+  'darkness_is_proxy' => 'темнота оценена приближённо',
+  'low_confidence' => 'низкая уверенность прогноза',
+  'high_dew_risk' => 'риск росы',
+  'strong_wind' => 'сильный ветер',
+  _ => warning.replaceAll('_', ' '),
+};
 
 String _humanWarnings(List<String> warnings) {
   if (warnings.contains('target_not_visible_in_scope')) {

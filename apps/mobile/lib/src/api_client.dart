@@ -14,11 +14,9 @@ class ApiException implements Exception {
 }
 
 class ThiezerApiClient {
-  ThiezerApiClient({
-    required String baseUrl,
-    http.Client? client,
-  })  : _baseUrl = _normalizeBaseUrl(baseUrl),
-        _client = client ?? http.Client();
+  ThiezerApiClient({required String baseUrl, http.Client? client})
+    : _baseUrl = _normalizeBaseUrl(baseUrl),
+      _client = client ?? http.Client();
 
   String _baseUrl;
   final http.Client _client;
@@ -36,8 +34,7 @@ class ThiezerApiClient {
     final decoded = _decode(response);
     return (decoded as List<dynamic>)
         .map(
-          (dynamic item) =>
-              TargetOption.fromJson(item as Map<String, dynamic>),
+          (dynamic item) => TargetOption.fromJson(item as Map<String, dynamic>),
         )
         .toList(growable: false);
   }
@@ -45,6 +42,7 @@ class ThiezerApiClient {
   Future<RecommendationResponse> searchRecommendations({
     required GeoPoint location,
     required String target,
+    CelestialObject? catalogObject,
     required double radiusKm,
     required String scope,
     String? countryCode,
@@ -53,15 +51,22 @@ class ThiezerApiClient {
     final now = DateTime.now().toUtc();
     final payload = <String, dynamic>{
       'user_location': location.toJson(),
-      'target': target,
+      'target': catalogObject == null
+          ? <String, dynamic>{'preset': target}
+          : <String, dynamic>{
+              'catalog_object': <String, dynamic>{
+                'provider': catalogObject.provider,
+                'object_id': catalogObject.objectId,
+              },
+            },
       'observation_mode': 'naked_eye',
       'start_utc': now.toIso8601String(),
       'end_utc': now.add(horizon).toIso8601String(),
       'scope': scope,
       'country_code':
           scope == 'country' && countryCode != null && countryCode.isNotEmpty
-              ? countryCode.toUpperCase()
-              : null,
+          ? countryCode.toUpperCase()
+          : null,
       'max_distance_km': radiusKm,
       'max_candidates': 16,
       'max_results': 6,
@@ -80,6 +85,38 @@ class ThiezerApiClient {
     );
   }
 
+  Future<List<CelestialObject>> searchCelestialObjects(String query) async {
+    final response = await _client
+        .get(
+          _uri(
+            '/v1/celestial-objects/search?q=${Uri.encodeQueryComponent(query)}&limit=8',
+          ),
+        )
+        .timeout(const Duration(seconds: 15));
+    return (_decode(response) as List<dynamic>)
+        .map((item) => CelestialObject.fromJson(item as Map<String, dynamic>))
+        .toList(growable: false);
+  }
+
+  Future<Map<String, dynamic>> celestialVisibility({
+    required CelestialObject object,
+    required GeoPoint point,
+  }) async {
+    final response = await _client
+        .post(
+          _uri('/v1/celestial-objects/visibility'),
+          headers: const <String, String>{'content-type': 'application/json'},
+          body: jsonEncode(<String, dynamic>{
+            'provider': object.provider,
+            'object_id': object.objectId,
+            'point': point.toJson(),
+            'timestamp_utc': DateTime.now().toUtc().toIso8601String(),
+          }),
+        )
+        .timeout(const Duration(seconds: 20));
+    return _decode(response) as Map<String, dynamic>;
+  }
+
   Future<List<StoreResult>> searchStores({
     required GeoPoint location,
     required double radiusKm,
@@ -91,8 +128,8 @@ class ThiezerApiClient {
       'scope': scope,
       'country_code':
           scope == 'country' && countryCode != null && countryCode.isNotEmpty
-              ? countryCode.toUpperCase()
-              : null,
+          ? countryCode.toUpperCase()
+          : null,
       'max_distance_km': radiusKm,
       'max_results': 15,
     };
@@ -106,8 +143,7 @@ class ThiezerApiClient {
     final decoded = _decode(response) as Map<String, dynamic>;
     return (decoded['results'] as List<dynamic>)
         .map(
-          (dynamic item) =>
-              StoreResult.fromJson(item as Map<String, dynamic>),
+          (dynamic item) => StoreResult.fromJson(item as Map<String, dynamic>),
         )
         .toList(growable: false);
   }
@@ -127,9 +163,7 @@ class ThiezerApiClient {
       final detail = body is Map<String, dynamic>
           ? body['detail']?.toString()
           : response.body;
-      throw ApiException(
-        detail ?? 'HTTP ${response.statusCode}',
-      );
+      throw ApiException(detail ?? 'HTTP ${response.statusCode}');
     }
     return body;
   }

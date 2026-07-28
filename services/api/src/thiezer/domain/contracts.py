@@ -13,6 +13,8 @@ from pydantic import (
     model_validator,
 )
 
+from thiezer.domain.celestial_objects import CelestialObjectId, CelestialTargetRef
+
 UnitScore = Annotated[float, Field(ge=0.0, le=1.0)]
 Latitude = Annotated[float, Field(ge=-90.0, le=90.0)]
 Longitude = Annotated[float, Field(ge=-180.0, le=180.0)]
@@ -250,7 +252,7 @@ class RankedPlace(BaseModel):
 
 class RecommendationSearchRequest(BaseModel):
     user_location: GeoPoint
-    target: TargetKind
+    target: TargetKind | CelestialTargetRef
     observation_mode: ObservationMode = ObservationMode.NAKED_EYE
     start_utc: datetime
     end_utc: datetime
@@ -261,6 +263,36 @@ class RecommendationSearchRequest(BaseModel):
     max_results: Annotated[int, Field(ge=1, le=10)] = 5
     minimum_score: UnitScore = 0.35
     include_unverified: bool = True
+
+    @property
+    def preset_target(self) -> TargetKind | None:
+        """The legacy scoring target, if the request selected a built-in preset."""
+        if isinstance(self.target, TargetKind):
+            return self.target
+        return TargetKind(self.target.preset) if self.target.preset is not None else None
+
+    @property
+    def catalog_target(self) -> CelestialObjectId | None:
+        return self.target.catalog_object if isinstance(self.target, CelestialTargetRef) else None
+
+    @model_validator(mode="before")
+    @classmethod
+    def normalize_target(cls, value: object) -> object:
+        if not isinstance(value, dict):
+            return value
+        target = value.get("target")
+        if isinstance(target, dict):
+            return value
+        # The two temporary scalar fields were never a public API. Accepting them during
+        # this transition makes local clients resilient while the canonical shape remains
+        # target: {"catalog_object": {"provider": ..., "object_id": ...}}.
+        provider = value.pop("catalog_target_provider", None)
+        object_id = value.pop("catalog_target_object_id", None)
+        if provider is not None or object_id is not None:
+            if not provider or not object_id:
+                raise ValueError("catalog target provider and object ID must be supplied together")
+            value["target"] = {"catalog_object": {"provider": provider, "object_id": object_id}}
+        return value
 
     @model_validator(mode="after")
     def validate_request(self) -> RecommendationSearchRequest:
@@ -277,7 +309,7 @@ class RecommendationSearchRequest(BaseModel):
 
 class RecommendationSearchResponse(BaseModel):
     generated_at_utc: datetime
-    target: TargetKind
+    target: TargetKind | CelestialTargetRef
     scope: SearchScope
     search_radius_km: NonNegativeFloat
     coverage_country_codes: list[str]

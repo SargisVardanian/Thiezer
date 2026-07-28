@@ -24,7 +24,8 @@ candidate.
 
 ## Implemented
 
-- Targets: Alpha Centauri, Mars, Jupiter, Moon, Milky Way core, and general night sky.
+- Preset targets plus on-demand SIMBAD/Gaia/VizieR/NED/Exoplanet Archive resolution; no local
+  permanent star catalogue is required.
 - `adaptive`, strict `country`, and border-agnostic `global` search scopes.
 - H3 resolution 5→7 refinement for searches up to 300 km.
 - Surface features: elevation, slope, roughness, water, urban, forest, openness, multiscale light
@@ -57,6 +58,15 @@ uvicorn thiezer.main:app --reload --host 0.0.0.0
 ```
 
 Swagger: `http://127.0.0.1:8000/docs`
+
+## Celestial catalog gateway
+
+Catalog lookup is ephemeral and bounded. Search with `GET /v1/celestial-objects/search?q=Sirius`,
+then request a visibility preview or submit `target: {"catalog_object": {"provider": "simbad",
+"object_id": "M 31"}}` to the recommendation API. Existing string preset requests remain supported.
+Run locally without PostgreSQL with `THIEZER_STORAGE_MODE=ephemeral` and
+`THIEZER_DATABASE_ENABLED=false`. Provider attribution, cache policy, live-smoke caveats and
+scientific limits are in [`docs/CELESTIAL_DATA_PROVIDERS.md`](docs/CELESTIAL_DATA_PROVIDERS.md).
 
 ## Real geodata mode
 

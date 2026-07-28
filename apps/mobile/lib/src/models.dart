@@ -5,14 +5,14 @@ class GeoPoint {
   final double longitude;
 
   Map<String, dynamic> toJson() => <String, dynamic>{
-        'latitude_deg': latitude,
-        'longitude_deg': longitude,
-      };
+    'latitude_deg': latitude,
+    'longitude_deg': longitude,
+  };
 
   factory GeoPoint.fromJson(Map<String, dynamic> json) => GeoPoint(
-        (json['latitude_deg'] as num).toDouble(),
-        (json['longitude_deg'] as num).toDouble(),
-      );
+    (json['latitude_deg'] as num).toDouble(),
+    (json['longitude_deg'] as num).toDouble(),
+  );
 }
 
 class TargetOption {
@@ -21,28 +21,49 @@ class TargetOption {
   final String id;
   final String label;
 
-  factory TargetOption.fromJson(Map<String, dynamic> json) => TargetOption(
-        id: json['id'] as String,
-        label: json['label'] as String,
-      );
+  factory TargetOption.fromJson(Map<String, dynamic> json) =>
+      TargetOption(id: json['id'] as String, label: json['label'] as String);
+}
+
+class CelestialObject {
+  const CelestialObject({
+    required this.provider,
+    required this.objectId,
+    required this.name,
+    required this.objectClass,
+    required this.attribution,
+  });
+
+  final String provider;
+  final String objectId;
+  final String name;
+  final String objectClass;
+  final String attribution;
+
+  factory CelestialObject.fromJson(Map<String, dynamic> json) {
+    final identifier = json['identifier'] as Map<String, dynamic>;
+    return CelestialObject(
+      provider: identifier['provider'] as String,
+      objectId: identifier['object_id'] as String,
+      name: json['name'] as String,
+      objectClass: json['object_class'] as String,
+      attribution: json['attribution'] as String,
+    );
+  }
 }
 
 class RouteHandoff {
-  const RouteHandoff({
-    required this.provider,
-    required this.url,
-    this.note,
-  });
+  const RouteHandoff({required this.provider, required this.url, this.note});
 
   final String provider;
   final String url;
   final String? note;
 
   factory RouteHandoff.fromJson(Map<String, dynamic> json) => RouteHandoff(
-        provider: json['provider'] as String,
-        url: json['url'] as String,
-        note: json['note'] as String?,
-      );
+    provider: json['provider'] as String,
+    url: json['url'] as String,
+    note: json['note'] as String?,
+  );
 }
 
 class SkyConditions {
@@ -59,11 +80,11 @@ class SkyConditions {
   final double? visibilityM;
 
   factory SkyConditions.fromJson(Map<String, dynamic> json) => SkyConditions(
-        cloud: (json['total_cloud_fraction'] as num).toDouble(),
-        temperatureC: (json['temperature_c'] as num).toDouble(),
-        windMps: (json['wind_speed_mps'] as num).toDouble(),
-        visibilityM: (json['visibility_m'] as num?)?.toDouble(),
-      );
+    cloud: (json['total_cloud_fraction'] as num).toDouble(),
+    temperatureC: (json['temperature_c'] as num).toDouble(),
+    windMps: (json['wind_speed_mps'] as num).toDouble(),
+    visibilityM: (json['visibility_m'] as num?)?.toDouble(),
+  );
 }
 
 class AstronomySnapshot {
@@ -84,8 +105,8 @@ class AstronomySnapshot {
         altitudeDeg: (json['altitude_deg'] as num).toDouble(),
         azimuthDeg: (json['azimuth_deg'] as num).toDouble(),
         sunAltitudeDeg: (json['sun_altitude_deg'] as num).toDouble(),
-        moonIllumination:
-            (json['moon_illumination_fraction'] as num).toDouble(),
+        moonIllumination: (json['moon_illumination_fraction'] as num)
+            .toDouble(),
       );
 }
 
@@ -200,28 +221,27 @@ class RecommendationResponse {
   final List<String> countryCodes;
   final double radiusKm;
 
-  factory RecommendationResponse.fromJson(Map<String, dynamic> json) =>
-      RecommendationResponse(
-        results: (json['results'] as List<dynamic>)
-            .map(
-              (dynamic item) => RecommendationResult.fromJson(
-                item as Map<String, dynamic>,
-              ),
-            )
-            .toList(growable: false),
-        warnings: (json['warnings'] as List<dynamic>? ?? const <dynamic>[])
+  factory RecommendationResponse.fromJson(
+    Map<String, dynamic> json,
+  ) => RecommendationResponse(
+    results: (json['results'] as List<dynamic>)
+        .map(
+          (dynamic item) =>
+              RecommendationResult.fromJson(item as Map<String, dynamic>),
+        )
+        .toList(growable: false),
+    warnings: (json['warnings'] as List<dynamic>? ?? const <dynamic>[])
+        .map((dynamic item) => item as String)
+        .toList(growable: false),
+    sources: (json['discovery_sources'] as List<dynamic>? ?? const <dynamic>[])
+        .map((dynamic item) => item as String)
+        .toList(growable: false),
+    countryCodes:
+        (json['coverage_country_codes'] as List<dynamic>? ?? const <dynamic>[])
             .map((dynamic item) => item as String)
             .toList(growable: false),
-        sources:
-            (json['discovery_sources'] as List<dynamic>? ?? const <dynamic>[])
-                .map((dynamic item) => item as String)
-                .toList(growable: false),
-        countryCodes: (json['coverage_country_codes'] as List<dynamic>? ??
-                const <dynamic>[])
-            .map((dynamic item) => item as String)
-            .toList(growable: false),
-        radiusKm: (json['search_radius_km'] as num).toDouble(),
-      );
+    radiusKm: (json['search_radius_km'] as num).toDouble(),
+  );
 }
 
 class StoreResult {

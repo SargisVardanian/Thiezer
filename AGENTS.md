@@ -29,3 +29,5 @@ make run
 6. Coefficients belong in versioned configuration, not unexplained constants inside code paths.
 7. Never commit secrets, tokens, `.env`, or live provider responses containing restricted data.
 8. Do not add AI, social, billing, or booking before the recommendation vertical slice works.
+9. Keep celestial catalog lookup query-driven and ephemeral. Preserve string presets, use typed
+   identifiers and fixed provider query templates, and never describe an exoplanet as directly visible.
