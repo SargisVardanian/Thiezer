@@ -30,7 +30,7 @@ class TargetKind(StrEnum):
     MOON = "moon"
     MILKY_WAY = "milky_way"
     BEST_NIGHT_SKY = "best_night_sky"
-    BRIGHT_PLANET = "bright_planet"  # Backward-compatible generic preview target.
+    BRIGHT_PLANET = "bright_planet"
 
 
 class ObservationMode(StrEnum):
@@ -40,6 +40,13 @@ class ObservationMode(StrEnum):
 
 
 class SearchScope(StrEnum):
+    """Boundary policy for a radius-based search.
+
+    ADAPTIVE and GLOBAL both allow crossing borders. COUNTRY restricts known country codes.
+    The engine never scans an entire large country; max_distance_km is always the hard spatial bound.
+    """
+
+    ADAPTIVE = "adaptive"
     COUNTRY = "country"
     GLOBAL = "global"
 
@@ -48,12 +55,15 @@ class PlaceKind(StrEnum):
     OBSERVATION_SITE = "observation_site"
     OBSERVATORY = "observatory"
     VIEWPOINT = "viewpoint"
+    CAMPSITE = "campsite"
+    PARKING = "parking"
 
 
 class VerificationStatus(StrEnum):
     VERIFIED = "verified"
     PARTNER_VERIFIED = "partner_verified"
     UNVERIFIED_SEED = "unverified_seed"
+    UNVERIFIED_DISCOVERED = "unverified_discovered"
 
 
 class StoreKind(StrEnum):
@@ -82,6 +92,9 @@ class WarningCode(StrEnum):
     UNVERIFIED_PLACE = "unverified_place"
     WEATHER_UNAVAILABLE = "weather_unavailable"
     NO_CANDIDATE_PLACES = "no_candidate_places"
+    NO_OBSERVATION_WINDOW = "no_observation_window"
+    DISCOVERY_PROVIDER_UNAVAILABLE = "discovery_provider_unavailable"
+    DARKNESS_IS_PROXY = "darkness_is_proxy"
 
 
 class GeoPoint(BaseModel):
@@ -173,7 +186,7 @@ class CandidatePlace(BaseModel):
 
     id: str
     name: str
-    country_code: CountryCode
+    country_code: CountryCode | None = None
     region: str | None = None
     point: GeoPoint
     elevation_m: float
@@ -186,6 +199,8 @@ class CandidatePlace(BaseModel):
     road_access: str
     notes: str | None = None
     source_url: AnyHttpUrl | None = None
+    source_provider: str = "seed"
+    darkness_model: str = "seed_value"
 
 
 class ExplanationItem(BaseModel):
@@ -239,12 +254,13 @@ class RecommendationSearchRequest(BaseModel):
     observation_mode: ObservationMode = ObservationMode.NAKED_EYE
     start_utc: datetime
     end_utc: datetime
-    scope: SearchScope = SearchScope.COUNTRY
-    country_code: CountryCode | None = "AM"
-    max_distance_km: Annotated[float, Field(gt=0.0, le=20_000.0)] = 300.0
-    max_candidates: Annotated[int, Field(ge=1, le=25)] = 8
+    scope: SearchScope = SearchScope.ADAPTIVE
+    country_code: CountryCode | None = None
+    max_distance_km: Annotated[float, Field(gt=0.0, le=1_000.0)] = 250.0
+    max_candidates: Annotated[int, Field(ge=1, le=40)] = 16
     max_results: Annotated[int, Field(ge=1, le=10)] = 5
     minimum_score: UnitScore = 0.35
+    include_unverified: bool = True
 
     @model_validator(mode="after")
     def validate_request(self) -> RecommendationSearchRequest:
@@ -263,7 +279,9 @@ class RecommendationSearchResponse(BaseModel):
     generated_at_utc: datetime
     target: TargetKind
     scope: SearchScope
+    search_radius_km: NonNegativeFloat
     coverage_country_codes: list[str]
+    discovery_sources: list[str]
     results: list[RankedPlace]
     warnings: list[WarningCode]
     provider_attributions: list[str]
@@ -280,7 +298,7 @@ class EquipmentStore(BaseModel):
     id: str
     name: str
     kind: StoreKind
-    country_code: CountryCode
+    country_code: CountryCode | None = None
     point: GeoPoint | None = None
     address: str | None = None
     website_url: AnyHttpUrl
@@ -290,6 +308,7 @@ class EquipmentStore(BaseModel):
     delivers_countrywide: bool = False
     verification_status: VerificationStatus
     source_checked_at_utc: datetime
+    source_provider: str = "seed"
 
     @model_validator(mode="after")
     def validate_store(self) -> EquipmentStore:
@@ -301,10 +320,16 @@ class EquipmentStore(BaseModel):
 
 class StoreSearchRequest(BaseModel):
     user_location: GeoPoint
-    scope: SearchScope = SearchScope.COUNTRY
-    country_code: CountryCode | None = "AM"
-    max_distance_km: Annotated[float, Field(gt=0.0, le=20_000.0)] = 300.0
-    max_results: Annotated[int, Field(ge=1, le=20)] = 10
+    scope: SearchScope = SearchScope.ADAPTIVE
+    country_code: CountryCode | None = None
+    max_distance_km: Annotated[float, Field(gt=0.0, le=1_000.0)] = 250.0
+    max_results: Annotated[int, Field(ge=1, le=30)] = 10
+
+    @model_validator(mode="after")
+    def validate_scope(self) -> StoreSearchRequest:
+        if self.scope == SearchScope.COUNTRY and self.country_code is None:
+            raise ValueError("country_code is required for country scope")
+        return self
 
 
 class StoreSearchResult(BaseModel):
@@ -315,13 +340,17 @@ class StoreSearchResult(BaseModel):
 
 class StoreSearchResponse(BaseModel):
     results: list[StoreSearchResult]
+    search_radius_km: NonNegativeFloat
     coverage_country_codes: list[str]
+    discovery_sources: list[str]
+    warnings: list[WarningCode]
+    provider_attributions: list[str]
 
 
 def _require_aware(value: datetime, field_name: str) -> None:
     if value.tzinfo is None or value.utcoffset() is None:
         raise ValueError(f"{field_name} must be timezone-aware")
-    if value.astimezone(UTC).utcoffset() is None:  # Defensive for custom tzinfo implementations.
+    if value.astimezone(UTC).utcoffset() is None:
         raise ValueError(f"{field_name} cannot be converted to UTC")
 
 
