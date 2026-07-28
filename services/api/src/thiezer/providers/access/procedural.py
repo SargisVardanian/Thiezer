@@ -1,7 +1,11 @@
 from __future__ import annotations
 
 from thiezer.domain.search_cells import cell_sample_points
-from thiezer.domain.static_scoring import passes_static_filters, score_raw_features
+from thiezer.domain.static_scoring import (
+    StaticFilterPolicy,
+    passes_static_filters,
+    score_raw_features,
+)
 from thiezer.domain.surface import SurfaceCell, SurfaceSite
 from thiezer.providers.static_layers.base import StaticLayerProvider
 
@@ -65,9 +69,7 @@ class ProceduralAccessPointProvider:
         return None
 
 
-def _point_policy():
-    from thiezer.domain.static_scoring import StaticFilterPolicy
-
+def _point_policy() -> StaticFilterPolicy:
     return StaticFilterPolicy(
         minimum_land_fraction=0.70,
         maximum_urban_fraction=0.25,
