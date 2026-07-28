@@ -2,6 +2,7 @@ from collections.abc import AsyncIterator
 from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 
 from thiezer import __version__
 from thiezer.api.routers import discovery, health, scoring
@@ -18,15 +19,25 @@ async def lifespan(_: FastAPI) -> AsyncIterator[None]:
     await dispose_engine()
 
 
+settings = get_settings()
 app = FastAPI(
     title="Thiezer API",
     version=__version__,
     description=(
-        "Armenia-first astronomy travel recommendations, target visibility, equipment "
-        "discovery, and zero-key route handoffs."
+        "Global radius-based astronomy travel recommendations, target visibility, "
+        "equipment discovery, and zero-key route handoffs."
     ),
     lifespan=lifespan,
 )
+if settings.cors_allow_all:
+    app.add_middleware(
+        CORSMiddleware,
+        allow_origins=["*"],
+        allow_credentials=False,
+        allow_methods=["*"],
+        allow_headers=["*"],
+    )
+
 app.include_router(health.router)
 app.include_router(scoring.router)
 app.include_router(discovery.router)
