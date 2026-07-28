@@ -13,7 +13,6 @@ from thiezer.domain.contracts import (
     RecommendationSearchRequest,
     RecommendationSearchResponse,
     SkyScoreBreakdown,
-    TargetKind,
     VerificationStatus,
     WarningCode,
 )
@@ -21,6 +20,7 @@ from thiezer.domain.ephemeris import AstronomyProvider
 from thiezer.domain.geospatial import build_route_handoffs
 from thiezer.domain.quality import build_score_inputs
 from thiezer.domain.scoring import calculate_sky_score
+from thiezer.domain.travel import calculate_travel_utility
 from thiezer.providers.weather.base import WeatherProvider, weather_point_key
 from thiezer.repositories.base import PlaceRepository
 
@@ -48,7 +48,7 @@ class RecommendationService:
         self,
         request: RecommendationSearchRequest,
     ) -> RecommendationSearchResponse:
-        batch = await self._places.search(
+        place_batch = await self._places.search(
             user_location=request.user_location,
             scope=request.scope,
             country_code=request.country_code,
@@ -56,62 +56,77 @@ class RecommendationService:
             limit=request.max_candidates,
             include_unverified=request.include_unverified,
         )
-        candidates = batch.matches
         generated_at = datetime.now(UTC)
-        if not candidates:
-            warnings = [*batch.warnings, WarningCode.NO_CANDIDATE_PLACES]
+        if not place_batch.matches:
             return RecommendationSearchResponse(
                 generated_at_utc=generated_at,
                 target=request.target,
                 scope=request.scope,
                 search_radius_km=request.max_distance_km,
-                coverage_country_codes=batch.coverage_country_codes,
-                discovery_sources=batch.discovery_sources,
+                coverage_country_codes=place_batch.coverage_country_codes,
+                discovery_sources=place_batch.discovery_sources,
                 results=[],
-                warnings=list(dict.fromkeys(warnings)),
-                provider_attributions=batch.attributions,
+                warnings=list(
+                    dict.fromkeys([*place_batch.warnings, WarningCode.NO_CANDIDATE_PLACES])
+                ),
+                provider_attributions=place_batch.attributions,
+                metrics=place_batch.metrics,
             )
 
+        points = [place.point for place, _ in place_batch.matches]
+        elevations = {
+            weather_point_key(place.point): place.elevation_m
+            for place, _ in place_batch.matches
+        }
         forecast_by_point = await self._weather.get_hourly_forecasts(
-            points=[place.point for place, _ in candidates],
+            points=points,
             start_utc=request.start_utc,
             end_utc=request.end_utc,
+            elevations_m=elevations,
         )
         ranked: list[RankedPlace] = []
-        attributions: set[str] = set(batch.attributions)
+        attributions: set[str] = set(place_batch.attributions)
         places_with_weather = 0
+        any_geometry_visible = False
 
-        for place, distance_km in candidates:
+        for place, distance_km in place_batch.matches:
             conditions = forecast_by_point.get(weather_point_key(place.point), [])
             if not conditions:
                 continue
             places_with_weather += 1
             attributions.update(item.attribution for item in conditions)
-            samples = self._evaluate_place(
+            samples, geometry_visible = self._evaluate_place(
                 request=request,
                 place=place,
-                distance_km=distance_km,
                 conditions=conditions,
                 generated_at_utc=generated_at,
             )
+            any_geometry_visible = any_geometry_visible or geometry_visible
             window = _best_window(samples, minimum_score=request.minimum_score)
             if window is None:
                 continue
+            confidence = _component_value(window.score_breakdown, "confidence")
+            travel = calculate_travel_utility(
+                sky_quality=window.best_score,
+                distance_km=distance_km,
+                maximum_distance_km=request.max_distance_km,
+                place=place,
+                forecast_confidence=confidence,
+            )
             warnings = list(window.score_breakdown.warnings)
             if place.verification_status in {
                 VerificationStatus.UNVERIFIED_SEED,
                 VerificationStatus.UNVERIFIED_DISCOVERED,
             }:
                 warnings.append(WarningCode.UNVERIFIED_PLACE)
-            if place.darkness_model != "viirs_raster":
-                warnings.append(WarningCode.DARKNESS_IS_PROXY)
             ranked.append(
                 RankedPlace(
                     rank=1,
                     place=place,
                     distance_km=distance_km,
                     observation_window=window,
-                    utility=window.score_breakdown.utility,
+                    utility=travel.total,
+                    travel_utility=travel,
                     explanations=_explain(place.name, distance_km, window.score_breakdown),
                     warnings=list(dict.fromkeys(warnings)),
                     routes=build_route_handoffs(
@@ -124,35 +139,43 @@ class RecommendationService:
 
         ranked.sort(
             key=lambda result: (
-                -result.utility,
+                -result.travel_utility.total,
                 -result.observation_window.best_score,
                 result.distance_km,
                 result.place.id,
             )
         )
         results = [
-            result.model_copy(update={"rank": index}) for index, result in enumerate(ranked, 1)
+            result.model_copy(update={"rank": index})
+            for index, result in enumerate(ranked, 1)
         ][: request.max_results]
 
-        response_warnings = list(batch.warnings)
+        response_warnings = list(place_batch.warnings)
         if not results:
             if places_with_weather == 0:
                 response_warnings.append(WarningCode.WEATHER_UNAVAILABLE)
-            elif request.target == TargetKind.ALPHA_CENTAURI:
+            elif not any_geometry_visible:
                 response_warnings.append(WarningCode.TARGET_NOT_VISIBLE_IN_SCOPE)
             else:
                 response_warnings.append(WarningCode.NO_OBSERVATION_WINDOW)
 
+        metrics = place_batch.metrics.model_copy(
+            update={
+                "weather_points_requested": len(points),
+                "weather_batches": self._weather.last_batch_count,
+            }
+        )
         return RecommendationSearchResponse(
             generated_at_utc=generated_at,
             target=request.target,
             scope=request.scope,
             search_radius_km=request.max_distance_km,
-            coverage_country_codes=batch.coverage_country_codes,
-            discovery_sources=batch.discovery_sources,
+            coverage_country_codes=place_batch.coverage_country_codes,
+            discovery_sources=place_batch.discovery_sources,
             results=results,
             warnings=list(dict.fromkeys(response_warnings)),
             provider_attributions=sorted(attributions),
+            metrics=metrics,
         )
 
     def _evaluate_place(
@@ -160,17 +183,18 @@ class RecommendationService:
         *,
         request: RecommendationSearchRequest,
         place: CandidatePlace,
-        distance_km: float,
         conditions: list[HourlySkyCondition],
         generated_at_utc: datetime,
-    ) -> list[_EvaluatedSample]:
+    ) -> tuple[list[_EvaluatedSample], bool]:
         evaluated: list[_EvaluatedSample] = []
+        geometry_visible = request.target.value == "best_night_sky"
         for item in conditions:
             astronomy = self._astronomy.snapshot(
                 target=request.target,
                 point=place.point,
                 timestamp_utc=item.timestamp_utc,
             )
+            geometry_visible = geometry_visible or astronomy.above_geometric_horizon
             inputs = build_score_inputs(
                 target=request.target,
                 mode=request.observation_mode,
@@ -178,8 +202,8 @@ class RecommendationService:
                 conditions=item,
                 astronomy=astronomy,
                 search_started_utc=generated_at_utc,
-                distance_km=distance_km,
-                maximum_distance_km=request.max_distance_km,
+                distance_km=0.0,
+                maximum_distance_km=1.0,
             )
             score = calculate_sky_score(
                 target=request.target,
@@ -187,7 +211,7 @@ class RecommendationService:
                 inputs=inputs,
             )
             evaluated.append(_EvaluatedSample(item, astronomy, score))
-        return evaluated
+        return evaluated, geometry_visible
 
 
 def _best_window(
@@ -220,10 +244,7 @@ def _best_window(
         return (mean_score, best_score, len(group))
 
     best_group = max(groups, key=group_value)
-    best_sample = max(
-        best_group,
-        key=lambda sample: (sample.score.utility, sample.score.score),
-    )
+    best_sample = max(best_group, key=lambda sample: sample.score.score)
     mean_score = sum(sample.score.score for sample in best_group) / len(best_group)
     return ObservationWindow(
         start_utc=best_group[0].conditions.timestamp_utc,
@@ -235,6 +256,13 @@ def _best_window(
         best_conditions=best_sample.conditions,
         score_breakdown=best_sample.score,
     )
+
+
+def _component_value(score: SkyScoreBreakdown, name: str) -> float:
+    for component in score.components:
+        if component.name == name:
+            return component.value
+    return 0.5
 
 
 def _explain(
@@ -253,7 +281,9 @@ def _explain(
         *[
             ExplanationItem(
                 code=f"component_{component.name}",
-                message=f"{component.name.replace('_', ' ')} score is {component.value * 100:.0f}%.",
+                message=(
+                    f"{component.name.replace('_', ' ')} score is {component.value * 100:.0f}%."
+                ),
                 impact="positive",
             )
             for component in strongest
