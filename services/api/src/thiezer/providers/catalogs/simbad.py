@@ -6,7 +6,9 @@ from thiezer.domain.celestial_objects import (
     CelestialObject,
     CelestialObjectClass,
     CelestialObjectId,
+    CelestialPhotometry,
 )
+from thiezer.providers.catalogs.base import CatalogProviderError
 from thiezer.providers.catalogs.tap import TapClient, adql_contains_literal, adql_literal
 
 
@@ -30,29 +32,43 @@ class SimbadCatalogProvider:
         fixture_matches = list({item.identifier.object_id: item for item in matches}.values())[
             :limit
         ]
-        if fixture_matches or self._tap is None:
+        if self._tap is None:
             return fixture_matches
         literal = adql_contains_literal(query.strip())
-        rows = await self._tap.query(
-            "SELECT TOP 20 basic.oid, basic.main_id, basic.ra, basic.dec, basic.otype "
-            "FROM basic JOIN ident ON basic.oid = ident.oidref "
-            f"WHERE ident.id LIKE {literal}",
-            max_rows=limit,
-        )
-        return [_from_row(row) for row in rows]
+        try:
+            rows = await self._tap.query(
+                "SELECT TOP 20 basic.oid, basic.main_id, basic.ra, basic.dec, basic.otype, "
+                "allfluxes.V FROM basic JOIN ident ON basic.oid = ident.oidref "
+                "LEFT OUTER JOIN allfluxes ON basic.oid = allfluxes.oidref "
+                f"WHERE ident.id LIKE {literal}",
+                max_rows=limit,
+            )
+            live = _parse_rows(rows)
+        except CatalogProviderError:
+            return _fallback(fixture_matches)
+        except (KeyError, TypeError, ValueError) as exc:
+            raise CatalogProviderError("SIMBAD returned invalid object metadata") from exc
+        reference = self._fixtures.get(key)
+        return _normalise_known_name(live, reference) or fixture_matches
 
     async def get(self, object_id: str) -> CelestialObject | None:
         fixture = self._fixtures.get(object_id.casefold())
-        if fixture is not None or self._tap is None:
+        if self._tap is None:
             return fixture
         literal = adql_literal(object_id)
-        rows = await self._tap.query(
-            "SELECT TOP 1 basic.oid, basic.main_id, basic.ra, basic.dec, basic.otype "
-            "FROM basic JOIN ident ON basic.oid = ident.oidref "
-            f"WHERE ident.id = {literal}",
-            max_rows=1,
-        )
-        return _from_row(rows[0]) if rows else None
+        try:
+            rows = await self._tap.query(
+                "SELECT TOP 1 basic.oid, basic.main_id, basic.ra, basic.dec, basic.otype, "
+                "allfluxes.V FROM basic JOIN ident ON basic.oid = ident.oidref "
+                "LEFT OUTER JOIN allfluxes ON basic.oid = allfluxes.oidref "
+                f"WHERE ident.id = {literal}",
+                max_rows=1,
+            )
+            return _from_row(rows[0]) if rows else fixture
+        except CatalogProviderError:
+            return _fallback_object(fixture)
+        except (KeyError, TypeError, ValueError) as exc:
+            raise CatalogProviderError("SIMBAD returned invalid object metadata") from exc
 
 
 def _from_row(row: dict[str, object]) -> CelestialObject:
@@ -66,6 +82,7 @@ def _from_row(row: dict[str, object]) -> CelestialObject:
         coordinates=CelestialCoordinates(
             right_ascension_deg=_number(row["ra"]), declination_deg=_number(row["dec"])
         ),
+        photometry=CelestialPhotometry(visual_magnitude=_optional_number(row.get("V"))),
         attribution=SimbadCatalogProvider.attribution,
     )
 
@@ -74,6 +91,64 @@ def _number(value: object) -> float:
     if not isinstance(value, (str, int, float)):
         raise ValueError("catalog response has an invalid numeric field")
     return float(value)
+
+
+def _optional_number(value: object) -> float | None:
+    return _number(value) if value is not None else None
+
+
+def _parse_rows(rows: list[dict[str, object]]) -> list[CelestialObject]:
+    parsed: dict[str, CelestialObject] = {}
+    for row in rows:
+        try:
+            item = _from_row(row)
+        except (KeyError, TypeError, ValueError):
+            continue
+        parsed[item.identifier.object_id] = item
+    if rows and not parsed:
+        raise CatalogProviderError("SIMBAD returned no rows with usable coordinates")
+    return list(parsed.values())
+
+
+def _normalise_known_name(
+    items: list[CelestialObject], reference: CelestialObject | None
+) -> list[CelestialObject]:
+    if reference is None or reference.coordinates is None or not items:
+        return items
+    ordered = sorted(
+        items,
+        key=lambda item: _coordinate_distance_squared(item, reference),
+    )
+    closest = ordered[0]
+    if _coordinate_distance_squared(closest, reference) <= (1 / 60) ** 2:
+        ordered[0] = closest.model_copy(
+            update={"name": reference.name, "aliases": reference.aliases}
+        )
+    return ordered
+
+
+def _coordinate_distance_squared(item: CelestialObject, reference: CelestialObject) -> float:
+    if item.coordinates is None or reference.coordinates is None:
+        return float("inf")
+    return (
+        item.coordinates.right_ascension_deg - reference.coordinates.right_ascension_deg
+    ) ** 2 + (item.coordinates.declination_deg - reference.coordinates.declination_deg) ** 2
+
+
+def _fallback(items: list[CelestialObject]) -> list[CelestialObject]:
+    return [item for item in (_fallback_object(value) for value in items) if item is not None]
+
+
+def _fallback_object(item: CelestialObject | None) -> CelestialObject | None:
+    if item is None:
+        return None
+    return item.model_copy(
+        update={
+            "warnings": tuple(
+                dict.fromkeys((*item.warnings, "Live SIMBAD unavailable; bundled fallback used."))
+            )
+        }
+    )
 
 
 def simbad_fixture(*, tap: TapClient | None = None) -> SimbadCatalogProvider:

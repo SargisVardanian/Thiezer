@@ -16,6 +16,16 @@ class CatalogSource(StrEnum):
     SKYFIELD = "skyfield"
 
 
+class MoonPhase(StrEnum):
+    ANY = "any"
+    NEW = "new"
+    CRESCENT = "crescent"
+    FIRST_QUARTER = "first_quarter"
+    GIBBOUS = "gibbous"
+    FULL = "full"
+    LAST_QUARTER = "last_quarter"
+
+
 class CelestialObjectClass(StrEnum):
     STAR = "star"
     GALAXY = "galaxy"
@@ -89,6 +99,12 @@ class CelestialObject(BaseModel):
     warnings: tuple[str, ...] = ()
 
 
+class CelestialSearchResults(BaseModel):
+    results: tuple[CelestialObject, ...]
+    source_attributions: tuple[str, ...]
+    warnings: tuple[str, ...] = ()
+
+
 class CelestialTargetRef(BaseModel):
     preset: str | None = None
     catalog_object: CelestialObjectId | None = None
@@ -104,6 +120,13 @@ class VisibilityCapability(StrEnum):
     NOT_DIRECTLY_VISIBLE = "not_directly_visible"
 
 
+class ObservationCapability(StrEnum):
+    NAKED_EYE = "naked_eye"
+    BINOCULARS = "binoculars"
+    TELESCOPE = "telescope"
+    CAMERA = "camera"
+
+
 class CelestialVisibilityResult(BaseModel):
     target: CelestialObject
     observer: CelestialObserver
@@ -116,11 +139,14 @@ class CelestialVisibilityResult(BaseModel):
     moon_altitude_deg: float | None = None
     moon_illumination_fraction: float | None = Field(default=None, ge=0, le=1)
     moon_separation_deg: float | None = Field(default=None, ge=0, le=180)
+    moon_phase: MoonPhase = MoonPhase.ANY
+    moon_phase_angle_deg: float | None = Field(default=None, ge=0.0, lt=360.0)
     visibility_window: tuple[datetime, datetime] | None = None
     rise_utc: datetime | None = None
     set_utc: datetime | None = None
     culmination_utc: datetime | None = None
     maximum_altitude_deg: float | None = None
     capability: VisibilityCapability
+    observation_capabilities: tuple[ObservationCapability, ...] = ()
     source_attributions: tuple[str, ...]
     warnings: tuple[str, ...] = ()

@@ -5,7 +5,7 @@ from datetime import UTC, datetime
 from typing import Any, Protocol
 
 from thiezer.domain.astronomy import airmass_kasten_young
-from thiezer.domain.contracts import AstronomySnapshot, GeoPoint, TargetKind
+from thiezer.domain.contracts import AstronomySnapshot, GeoPoint, MoonPhase, TargetKind
 
 
 class AstronomyProvider(Protocol):
@@ -19,9 +19,15 @@ class AstronomyProvider(Protocol):
 
 
 _TARGET_LABELS: dict[TargetKind, str] = {
+    TargetKind.SUN: "Sun",
     TargetKind.ALPHA_CENTAURI: "Alpha Centauri",
+    TargetKind.MERCURY: "Mercury",
+    TargetKind.VENUS: "Venus",
     TargetKind.MARS: "Mars",
     TargetKind.JUPITER: "Jupiter",
+    TargetKind.SATURN: "Saturn",
+    TargetKind.URANUS: "Uranus",
+    TargetKind.NEPTUNE: "Neptune",
     TargetKind.MOON: "Moon",
     TargetKind.MILKY_WAY: "Milky Way core",
     TargetKind.BEST_NIGHT_SKY: "General night sky",
@@ -86,6 +92,7 @@ class SkyfieldAstronomyProvider:
         moon_apparent = observer.at(t).observe(self._moon).apparent()
         moon_altitude_deg = float(moon_apparent.altaz()[0].degrees)
         moon_illumination = float(self._almanac.fraction_illuminated(self._ephemeris, "moon", t))
+        moon_phase_angle = float(self._almanac.moon_phase(self._ephemeris, t).degrees) % 360.0
 
         if target == TargetKind.BEST_NIGHT_SKY:
             altitude_deg = 90.0
@@ -115,11 +122,19 @@ class SkyfieldAstronomyProvider:
             moon_separation_deg=min(180.0, max(0.0, moon_separation_deg)),
             airmass=None if not math.isfinite(airmass) else airmass,
             above_geometric_horizon=altitude_deg > 0.0,
+            moon_phase=classify_moon_phase(moon_phase_angle),
+            moon_phase_angle_deg=moon_phase_angle,
         )
 
     def _target_object(self, target: TargetKind) -> Any:
         if target in self._fixed_targets:
             return self._fixed_targets[target]
+        if target == TargetKind.SUN:
+            return self._sun
+        if target == TargetKind.MERCURY:
+            return self._ephemeris["mercury"]
+        if target == TargetKind.VENUS:
+            return self._ephemeris["venus"]
         if target == TargetKind.MARS:
             return self._ephemeris["mars barycenter"]
         if target == TargetKind.JUPITER:
@@ -128,7 +143,32 @@ class SkyfieldAstronomyProvider:
             return self._moon
         if target == TargetKind.BRIGHT_PLANET:
             return self._ephemeris["jupiter barycenter"]
+        if target == TargetKind.SATURN:
+            return self._ephemeris["saturn barycenter"]
+        if target == TargetKind.URANUS:
+            return self._ephemeris["uranus barycenter"]
+        if target == TargetKind.NEPTUNE:
+            return self._ephemeris["neptune barycenter"]
         raise ValueError(f"unsupported astronomy target: {target}")
+
+
+def classify_moon_phase(angle_deg: float) -> MoonPhase:
+    angle = angle_deg % 360.0
+    if angle < 22.5 or angle >= 337.5:
+        return MoonPhase.NEW
+    if angle < 67.5:
+        return MoonPhase.CRESCENT
+    if angle < 112.5:
+        return MoonPhase.FIRST_QUARTER
+    if angle < 157.5:
+        return MoonPhase.GIBBOUS
+    if angle < 202.5:
+        return MoonPhase.FULL
+    if angle < 247.5:
+        return MoonPhase.GIBBOUS
+    if angle < 292.5:
+        return MoonPhase.LAST_QUARTER
+    return MoonPhase.CRESCENT
 
 
 def _require_aware_utc(value: datetime) -> datetime:

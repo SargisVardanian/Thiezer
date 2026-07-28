@@ -10,6 +10,7 @@ from thiezer.domain.celestial_objects import (
     CelestialObjectId,
     CelestialPhysicalProperties,
 )
+from thiezer.providers.catalogs.base import CatalogProviderError
 from thiezer.providers.catalogs.tap import TapClient, adql_contains_literal, adql_literal
 
 
@@ -32,25 +33,38 @@ class ExoplanetArchiveProvider:
             or needle in item.name.casefold()
             or any(needle in alias.casefold() for alias in item.aliases)
         ][:limit]
-        if matches or self._tap is None:
+        if self._tap is None:
             return matches
-        rows = await self._tap.query(
-            "SELECT TOP 20 pl_name, hostname, ra, dec, pl_orbper, tran_flag FROM pscomppars "
-            f"WHERE pl_name LIKE {adql_contains_literal(query.strip())}",
-            max_rows=limit,
-        )
-        return [_from_row(row) for row in rows]
+        try:
+            rows = await self._tap.query(
+                "SELECT TOP 20 pl_name, hostname, ra, dec, pl_orbper, tran_flag "
+                "FROM pscomppars "
+                f"WHERE pl_name LIKE {adql_contains_literal(query.strip())}",
+                max_rows=limit,
+            )
+            live = [_from_row(row) for row in rows]
+        except CatalogProviderError:
+            return _fallback(matches)
+        except (KeyError, TypeError, ValueError) as exc:
+            raise CatalogProviderError("Exoplanet Archive returned invalid metadata") from exc
+        return live or matches
 
     async def get(self, object_id: str) -> CelestialObject | None:
         fixture = self._fixtures.get(object_id.casefold())
-        if fixture is not None or self._tap is None:
+        if self._tap is None:
             return fixture
-        rows = await self._tap.query(
-            "SELECT TOP 1 pl_name, hostname, ra, dec, pl_orbper, tran_flag FROM pscomppars "
-            f"WHERE pl_name = {adql_literal(object_id)}",
-            max_rows=1,
-        )
-        return _from_row(rows[0]) if rows else None
+        try:
+            rows = await self._tap.query(
+                "SELECT TOP 1 pl_name, hostname, ra, dec, pl_orbper, tran_flag "
+                "FROM pscomppars "
+                f"WHERE pl_name = {adql_literal(object_id)}",
+                max_rows=1,
+            )
+            return _from_row(rows[0]) if rows else fixture
+        except CatalogProviderError:
+            return _fallback_object(fixture)
+        except (KeyError, TypeError, ValueError) as exc:
+            raise CatalogProviderError("Exoplanet Archive returned invalid metadata") from exc
 
 
 def _from_row(row: dict[str, object]) -> CelestialObject:
@@ -91,3 +105,21 @@ def _truthy(value: object) -> bool | None:
     if value is None:
         return None
     return str(value).casefold() in {"1", "true", "t", "yes"}
+
+
+def _fallback(items: list[CelestialObject]) -> list[CelestialObject]:
+    return [item for item in (_fallback_object(value) for value in items) if item is not None]
+
+
+def _fallback_object(item: CelestialObject | None) -> CelestialObject | None:
+    if item is None:
+        return None
+    return item.model_copy(
+        update={
+            "warnings": tuple(
+                dict.fromkeys(
+                    (*item.warnings, "Live Exoplanet Archive unavailable; bundled fallback used.")
+                )
+            )
+        }
+    )

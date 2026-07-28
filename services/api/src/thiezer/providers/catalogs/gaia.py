@@ -11,7 +11,7 @@ from thiezer.domain.celestial_objects import (
     CelestialObjectId,
     CelestialPhotometry,
 )
-from thiezer.providers.catalogs.tap import TapClient, adql_literal
+from thiezer.providers.catalogs.tap import TapClient
 
 
 class GaiaCatalogProvider:
@@ -33,11 +33,41 @@ class GaiaCatalogProvider:
         if self._tap is None or not object_id.isdecimal():
             return None
         rows = await self._tap.query(
-            "SELECT TOP 1 source_id, ra, dec, ref_epoch, pmra, pmdec, parallax, radial_velocity, phot_g_mean_mag "
-            f"FROM gaiadr3.gaia_source WHERE source_id = {adql_literal(object_id)}",
+            "SELECT TOP 1 source_id, ra, dec, ref_epoch, pmra, pmdec, parallax, "
+            "radial_velocity, phot_g_mean_mag, phot_bp_mean_mag, phot_rp_mean_mag "
+            f"FROM gaiadr3.gaia_source WHERE source_id = {object_id}",
             max_rows=1,
         )
         return _from_row(rows[0]) if rows else None
+
+    async def enrich_nearest(self, target: CelestialObject) -> CelestialObject | None:
+        """Enrich a SIMBAD star from a fixed-radius, code-owned Gaia cone query."""
+        if self._tap is None or target.coordinates is None:
+            return None
+        ra = target.coordinates.right_ascension_deg
+        dec = target.coordinates.declination_deg
+        rows = await self._tap.query(
+            "SELECT TOP 1 source_id, ra, dec, ref_epoch, pmra, pmdec, parallax, "
+            "radial_velocity, phot_g_mean_mag, phot_bp_mean_mag, phot_rp_mean_mag, "
+            f"DISTANCE(POINT('ICRS', ra, dec), POINT('ICRS', {ra:.10f}, {dec:.10f})) "
+            "AS angular_distance FROM gaiadr3.gaia_source "
+            "WHERE 1 = CONTAINS(POINT('ICRS', ra, dec), "
+            f"CIRCLE('ICRS', {ra:.10f}, {dec:.10f}, 0.002)) "
+            "ORDER BY angular_distance ASC",
+            max_rows=1,
+        )
+        if not rows:
+            return None
+        gaia = _from_row(rows[0])
+        return gaia.model_copy(
+            update={
+                "name": target.name,
+                "aliases": target.aliases,
+                "attribution": f"{target.attribution}; {self.attribution}",
+                "uncertainty": target.uncertainty,
+                "warnings": target.warnings,
+            }
+        )
 
 
 def _from_row(row: dict[str, object]) -> CelestialObject:
@@ -56,7 +86,11 @@ def _from_row(row: dict[str, object]) -> CelestialObject:
             parallax_mas=_number(row.get("parallax")),
             radial_velocity_km_s=_number(row.get("radial_velocity")),
         ),
-        photometry=CelestialPhotometry(gaia_g_magnitude=_number(row.get("phot_g_mean_mag"))),
+        photometry=CelestialPhotometry(
+            gaia_g_magnitude=_number(row.get("phot_g_mean_mag")),
+            gaia_bp_magnitude=_number(row.get("phot_bp_mean_mag")),
+            gaia_rp_magnitude=_number(row.get("phot_rp_mean_mag")),
+        ),
         attribution=GaiaCatalogProvider.attribution,
     )
 

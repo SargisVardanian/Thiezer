@@ -14,6 +14,7 @@ from thiezer.domain.contracts import (
 )
 from thiezer.domain.geospatial import haversine_distance_km
 from thiezer.repositories.base import PlaceSearchBatch, StoreSearchBatch
+from thiezer.services.progress import ProgressCallback, report_progress
 
 
 class SeedPlaceRepository:
@@ -29,7 +30,10 @@ class SeedPlaceRepository:
         max_distance_km: float,
         limit: int,
         include_unverified: bool = True,
+        progress: ProgressCallback | None = None,
     ) -> PlaceSearchBatch:
+        await report_progress(progress, "generating_cells")
+        await report_progress(progress, "applying_static_filters")
         matches: list[tuple[CandidatePlace, float]] = []
         for place in self._places:
             if scope == SearchScope.COUNTRY and place.country_code != country_code:

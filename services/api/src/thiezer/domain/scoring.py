@@ -34,6 +34,7 @@ class ScoreInputs:
     place_accessible: bool = True
     normalized_drive_cost: float = 0.0
     normalized_risk: float = 0.0
+    drive_weight: float = 0.20
 
 
 _PLANET_WEIGHTS = {
@@ -124,7 +125,7 @@ def _component_strength(value: float) -> str:
 
 
 def weights_for(target: TargetKind, mode: ObservationMode) -> dict[str, float]:
-    weights = dict(_BASE_WEIGHTS[target])
+    weights = dict(_BASE_WEIGHTS.get(target, _PLANET_WEIGHTS))
     if mode == ObservationMode.WIDE_ANGLE_CAMERA:
         weights["wind"] += 0.02
         weights["accessibility"] -= 0.01
@@ -192,7 +193,7 @@ def calculate_sky_score(
 
     utility = (
         score
-        - 0.20 * _bounded(inputs.normalized_drive_cost)
+        - inputs.drive_weight * _bounded(inputs.normalized_drive_cost)
         - 0.15 * _bounded(inputs.normalized_risk)
         - 0.15 * (1.0 - values["confidence"])
     )

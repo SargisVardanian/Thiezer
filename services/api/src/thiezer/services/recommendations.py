@@ -9,6 +9,7 @@ from thiezer.domain.contracts import (
     CandidatePlace,
     ExplanationItem,
     HourlySkyCondition,
+    MoonPhase,
     ObservationWindow,
     RankedPlace,
     RecommendationSearchRequest,
@@ -26,6 +27,7 @@ from thiezer.providers.weather.base import WeatherProvider, weather_point_key
 from thiezer.repositories.base import PlaceRepository
 from thiezer.services.celestial_resolution import CelestialResolutionService
 from thiezer.services.celestial_visibility import CelestialVisibilityService
+from thiezer.services.progress import ProgressCallback, report_progress
 
 
 @dataclass(frozen=True, slots=True)
@@ -54,7 +56,9 @@ class RecommendationService:
     async def search(
         self,
         request: RecommendationSearchRequest,
+        progress: ProgressCallback | None = None,
     ) -> RecommendationSearchResponse:
+        await report_progress(progress, "resolving_target")
         scoring_target = _scoring_target(request.target)
         catalog_target = await self._resolve_catalog_target(request)
         batch = await self._places.search(
@@ -64,6 +68,7 @@ class RecommendationService:
             max_distance_km=request.max_distance_km,
             limit=request.max_candidates,
             include_unverified=request.include_unverified,
+            progress=progress,
         )
         candidates = batch.matches
         generated_at = datetime.now(UTC)
@@ -81,6 +86,7 @@ class RecommendationService:
                 provider_attributions=batch.attributions,
             )
 
+        await report_progress(progress, "fetching_weather")
         forecast_by_point = await self._weather.get_hourly_forecasts(
             points=[place.point for place, _ in candidates],
             start_utc=request.start_utc,
@@ -90,6 +96,7 @@ class RecommendationService:
         attributions: set[str] = set(batch.attributions)
         places_with_weather = 0
 
+        await report_progress(progress, "calculating_astronomy")
         for place, distance_km in candidates:
             conditions = forecast_by_point.get(weather_point_key(place.point), [])
             if not conditions:
@@ -133,6 +140,7 @@ class RecommendationService:
                 )
             )
 
+        await report_progress(progress, "ranking")
         ranked.sort(
             key=lambda result: (
                 -result.utility,
@@ -193,6 +201,10 @@ class RecommendationService:
                     timestamp_utc=item.timestamp_utc,
                     scoring_target=scoring_target,
                 )
+            if request.preferences.moon_phase != MoonPhase.ANY and (
+                astronomy.moon_phase != request.preferences.moon_phase
+            ):
+                continue
             inputs = build_score_inputs(
                 target=scoring_target,
                 mode=request.observation_mode,
@@ -202,6 +214,7 @@ class RecommendationService:
                 search_started_utc=generated_at_utc,
                 distance_km=distance_km,
                 maximum_distance_km=request.max_distance_km,
+                preferences=request.preferences,
             )
             score = calculate_sky_score(
                 target=scoring_target,

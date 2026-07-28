@@ -10,6 +10,7 @@ from thiezer.domain.contracts import (
 )
 from thiezer.domain.geospatial import haversine_distance_km
 from thiezer.repositories.base import PlaceSearchBatch
+from thiezer.services.progress import ProgressCallback
 from thiezer.services.surface_search import SurfaceSearchService
 
 
@@ -26,6 +27,7 @@ class SurfacePlaceRepository:
         max_distance_km: float,
         limit: int,
         include_unverified: bool = True,
+        progress: ProgressCallback | None = None,
     ) -> PlaceSearchBatch:
         if not include_unverified:
             return PlaceSearchBatch(
@@ -41,6 +43,7 @@ class SurfacePlaceRepository:
             country_code=country_code,
             max_distance_km=max_distance_km,
             limit=limit,
+            progress=progress,
         )
         matches: list[tuple[CandidatePlace, float]] = []
         for site in result.sites:

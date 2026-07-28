@@ -13,7 +13,7 @@ from pydantic import (
     model_validator,
 )
 
-from thiezer.domain.celestial_objects import CelestialObjectId, CelestialTargetRef
+from thiezer.domain.celestial_objects import CelestialObjectId, CelestialTargetRef, MoonPhase
 
 UnitScore = Annotated[float, Field(ge=0.0, le=1.0)]
 Latitude = Annotated[float, Field(ge=-90.0, le=90.0)]
@@ -26,13 +26,37 @@ CountryCode = Annotated[
 
 
 class TargetKind(StrEnum):
+    SUN = "sun"
     ALPHA_CENTAURI = "alpha_centauri"
+    MERCURY = "mercury"
+    VENUS = "venus"
     MARS = "mars"
     JUPITER = "jupiter"
+    SATURN = "saturn"
+    URANUS = "uranus"
+    NEPTUNE = "neptune"
     MOON = "moon"
     MILKY_WAY = "milky_way"
     BEST_NIGHT_SKY = "best_night_sky"
     BRIGHT_PLANET = "bright_planet"
+
+
+class TargetFamily(StrEnum):
+    GENERAL = "general"
+    MOON = "moon"
+    PLANET = "planet"
+    SATELLITE = "satellite"
+    STAR = "star"
+    GALAXY = "galaxy"
+    MILKY_WAY = "milky_way"
+    DEEP_SKY = "deep_sky"
+
+
+class ObservationPreferences(BaseModel):
+    """Target-specific constraints kept separate from the legacy preset name."""
+
+    moon_phase: MoonPhase = MoonPhase.ANY
+    nearby_first: bool = True
 
 
 class ObservationMode(StrEnum):
@@ -176,6 +200,8 @@ class AstronomySnapshot(BaseModel):
     moon_separation_deg: Annotated[float, Field(ge=0.0, le=180.0)]
     airmass: NonNegativeFloat | None
     above_geometric_horizon: bool
+    moon_phase: MoonPhase = MoonPhase.ANY
+    moon_phase_angle_deg: float | None = Field(default=None, ge=0.0, lt=360.0)
 
     @model_validator(mode="after")
     def validate_timestamp(self) -> AstronomySnapshot:
@@ -263,6 +289,7 @@ class RecommendationSearchRequest(BaseModel):
     max_results: Annotated[int, Field(ge=1, le=10)] = 5
     minimum_score: UnitScore = 0.35
     include_unverified: bool = True
+    preferences: ObservationPreferences = Field(default_factory=ObservationPreferences)
 
     @property
     def preset_target(self) -> TargetKind | None:

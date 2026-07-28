@@ -10,6 +10,7 @@ from thiezer.domain.contracts import (
     SearchScope,
     WarningCode,
 )
+from thiezer.services.progress import ProgressCallback
 
 
 @dataclass(frozen=True, slots=True)
@@ -40,6 +41,7 @@ class PlaceRepository(Protocol):
         max_distance_km: float,
         limit: int,
         include_unverified: bool = True,
+        progress: ProgressCallback | None = None,
     ) -> PlaceSearchBatch: ...
 
 

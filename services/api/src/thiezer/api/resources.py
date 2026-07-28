@@ -109,7 +109,7 @@ def build_resources(settings: Settings) -> AppResources:
     )
     astronomy = SkyfieldAstronomyProvider()
     horizons = HorizonsClient(client)
-    celestial_resolution = _build_celestial_resolution(client, horizons)
+    celestial_resolution = _build_celestial_resolution(client, horizons, settings)
     celestial_visibility = CelestialVisibilityService(celestial_resolution, horizons)
     recommendation_service = RecommendationService(
         place_repository=SurfacePlaceRepository(surface_search),
@@ -133,7 +133,9 @@ def build_resources(settings: Settings) -> AppResources:
         celestial_resolution=celestial_resolution,
         celestial_visibility=celestial_visibility,
         query_jobs=EphemeralQueryJobs(
-            recommendation_service, ttl_seconds=settings.query_ttl_seconds
+            recommendation_service,
+            ttl_seconds=settings.query_ttl_seconds,
+            result_ttl_seconds=settings.result_ttl_seconds,
         ),
         store_overpass=store_overpass,
     )
@@ -154,7 +156,7 @@ def _build_static_layers(settings: Settings) -> StaticLayerProvider:
 
 
 def _build_celestial_resolution(
-    client: httpx.AsyncClient, horizons: HorizonsClient
+    client: httpx.AsyncClient, horizons: HorizonsClient, settings: Settings
 ) -> CelestialResolutionService:
     """Build query-driven provider adapters with small fixtures only as deterministic fallback."""
     host = CelestialObject(
@@ -213,6 +215,7 @@ def _build_celestial_resolution(
             ),
             CatalogSource.NED: NedCatalogProvider(
                 tap=TapClient("https://ned.ipac.caltech.edu/tap/sync", client),
+                client=client,
                 fixtures={"m 31": m31, "m31": m31},
             ),
             CatalogSource.EXOPLANET_ARCHIVE: ExoplanetArchiveProvider(
@@ -224,5 +227,7 @@ def _build_celestial_resolution(
                 fixtures={"halley": halley, "1p": halley, "90000030": halley},
             ),
             CatalogSource.SKYFIELD: SkyfieldPresetCatalogProvider(),
-        }
+        },
+        catalog_ttl_seconds=settings.catalog_cache_ttl_seconds,
+        horizons_ttl_seconds=settings.horizons_cache_ttl_seconds,
     )

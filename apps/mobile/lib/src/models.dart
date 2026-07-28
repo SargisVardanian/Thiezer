@@ -5,14 +5,14 @@ class GeoPoint {
   final double longitude;
 
   Map<String, dynamic> toJson() => <String, dynamic>{
-    'latitude_deg': latitude,
-    'longitude_deg': longitude,
-  };
+        'latitude_deg': latitude,
+        'longitude_deg': longitude,
+      };
 
   factory GeoPoint.fromJson(Map<String, dynamic> json) => GeoPoint(
-    (json['latitude_deg'] as num).toDouble(),
-    (json['longitude_deg'] as num).toDouble(),
-  );
+        (json['latitude_deg'] as num).toDouble(),
+        (json['longitude_deg'] as num).toDouble(),
+      );
 }
 
 class TargetOption {
@@ -32,6 +32,14 @@ class CelestialObject {
     required this.name,
     required this.objectClass,
     required this.attribution,
+    required this.aliases,
+    required this.warnings,
+    this.visualMagnitude,
+    this.gaiaMagnitude,
+    this.spectralType,
+    this.redshift,
+    this.orbitalPeriodDays,
+    this.hostStarName,
   });
 
   final String provider;
@@ -39,17 +47,123 @@ class CelestialObject {
   final String name;
   final String objectClass;
   final String attribution;
+  final List<String> aliases;
+  final List<String> warnings;
+  final double? visualMagnitude;
+  final double? gaiaMagnitude;
+  final String? spectralType;
+  final double? redshift;
+  final double? orbitalPeriodDays;
+  final String? hostStarName;
 
   factory CelestialObject.fromJson(Map<String, dynamic> json) {
     final identifier = json['identifier'] as Map<String, dynamic>;
+    final photometry = json['photometry'] as Map<String, dynamic>?;
+    final physical = json['physical'] as Map<String, dynamic>?;
+    final hostStar = json['host_star'] as Map<String, dynamic>?;
     return CelestialObject(
       provider: identifier['provider'] as String,
       objectId: identifier['object_id'] as String,
       name: json['name'] as String,
       objectClass: json['object_class'] as String,
       attribution: json['attribution'] as String,
+      aliases: (json['aliases'] as List<dynamic>? ?? const <dynamic>[])
+          .map((dynamic item) => item as String)
+          .toList(growable: false),
+      warnings: (json['warnings'] as List<dynamic>? ?? const <dynamic>[])
+          .map((dynamic item) => item as String)
+          .toList(growable: false),
+      visualMagnitude: (photometry?['visual_magnitude'] as num?)?.toDouble(),
+      gaiaMagnitude: (photometry?['gaia_g_magnitude'] as num?)?.toDouble(),
+      spectralType: physical?['spectral_type'] as String?,
+      redshift: (physical?['redshift'] as num?)?.toDouble(),
+      orbitalPeriodDays: (physical?['orbital_period_days'] as num?)?.toDouble(),
+      hostStarName: hostStar?['object_id'] as String?,
     );
   }
+
+  double? get apparentMagnitude => visualMagnitude ?? gaiaMagnitude;
+}
+
+class CelestialSearchResponse {
+  const CelestialSearchResponse({
+    required this.results,
+    required this.attributions,
+    required this.warnings,
+  });
+
+  final List<CelestialObject> results;
+  final List<String> attributions;
+  final List<String> warnings;
+
+  factory CelestialSearchResponse.fromJson(Map<String, dynamic> json) =>
+      CelestialSearchResponse(
+        results: (json['results'] as List<dynamic>)
+            .map(
+              (dynamic item) =>
+                  CelestialObject.fromJson(item as Map<String, dynamic>),
+            )
+            .toList(growable: false),
+        attributions:
+            (json['source_attributions'] as List<dynamic>? ?? const <dynamic>[])
+                .map((dynamic item) => item as String)
+                .toList(growable: false),
+        warnings: (json['warnings'] as List<dynamic>? ?? const <dynamic>[])
+            .map((dynamic item) => item as String)
+            .toList(growable: false),
+      );
+}
+
+class CelestialVisibilityPreview {
+  const CelestialVisibilityPreview({
+    required this.altitudeDeg,
+    required this.azimuthDeg,
+    required this.aboveHorizon,
+    required this.capability,
+    required this.observationCapabilities,
+    required this.attributions,
+    required this.warnings,
+    this.riseUtc,
+    this.setUtc,
+    this.culminationUtc,
+    this.maximumAltitudeDeg,
+  });
+
+  final double altitudeDeg;
+  final double azimuthDeg;
+  final bool aboveHorizon;
+  final String capability;
+  final List<String> observationCapabilities;
+  final List<String> attributions;
+  final List<String> warnings;
+  final DateTime? riseUtc;
+  final DateTime? setUtc;
+  final DateTime? culminationUtc;
+  final double? maximumAltitudeDeg;
+
+  factory CelestialVisibilityPreview.fromJson(Map<String, dynamic> json) =>
+      CelestialVisibilityPreview(
+        altitudeDeg: (json['altitude_deg'] as num).toDouble(),
+        azimuthDeg: (json['azimuth_deg'] as num).toDouble(),
+        aboveHorizon: json['above_horizon'] as bool,
+        capability: json['capability'] as String,
+        observationCapabilities:
+            (json['observation_capabilities'] as List<dynamic>? ??
+                    const <dynamic>[])
+                .map((dynamic item) => item as String)
+                .toList(growable: false),
+        attributions:
+            (json['source_attributions'] as List<dynamic>? ?? const <dynamic>[])
+                .map((dynamic item) => item as String)
+                .toList(growable: false),
+        warnings: (json['warnings'] as List<dynamic>? ?? const <dynamic>[])
+            .map((dynamic item) => item as String)
+            .toList(growable: false),
+        riseUtc: _optionalDate(json['rise_utc']),
+        setUtc: _optionalDate(json['set_utc']),
+        culminationUtc: _optionalDate(json['culmination_utc']),
+        maximumAltitudeDeg: (json['maximum_altitude_deg'] as num?)?.toDouble(),
+      );
 }
 
 class RouteHandoff {
@@ -60,10 +174,10 @@ class RouteHandoff {
   final String? note;
 
   factory RouteHandoff.fromJson(Map<String, dynamic> json) => RouteHandoff(
-    provider: json['provider'] as String,
-    url: json['url'] as String,
-    note: json['note'] as String?,
-  );
+        provider: json['provider'] as String,
+        url: json['url'] as String,
+        note: json['note'] as String?,
+      );
 }
 
 class SkyConditions {
@@ -80,11 +194,11 @@ class SkyConditions {
   final double? visibilityM;
 
   factory SkyConditions.fromJson(Map<String, dynamic> json) => SkyConditions(
-    cloud: (json['total_cloud_fraction'] as num).toDouble(),
-    temperatureC: (json['temperature_c'] as num).toDouble(),
-    windMps: (json['wind_speed_mps'] as num).toDouble(),
-    visibilityM: (json['visibility_m'] as num?)?.toDouble(),
-  );
+        cloud: (json['total_cloud_fraction'] as num).toDouble(),
+        temperatureC: (json['temperature_c'] as num).toDouble(),
+        windMps: (json['wind_speed_mps'] as num).toDouble(),
+        visibilityM: (json['visibility_m'] as num?)?.toDouble(),
+      );
 }
 
 class AstronomySnapshot {
@@ -105,8 +219,8 @@ class AstronomySnapshot {
         altitudeDeg: (json['altitude_deg'] as num).toDouble(),
         azimuthDeg: (json['azimuth_deg'] as num).toDouble(),
         sunAltitudeDeg: (json['sun_altitude_deg'] as num).toDouble(),
-        moonIllumination: (json['moon_illumination_fraction'] as num)
-            .toDouble(),
+        moonIllumination:
+            (json['moon_illumination_fraction'] as num).toDouble(),
       );
 }
 
@@ -153,6 +267,7 @@ class RecommendationResult {
     required this.place,
     required this.distanceKm,
     required this.bestScore,
+    required this.travelUtility,
     required this.meanScore,
     required this.bestTime,
     required this.windowStart,
@@ -167,6 +282,7 @@ class RecommendationResult {
   final ObservationPlace place;
   final double distanceKm;
   final double bestScore;
+  final double travelUtility;
   final double meanScore;
   final DateTime bestTime;
   final DateTime windowStart;
@@ -183,6 +299,7 @@ class RecommendationResult {
       place: ObservationPlace.fromJson(json['place'] as Map<String, dynamic>),
       distanceKm: (json['distance_km'] as num).toDouble(),
       bestScore: (window['best_score'] as num).toDouble(),
+      travelUtility: (json['utility'] as num).toDouble(),
       meanScore: (window['mean_score'] as num).toDouble(),
       bestTime: DateTime.parse(window['best_time_utc'] as String).toLocal(),
       windowStart: DateTime.parse(window['start_utc'] as String).toLocal(),
@@ -223,25 +340,62 @@ class RecommendationResponse {
 
   factory RecommendationResponse.fromJson(
     Map<String, dynamic> json,
-  ) => RecommendationResponse(
-    results: (json['results'] as List<dynamic>)
-        .map(
-          (dynamic item) =>
-              RecommendationResult.fromJson(item as Map<String, dynamic>),
-        )
-        .toList(growable: false),
-    warnings: (json['warnings'] as List<dynamic>? ?? const <dynamic>[])
-        .map((dynamic item) => item as String)
-        .toList(growable: false),
-    sources: (json['discovery_sources'] as List<dynamic>? ?? const <dynamic>[])
-        .map((dynamic item) => item as String)
-        .toList(growable: false),
-    countryCodes:
-        (json['coverage_country_codes'] as List<dynamic>? ?? const <dynamic>[])
+  ) =>
+      RecommendationResponse(
+        results: (json['results'] as List<dynamic>)
+            .map(
+              (dynamic item) =>
+                  RecommendationResult.fromJson(item as Map<String, dynamic>),
+            )
+            .toList(growable: false),
+        warnings: (json['warnings'] as List<dynamic>? ?? const <dynamic>[])
             .map((dynamic item) => item as String)
             .toList(growable: false),
-    radiusKm: (json['search_radius_km'] as num).toDouble(),
-  );
+        sources:
+            (json['discovery_sources'] as List<dynamic>? ?? const <dynamic>[])
+                .map((dynamic item) => item as String)
+                .toList(growable: false),
+        countryCodes: (json['coverage_country_codes'] as List<dynamic>? ??
+                const <dynamic>[])
+            .map((dynamic item) => item as String)
+            .toList(growable: false),
+        radiusKm: (json['search_radius_km'] as num).toDouble(),
+      );
+}
+
+class QueryJobStatus {
+  const QueryJobStatus({
+    required this.queryId,
+    required this.stage,
+    required this.expiresAt,
+    this.error,
+    this.result,
+  });
+
+  final String queryId;
+  final String stage;
+  final DateTime expiresAt;
+  final String? error;
+  final RecommendationResponse? result;
+
+  bool get isTerminal => const {
+        'completed',
+        'failed',
+        'cancelled',
+        'expired',
+      }.contains(stage);
+
+  factory QueryJobStatus.fromJson(Map<String, dynamic> json) => QueryJobStatus(
+        queryId: json['query_id'] as String,
+        stage: json['stage'] as String,
+        expiresAt: DateTime.parse(json['expires_at_utc'] as String),
+        error: json['error'] as String?,
+        result: json['result'] == null
+            ? null
+            : RecommendationResponse.fromJson(
+                json['result'] as Map<String, dynamic>,
+              ),
+      );
 }
 
 class StoreResult {
@@ -291,3 +445,6 @@ class StoreResult {
     );
   }
 }
+
+DateTime? _optionalDate(dynamic value) =>
+    value is String ? DateTime.parse(value).toLocal() : null;

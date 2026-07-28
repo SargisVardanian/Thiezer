@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:http/http.dart' as http;
@@ -5,18 +6,23 @@ import 'package:http/http.dart' as http;
 import 'models.dart';
 
 class ApiException implements Exception {
-  ApiException(this.message);
+  ApiException(this.message, {this.statusCode});
 
   final String message;
+  final int? statusCode;
 
   @override
   String toString() => message;
 }
 
+class ApiRequestCancelled implements Exception {
+  const ApiRequestCancelled();
+}
+
 class ThiezerApiClient {
   ThiezerApiClient({required String baseUrl, http.Client? client})
-    : _baseUrl = _normalizeBaseUrl(baseUrl),
-      _client = client ?? http.Client();
+      : _baseUrl = _normalizeBaseUrl(baseUrl),
+        _client = client ?? http.Client();
 
   String _baseUrl;
   final http.Client _client;
@@ -48,31 +54,15 @@ class ThiezerApiClient {
     String? countryCode,
     Duration horizon = const Duration(days: 7),
   }) async {
-    final now = DateTime.now().toUtc();
-    final payload = <String, dynamic>{
-      'user_location': location.toJson(),
-      'target': catalogObject == null
-          ? <String, dynamic>{'preset': target}
-          : <String, dynamic>{
-              'catalog_object': <String, dynamic>{
-                'provider': catalogObject.provider,
-                'object_id': catalogObject.objectId,
-              },
-            },
-      'observation_mode': 'naked_eye',
-      'start_utc': now.toIso8601String(),
-      'end_utc': now.add(horizon).toIso8601String(),
-      'scope': scope,
-      'country_code':
-          scope == 'country' && countryCode != null && countryCode.isNotEmpty
-          ? countryCode.toUpperCase()
-          : null,
-      'max_distance_km': radiusKm,
-      'max_candidates': 16,
-      'max_results': 6,
-      'minimum_score': 0.28,
-      'include_unverified': true,
-    };
+    final payload = _recommendationPayload(
+      location: location,
+      target: target,
+      catalogObject: catalogObject,
+      radiusKm: radiusKm,
+      scope: scope,
+      countryCode: countryCode,
+      horizon: horizon,
+    );
     final response = await _client
         .post(
           _uri('/v1/recommendations/search'),
@@ -85,20 +75,81 @@ class ThiezerApiClient {
     );
   }
 
-  Future<List<CelestialObject>> searchCelestialObjects(String query) async {
+  Future<QueryJobStatus> startRecommendationJob({
+    required GeoPoint location,
+    required String target,
+    required double radiusKm,
+    required String scope,
+    CelestialObject? catalogObject,
+    String? countryCode,
+    Duration horizon = const Duration(days: 7),
+  }) async {
     final response = await _client
-        .get(
-          _uri(
-            '/v1/celestial-objects/search?q=${Uri.encodeQueryComponent(query)}&limit=8',
+        .post(
+          _uri('/v1/search-jobs'),
+          headers: const <String, String>{'content-type': 'application/json'},
+          body: jsonEncode(
+            _recommendationPayload(
+              location: location,
+              target: target,
+              catalogObject: catalogObject,
+              radiusKm: radiusKm,
+              scope: scope,
+              countryCode: countryCode,
+              horizon: horizon,
+            ),
           ),
         )
-        .timeout(const Duration(seconds: 15));
-    return (_decode(response) as List<dynamic>)
-        .map((item) => CelestialObject.fromJson(item as Map<String, dynamic>))
-        .toList(growable: false);
+        .timeout(const Duration(seconds: 20));
+    return QueryJobStatus.fromJson(
+      _decode(response) as Map<String, dynamic>,
+    );
   }
 
-  Future<Map<String, dynamic>> celestialVisibility({
+  Future<QueryJobStatus> fetchRecommendationJob(String queryId) async {
+    final response = await _client
+        .get(_uri('/v1/search-jobs/${Uri.encodeComponent(queryId)}'))
+        .timeout(const Duration(seconds: 20));
+    return QueryJobStatus.fromJson(
+      _decode(response) as Map<String, dynamic>,
+    );
+  }
+
+  Future<bool> cancelRecommendationJob(String queryId) async {
+    final response = await _client
+        .delete(_uri('/v1/search-jobs/${Uri.encodeComponent(queryId)}'))
+        .timeout(const Duration(seconds: 20));
+    final decoded = _decode(response) as Map<String, dynamic>;
+    return decoded['cancelled'] as bool;
+  }
+
+  Future<CelestialSearchResponse> searchCelestialObjects(
+    String query, {
+    Set<String> types = const <String>{},
+    Future<void>? abortTrigger,
+  }) async {
+    final parameters = <String, String>{'q': query, 'limit': '8'};
+    if (types.isNotEmpty) parameters['types'] = types.join(',');
+    final request = http.AbortableRequest(
+      'GET',
+      _uri('/v1/celestial-objects/search').replace(
+        queryParameters: parameters,
+      ),
+      abortTrigger: abortTrigger,
+    );
+    try {
+      final streamed =
+          await _client.send(request).timeout(const Duration(seconds: 15));
+      final response = await http.Response.fromStream(streamed);
+      return CelestialSearchResponse.fromJson(
+        _decode(response) as Map<String, dynamic>,
+      );
+    } on http.RequestAbortedException {
+      throw const ApiRequestCancelled();
+    }
+  }
+
+  Future<CelestialVisibilityPreview> celestialVisibility({
     required CelestialObject object,
     required GeoPoint point,
   }) async {
@@ -114,7 +165,9 @@ class ThiezerApiClient {
           }),
         )
         .timeout(const Duration(seconds: 20));
-    return _decode(response) as Map<String, dynamic>;
+    return CelestialVisibilityPreview.fromJson(
+      _decode(response) as Map<String, dynamic>,
+    );
   }
 
   Future<List<StoreResult>> searchStores({
@@ -128,8 +181,8 @@ class ThiezerApiClient {
       'scope': scope,
       'country_code':
           scope == 'country' && countryCode != null && countryCode.isNotEmpty
-          ? countryCode.toUpperCase()
-          : null,
+              ? countryCode.toUpperCase()
+              : null,
       'max_distance_km': radiusKm,
       'max_results': 15,
     };
@@ -163,7 +216,10 @@ class ThiezerApiClient {
       final detail = body is Map<String, dynamic>
           ? body['detail']?.toString()
           : response.body;
-      throw ApiException(detail ?? 'HTTP ${response.statusCode}');
+      throw ApiException(
+        detail ?? 'HTTP ${response.statusCode}',
+        statusCode: response.statusCode,
+      );
     }
     return body;
   }
@@ -176,5 +232,41 @@ class ThiezerApiClient {
     return trimmed.endsWith('/')
         ? trimmed.substring(0, trimmed.length - 1)
         : trimmed;
+  }
+
+  Map<String, dynamic> _recommendationPayload({
+    required GeoPoint location,
+    required String target,
+    required double radiusKm,
+    required String scope,
+    required Duration horizon,
+    CelestialObject? catalogObject,
+    String? countryCode,
+  }) {
+    final now = DateTime.now().toUtc();
+    return <String, dynamic>{
+      'user_location': location.toJson(),
+      'target': catalogObject == null
+          ? <String, dynamic>{'preset': target}
+          : <String, dynamic>{
+              'catalog_object': <String, dynamic>{
+                'provider': catalogObject.provider,
+                'object_id': catalogObject.objectId,
+              },
+            },
+      'observation_mode': 'naked_eye',
+      'start_utc': now.toIso8601String(),
+      'end_utc': now.add(horizon).toIso8601String(),
+      'scope': scope,
+      'country_code':
+          scope == 'country' && countryCode != null && countryCode.isNotEmpty
+              ? countryCode.toUpperCase()
+              : null,
+      'max_distance_km': radiusKm,
+      'max_candidates': 16,
+      'max_results': 6,
+      'minimum_score': 0.28,
+      'include_unverified': true,
+    };
   }
 }

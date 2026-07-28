@@ -80,9 +80,25 @@ def test_recommendation_api_uses_injected_services_without_live_network() -> Non
                     "minimum_score": 0.1,
                 },
             )
+            celestial_response = client.post(
+                "/v1/celestial-objects/recommendations",
+                json={
+                    "user_location": {
+                        "latitude_deg": 40.1772,
+                        "longitude_deg": 44.5035,
+                    },
+                    "target": {"preset": "milky_way"},
+                    "start_utc": start.isoformat(),
+                    "end_utc": (start + timedelta(hours=3)).isoformat(),
+                    "max_distance_km": 200,
+                    "minimum_score": 0.1,
+                },
+            )
     finally:
         app.dependency_overrides.clear()
     assert response.status_code == 200
     body = response.json()
     assert body["results"][0]["place"]["id"] == "api-site"
     assert body["search_radius_km"] == 200
+    assert celestial_response.status_code == 200
+    assert celestial_response.json()["results"][0]["place"]["id"] == "api-site"
