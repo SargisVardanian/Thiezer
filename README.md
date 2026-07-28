@@ -2,33 +2,45 @@
 
 **Find the sky worth traveling for.**
 
-Thiezer is a global, radius-based astronomy travel application. It combines offline JPL
-ephemerides, hourly weather, dynamically discovered observation candidates, explainable Sky Score,
-equipment-store discovery, a Flutter client, and zero-key route handoffs.
+Thiezer is a surface-first astronomy travel prototype. It searches physical terrain before asking
+where an observation point has already been mapped.
 
-## Spatial model
+## Search pipeline
 
-The default search radius is 250 km.
+```text
+radius and boundary policy
+→ H3 coarse coverage
+→ DEM / land cover / night-light static scoring
+→ coarse-to-fine refinement
+→ spatial diversity
+→ representative accessible point inside each final cell
+→ weather
+→ astronomy
+→ route handoff and travel utility
+```
 
-- Large countries are naturally divided into local searches around the user.
-- Small countries can include nearby countries without special-case code.
-- `scope=country` is available when a strict national boundary is required.
-- `scope=adaptive` is the default and is border-agnostic inside the radius.
-
-Armenia remains a packaged validation dataset because it is convenient for field testing; it is not
-the product boundary.
+This avoids the POI-first failure mode in which an unmarked dark plateau can never become a
+candidate.
 
 ## Implemented
 
-- Alpha Centauri, Mars, Jupiter, Moon, Milky Way core, and general night sky.
+- Targets: Alpha Centauri, Mars, Jupiter, Moon, Milky Way core, and general night sky.
+- `adaptive`, strict `country`, and border-agnostic `global` search scopes.
+- H3 resolution 5→7 refinement for searches up to 300 km.
+- Surface features: elevation, slope, roughness, water, urban, forest, openness, multiscale light
+  pressure, access potential, restrictions, uncertainty, static score and upper bound.
+- Optional real COG mode for Copernicus DEM, ESA WorldCover and VIIRS/Black Marble.
+- Deterministic zero-key procedural mode for CI and disconnected development; it is explicitly
+  marked as a proxy and must not be presented as calibrated real-world darkness.
+- Local-only Overpass access discovery around shortlisted cells; no radius-wide POI scan.
+- Open-Meteo automatic chunking above 25 points with bounded concurrency and per-point elevation.
+- Application-scoped HTTP clients and providers.
 - Offline Skyfield/JPL DE421 geometry.
-- Batched Open-Meteo weather.
-- Global OSM/Overpass discovery for observatories, viewpoints, campsites, parking, and candidate
-  equipment stores.
-- Explainable Sky Score v1.
-- Google Maps, Apple Maps, Yandex web, and `geo:` route handoffs.
-- Flutter UI for iOS and macOS.
-- Ruff, Mypy, Pytest, Flutter analyze, and Flutter test CI.
+- Google Maps, Apple Maps, Yandex web and `geo:` route handoffs.
+- Equipment-store search and Flutter UI for iOS and macOS.
+
+All generated and OSM-discovered sites remain unverified until legal access, roads, parking,
+private-land constraints and nighttime safety are confirmed.
 
 ## Backend
 
@@ -36,10 +48,25 @@ the product boundary.
 python3 -m venv .venv
 source .venv/bin/activate
 pip install -e '.[dev]'
+pytest -q
 uvicorn thiezer.main:app --reload --host 0.0.0.0
 ```
 
 Swagger: `http://127.0.0.1:8000/docs`
+
+## Real geodata mode
+
+Install the optional stack and provide COG assets:
+
+```bash
+pip install -e '.[dev,geodata]'
+export THIEZER_SURFACE_PROVIDER=cog
+export THIEZER_DEM_COG_URL=/data/copernicus-dem.tif
+export THIEZER_WORLDCOVER_COG_URL=/data/worldcover.tif
+export THIEZER_VIIRS_COG_URL=/data/viirs-night-lights.tif
+```
+
+Without a VIIRS asset, darkness is marked as a proxy. See `docs/SURFACE_SEARCH.md`.
 
 ## Apple client
 
@@ -50,12 +77,3 @@ chmod +x scripts/bootstrap_platforms.sh
 flutter run -d macos \
   --dart-define=THIEZER_API_BASE_URL=http://127.0.0.1:8000
 ```
-
-See:
-
-- `docs/GLOBAL_DISCOVERY.md`
-- `docs/ARMENIA_MVP.md`
-- `apps/mobile/README.md`
-
-All packaged and dynamically discovered observation points remain unverified until field or partner
-validation confirms legal access, parking, roads, and nighttime safety.
