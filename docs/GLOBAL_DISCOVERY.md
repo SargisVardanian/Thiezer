@@ -1,84 +1,97 @@
-# Global adaptive discovery
+# Global radius-first discovery
 
-Thiezer uses a radius as the primary spatial constraint. Country size does not determine the
-workload:
+Administrative borders are not the primary search geometry. Every search has a hard radius, 250 km
+by default:
 
-- in a large country, a 250 km search evaluates only the user's surrounding region;
-- in a small country, `scope=adaptive` or `scope=global` may cross borders;
-- `scope=country` is an explicit strict filter and still remains radius-bounded.
+- large countries remain local because only cells inside the radius are evaluated;
+- small countries may include neighbouring countries in `adaptive` or `global` mode;
+- `country` applies an optional strict country filter while preserving the radius bound.
 
-## Default request
-
-```json
-{
-  "user_location": {"latitude_deg": 40.1772, "longitude_deg": 44.5035},
-  "target": "milky_way",
-  "observation_mode": "naked_eye",
-  "start_utc": "2026-07-28T18:00:00Z",
-  "end_utc": "2026-08-04T02:00:00Z",
-  "scope": "adaptive",
-  "country_code": null,
-  "max_distance_km": 250,
-  "max_candidates": 16,
-  "max_results": 5
-}
-```
-
-`global` does not mean scanning every point on Earth. It means "do not apply a national boundary
-inside the requested radius."
-
-## Candidate discovery
-
-The runtime repository merges:
-
-1. packaged or partner-verified places;
-2. OpenStreetMap features discovered through Overpass:
-   - observatories;
-   - viewpoints;
-   - campsites;
-   - non-private parking areas.
-
-Results are deduplicated and ranked cheaply before weather is requested.
-
-## Cost control
+## Surface-first pipeline
 
 ```text
-user position
-  -> radius-bounded OSM discovery
-  -> static shortlist
-  -> one batched Open-Meteo call
-  -> local Skyfield/JPL geometry
-  -> Sky Score
-  -> external navigator URLs
+user point + radius
+  -> H3 coarse coverage
+  -> static surface layers and hard filters
+  -> diverse coarse parent shortlist
+  -> H3 refinement
+  -> static shortlist and spatial NMS
+  -> local OSM access materialisation around final cells
+  -> chunked weather
+  -> astronomy
+  -> SkyQuality
+  -> TravelUtility
+  -> navigator handoff
 ```
 
-No paid map, places, astronomy, or routing API is required for the development slice.
+OSM points are not used to decide where good sky exists. They are queried only near shortlisted
+surfaces to find a practical parking, viewpoint, campsite or road-access point.
 
-## Darkness limitations
+## Default budgets
 
-Dynamic global discovery currently uses `settlement_distance_proxy_v1`, based on mapped nearby
-cities/towns/villages, population when available, distance from the user, and place type.
+For approximately 250 km:
 
-It is not a calibrated sky-brightness measurement. Every such result returns
-`darkness_is_proxy`. The production replacement is a tiled VIIRS/Black Marble radiance layer plus
-atmospheric scattering and user/SQM calibration.
+- H3 resolution 5 coarse scan;
+- up to 24 spatially diverse parents;
+- refinement to H3 resolution 7;
+- up to 60 static cells;
+- local access lookup for at most 40 cells, each within 1-10 km;
+- weather in chunks of 25 with concurrency 2;
+- at most 10 returned routes, all as external zero-key URLs.
 
-## Safety
+Larger radii automatically use coarser starting resolutions to keep computational cost bounded.
 
-OSM-discovered results are `unverified_discovered`. The application must show that legal access,
-private land, final road condition, weather hazards, parking, and nighttime safety are not guaranteed.
+## Static layers
 
-## Flutter client
+`SurfaceCell` supports:
 
-`apps/mobile` contains one Flutter UI for iOS and macOS. It provides:
+- VIIRS/Black Marble radiance;
+- DEM elevation;
+- slope and roughness;
+- water, urban, forest and restricted fractions;
+- road and settlement distance;
+- horizon openness;
+- static score, optimistic upper bound and uncertainty.
 
-- current or manually entered coordinates;
-- target selection;
-- 25-500 km radius;
-- adaptive, country-only, and cross-border modes;
-- recommendation cards and OSM development map;
-- external Google Maps, Apple Maps, Yandex, and `geo:` route handoffs;
-- nearby equipment-store discovery;
-- editable backend URL.
+A configured local surface pack is preferred. Global elevation can be retrieved from Open-Meteo.
+When VIIRS, land cover or restrictions are unavailable, Thiezer uses a conservative fallback and
+returns `static_layers_fallback`; it does not claim calibrated sky brightness.
 
-See `apps/mobile/README.md`.
+## Hard filters
+
+A surface is rejected before weather calls when it exceeds configured limits for water, urban land,
+slope or restricted area, or when its static score is too low.
+
+## SkyQuality versus TravelUtility
+
+Sky quality contains only observation conditions: darkness, clouds, transparency, Moon, target
+altitude, terrain, dew, wind, accessibility and forecast confidence.
+
+Travel utility is calculated afterwards from:
+
+```text
+sky quality
+- radius-normalised travel penalty
+- place risk
+- static-data uncertainty
+- forecast uncertainty
+- verification penalty
+```
+
+This prevents proximity to the user from changing the physical darkness estimate.
+
+## Country filtering
+
+The default `adaptive` mode does not require country resolution. Strict `country` mode uses an
+offline nearest-settlement resolver and is therefore marked approximate near borders. A production
+deployment can replace it with exact country polygons without changing recommendation contracts.
+
+## Production data path
+
+Public Overpass and public raster tiles are development fallbacks. A scaled deployment should use:
+
+- regional OSM PBF imported into PostGIS;
+- local H3-keyed static surface packs;
+- cached weather grid cells;
+- validated access and restriction records;
+- HTTPS API deployment and private map-tile service.
