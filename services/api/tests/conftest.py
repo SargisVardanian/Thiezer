@@ -41,9 +41,19 @@ class FakeAstronomyProvider:
 
 
 class FakeWeatherProvider:
-    def __init__(self, *, cloud_by_longitude: dict[float, float] | None = None) -> None:
+    def __init__(
+        self,
+        *,
+        cloud_by_longitude: dict[float, float] | None = None,
+        chunk_size: int = 25,
+    ) -> None:
         self.cloud_by_longitude = cloud_by_longitude or {}
         self.batch_calls = 0
+        self.chunk_size = chunk_size
+
+    @property
+    def last_batch_count(self) -> int:
+        return self.batch_calls
 
     async def get_hourly_forecast(
         self,
@@ -65,8 +75,10 @@ class FakeWeatherProvider:
         points: list[GeoPoint],
         start_utc: datetime,
         end_utc: datetime,
+        elevations_m: dict[WeatherPointKey, float] | None = None,
     ) -> dict[WeatherPointKey, list[HourlySkyCondition]]:
-        self.batch_calls += 1
+        del elevations_m
+        self.batch_calls = max(1, (len(points) + self.chunk_size - 1) // self.chunk_size)
         result: dict[WeatherPointKey, list[HourlySkyCondition]] = {}
         for point in points:
             cloud = self.cloud_by_longitude.get(round(point.longitude_deg, 3), 0.05)
@@ -109,6 +121,7 @@ def make_place(
         risk_score=0.1,
         road_access="test road",
         notes="Synthetic test fixture",
+        static_uncertainty=0.2,
     )
 
 
