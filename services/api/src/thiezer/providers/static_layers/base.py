@@ -7,9 +7,14 @@ from thiezer.domain.static_scoring import RawSurfaceFeatures
 
 
 class StaticLayerProvider(Protocol):
-    source_name: str
-    attributions: tuple[str, ...]
-    darkness_is_proxy: bool
+    @property
+    def source_name(self) -> str: ...
+
+    @property
+    def attributions(self) -> tuple[str, ...]: ...
+
+    @property
+    def darkness_is_proxy(self) -> bool: ...
 
     async def evaluate_cells(self, cell_ids: list[str]) -> list[RawSurfaceFeatures]: ...
 
