@@ -33,20 +33,22 @@ nighttime safety are checked.
 ## Run locally on macOS
 
 ```bash
-./scripts/bootstrap_local.sh
-./scripts/run_macos_demo.sh
+bash scripts/bootstrap_local.sh
+bash scripts/run_macos_demo.sh
 ```
 
 The API is available at `http://127.0.0.1:8000/docs`.
 
 ## Run in the iOS Simulator
 
+Open an iOS Simulator first, then run:
+
 ```bash
-./scripts/bootstrap_local.sh
-./scripts/run_ios_simulator_demo.sh
+bash scripts/bootstrap_local.sh
+bash scripts/run_ios_simulator_demo.sh
 ```
 
-For a physical iPhone, run the API with `--host 0.0.0.0` and enter
+For a physical iPhone, start the API with `uvicorn thiezer.main:app --host 0.0.0.0`, then enter
 `http://<your-mac-lan-ip>:8000` in the app settings. Local HTTP is development-only; production
 builds must use HTTPS.
 
