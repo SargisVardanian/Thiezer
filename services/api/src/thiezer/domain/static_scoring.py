@@ -96,9 +96,7 @@ def land_score(
 
 def access_potential(*, distance_to_road_km: float, distance_to_settlement_km: float) -> float:
     road = math.exp(-max(0.0, distance_to_road_km) / 3.0)
-    isolation_penalty = 1.0 - 0.18 * _bounded(
-        (distance_to_settlement_km - 80.0) / 120.0
-    )
+    isolation_penalty = 1.0 - 0.18 * _bounded((distance_to_settlement_km - 80.0) / 120.0)
     return _bounded(road * isolation_penalty)
 
 
