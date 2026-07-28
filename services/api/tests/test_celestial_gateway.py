@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from datetime import UTC, datetime, timedelta
 
+import httpx
 import pytest
 
 from thiezer.domain.celestial_objects import (
@@ -13,6 +14,7 @@ from thiezer.domain.celestial_objects import (
     CelestialObjectId,
 )
 from thiezer.domain.contracts import GeoPoint, RecommendationSearchRequest, TargetKind
+from thiezer.providers.catalogs.base import CatalogProviderError
 from thiezer.providers.catalogs.simbad import simbad_fixture
 from thiezer.providers.catalogs.tap import TapClient
 from thiezer.services.celestial_resolution import CelestialResolutionService
@@ -36,6 +38,36 @@ async def test_simbad_aliases_resolve_without_live_network() -> None:
 async def test_tap_query_limits_reject_oversized_adql_without_network() -> None:
     with pytest.raises(ValueError, match="unsafe TAP query limit"):
         await TapClient("https://example.invalid", object()).query("x" * 4001)  # type: ignore[arg-type]
+
+
+@pytest.mark.asyncio
+async def test_tap_http_rejection_is_a_provider_failure_for_partial_fallback() -> None:
+    class RejectingClient:
+        async def post(self, *_: object, **__: object) -> httpx.Response:
+            return httpx.Response(
+                400,
+                request=httpx.Request("POST", "https://example.invalid/tap"),
+            )
+
+    with pytest.raises(CatalogProviderError):
+        await TapClient("https://example.invalid/tap", RejectingClient()).query("SELECT 1")  # type: ignore[arg-type]
+
+
+@pytest.mark.asyncio
+async def test_tap_normalises_metadata_and_array_rows() -> None:
+    class TapJsonClient:
+        async def post(self, *_: object, **__: object) -> httpx.Response:
+            return httpx.Response(
+                200,
+                json={
+                    "metadata": [{"name": "main_id"}, {"name": "ra"}],
+                    "data": [["Sirius", 101.287155]],
+                },
+                request=httpx.Request("POST", "https://example.invalid/tap"),
+            )
+
+    rows = await TapClient("https://example.invalid/tap", TapJsonClient()).query("SELECT 1")  # type: ignore[arg-type]
+    assert rows == [{"main_id": "Sirius", "ra": 101.287155}]
 
 
 def test_ephemeral_cache_expires_and_rejects_coordinate_or_token_keys() -> None:
