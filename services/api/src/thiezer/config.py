@@ -38,9 +38,7 @@ class Settings(BaseSettings):
 
     @model_validator(mode="after")
     def validate_surface_provider(self) -> "Settings":
-        if self.surface_provider == "cog" and (
-            not self.dem_cog_url or not self.worldcover_cog_url
-        ):
+        if self.surface_provider == "cog" and (not self.dem_cog_url or not self.worldcover_cog_url):
             raise ValueError("cog surface provider requires DEM and WorldCover COG URLs")
         return self
 
