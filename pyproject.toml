@@ -4,8 +4,8 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "thiezer"
-version = "0.2.0"
-description = "Armenia-first astronomy travel recommendation engine"
+version = "0.3.0"
+description = "Global radius-based astronomy travel recommendation engine"
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
