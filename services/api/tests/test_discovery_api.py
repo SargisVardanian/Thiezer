@@ -26,9 +26,7 @@ def test_targets_endpoint_lists_requested_targets() -> None:
 
 
 def test_store_search_returns_route_for_physical_store_without_live_network() -> None:
-    app.dependency_overrides[get_store_service] = lambda: StoreSearchService(
-        SeedStoreRepository()
-    )
+    app.dependency_overrides[get_store_service] = lambda: StoreSearchService(SeedStoreRepository())
     try:
         with TestClient(app) as client:
             response = client.post(
