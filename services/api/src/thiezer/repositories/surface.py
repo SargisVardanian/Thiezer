@@ -58,8 +58,6 @@ class SurfacePlaceRepository:
             ):
                 continue
             distance = haversine_distance_km(user_location, site.point)
-            # H3 coverage includes cells intersecting the circle. Access materialization can move
-            # the representative point outside it, so the final point must be checked again.
             if distance > max_distance_km + _RADIUS_TOLERANCE_KM:
                 continue
             point_key = (
@@ -101,9 +99,6 @@ class SurfacePlaceRepository:
             )
             matches.append((place, distance))
 
-        # Bright targets are often best observed without travelling. The origin is deliberately
-        # assigned extremely poor/unknown darkness so deep-sky profiles will reject it while Moon,
-        # planet and bright-star profiles can still recommend "stay here" when conditions permit.
         origin_key = (
             round(user_location.latitude_deg * 100_000),
             round(user_location.longitude_deg * 100_000),
@@ -112,10 +107,7 @@ class SurfacePlaceRepository:
             matches.append(
                 (
                     CandidatePlace(
-                        id=(
-                            "observer-location:"
-                            f"{origin_key[0]:+d}:{origin_key[1]:+d}"
-                        ),
+                        id=(f"observer-location:{origin_key[0]:+d}:{origin_key[1]:+d}"),
                         name="Текущая позиция",
                         country_code=country_code if scope == SearchScope.COUNTRY else None,
                         region=None,
