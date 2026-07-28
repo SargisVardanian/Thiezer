@@ -14,17 +14,18 @@ class RecommendationProfile:
     acceptable_score: float
     meaningful_quality_gain: float
     drive_weight: float
+    include_observer_location: bool
 
 
 _PROFILE_VERSION = "recommendation-profile-v1"
 
-_MOON = RecommendationProfile(TargetFamily.MOON, 0.34, 0.14, 0.55)
-_PLANET = RecommendationProfile(TargetFamily.PLANET, 0.40, 0.12, 0.45)
-_STAR = RecommendationProfile(TargetFamily.STAR, 0.42, 0.12, 0.40)
-_DEEP_SKY = RecommendationProfile(TargetFamily.DEEP_SKY, 0.50, 0.07, 0.18)
-_MILKY_WAY = RecommendationProfile(TargetFamily.MILKY_WAY, 0.50, 0.07, 0.18)
-_GENERAL = RecommendationProfile(TargetFamily.GENERAL, 0.44, 0.10, 0.24)
-_SATELLITE = RecommendationProfile(TargetFamily.SATELLITE, 0.40, 0.12, 0.44)
+_MOON = RecommendationProfile(TargetFamily.MOON, 0.34, 0.14, 0.55, True)
+_PLANET = RecommendationProfile(TargetFamily.PLANET, 0.40, 0.12, 0.45, True)
+_STAR = RecommendationProfile(TargetFamily.STAR, 0.42, 0.12, 0.40, True)
+_DEEP_SKY = RecommendationProfile(TargetFamily.DEEP_SKY, 0.50, 0.07, 0.18, False)
+_MILKY_WAY = RecommendationProfile(TargetFamily.MILKY_WAY, 0.50, 0.07, 0.18, False)
+_GENERAL = RecommendationProfile(TargetFamily.GENERAL, 0.44, 0.10, 0.24, False)
+_SATELLITE = RecommendationProfile(TargetFamily.SATELLITE, 0.40, 0.12, 0.44, True)
 
 
 def profile_for(
@@ -47,7 +48,6 @@ def profile_for(
         }:
             return _SATELLITE
         if object_class == CelestialObjectClass.EXOPLANET:
-            # Recommendations concern the host star, not direct visual detection of the planet.
             return _STAR
         if object_class in {
             CelestialObjectClass.SOLAR_SYSTEM_BODY,
