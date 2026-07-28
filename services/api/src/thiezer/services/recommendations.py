@@ -3,11 +3,13 @@ from __future__ import annotations
 from dataclasses import dataclass
 from datetime import UTC, datetime, timedelta
 
+from thiezer.domain.celestial_objects import CelestialObject, CelestialTargetRef
 from thiezer.domain.contracts import (
     AstronomySnapshot,
     CandidatePlace,
     ExplanationItem,
     HourlySkyCondition,
+    MoonPhase,
     ObservationWindow,
     RankedPlace,
     RecommendationSearchRequest,
@@ -21,8 +23,16 @@ from thiezer.domain.ephemeris import AstronomyProvider
 from thiezer.domain.geospatial import build_route_handoffs
 from thiezer.domain.quality import build_score_inputs
 from thiezer.domain.scoring import calculate_sky_score
+from thiezer.domain.target_profiles import (
+    RecommendationProfile,
+    profile_for,
+    scoring_target_for_catalog,
+)
 from thiezer.providers.weather.base import WeatherProvider, weather_point_key
 from thiezer.repositories.base import PlaceRepository
+from thiezer.services.celestial_resolution import CelestialResolutionService
+from thiezer.services.celestial_visibility import CelestialVisibilityService
+from thiezer.services.progress import ProgressCallback, report_progress
 
 
 @dataclass(frozen=True, slots=True)
@@ -39,15 +49,24 @@ class RecommendationService:
         place_repository: PlaceRepository,
         weather_provider: WeatherProvider,
         astronomy_provider: AstronomyProvider,
+        celestial_resolution: CelestialResolutionService | None = None,
+        celestial_visibility: CelestialVisibilityService | None = None,
     ) -> None:
         self._places = place_repository
         self._weather = weather_provider
         self._astronomy = astronomy_provider
+        self._celestial_resolution = celestial_resolution
+        self._celestial_visibility = celestial_visibility
 
     async def search(
         self,
         request: RecommendationSearchRequest,
+        progress: ProgressCallback | None = None,
     ) -> RecommendationSearchResponse:
+        await report_progress(progress, "resolving_target")
+        catalog_target = await self._resolve_catalog_target(request)
+        scoring_target = _scoring_target(request.target, catalog_target)
+        profile = profile_for(scoring_target, catalog_target)
         batch = await self._places.search(
             user_location=request.user_location,
             scope=request.scope,
@@ -55,6 +74,7 @@ class RecommendationService:
             max_distance_km=request.max_distance_km,
             limit=request.max_candidates,
             include_unverified=request.include_unverified,
+            progress=progress,
         )
         candidates = batch.matches
         generated_at = datetime.now(UTC)
@@ -72,6 +92,7 @@ class RecommendationService:
                 provider_attributions=batch.attributions,
             )
 
+        await report_progress(progress, "fetching_weather")
         forecast_by_point = await self._weather.get_hourly_forecasts(
             points=[place.point for place, _ in candidates],
             start_utc=request.start_utc,
@@ -81,14 +102,18 @@ class RecommendationService:
         attributions: set[str] = set(batch.attributions)
         places_with_weather = 0
 
+        await report_progress(progress, "calculating_astronomy")
         for place, distance_km in candidates:
             conditions = forecast_by_point.get(weather_point_key(place.point), [])
             if not conditions:
                 continue
             places_with_weather += 1
             attributions.update(item.attribution for item in conditions)
-            samples = self._evaluate_place(
+            samples = await self._evaluate_place(
                 request=request,
+                scoring_target=scoring_target,
+                catalog_target=catalog_target,
+                profile=profile,
                 place=place,
                 distance_km=distance_km,
                 conditions=conditions,
@@ -122,23 +147,19 @@ class RecommendationService:
                 )
             )
 
-        ranked.sort(
-            key=lambda result: (
-                -result.utility,
-                -result.observation_window.best_score,
-                result.distance_km,
-                result.place.id,
-            )
+        await report_progress(progress, "ranking")
+        results = _select_results(
+            ranked,
+            profile=profile,
+            max_results=request.max_results,
+            nearby_first=request.preferences.nearby_first,
         )
-        results = [
-            result.model_copy(update={"rank": index}) for index, result in enumerate(ranked, 1)
-        ][: request.max_results]
 
         response_warnings = list(batch.warnings)
         if not results:
             if places_with_weather == 0:
                 response_warnings.append(WarningCode.WEATHER_UNAVAILABLE)
-            elif request.target == TargetKind.ALPHA_CENTAURI:
+            elif scoring_target == TargetKind.ALPHA_CENTAURI and catalog_target is None:
                 response_warnings.append(WarningCode.TARGET_NOT_VISIBLE_IN_SCOPE)
             else:
                 response_warnings.append(WarningCode.NO_OBSERVATION_WINDOW)
@@ -155,10 +176,13 @@ class RecommendationService:
             provider_attributions=sorted(attributions),
         )
 
-    def _evaluate_place(
+    async def _evaluate_place(
         self,
         *,
         request: RecommendationSearchRequest,
+        scoring_target: TargetKind,
+        catalog_target: CelestialObject | None,
+        profile: RecommendationProfile,
         place: CandidatePlace,
         distance_km: float,
         conditions: list[HourlySkyCondition],
@@ -166,13 +190,28 @@ class RecommendationService:
     ) -> list[_EvaluatedSample]:
         evaluated: list[_EvaluatedSample] = []
         for item in conditions:
-            astronomy = self._astronomy.snapshot(
-                target=request.target,
-                point=place.point,
-                timestamp_utc=item.timestamp_utc,
-            )
+            if catalog_target is None:
+                astronomy = self._astronomy.snapshot(
+                    target=scoring_target,
+                    point=place.point,
+                    timestamp_utc=item.timestamp_utc,
+                )
+            else:
+                assert self._celestial_visibility is not None
+                astronomy = await self._celestial_visibility.snapshot(
+                    target=catalog_target,
+                    point=place.point,
+                    timestamp_utc=item.timestamp_utc,
+                    scoring_target=scoring_target,
+                )
+            if request.preferences.moon_phase != MoonPhase.ANY and (
+                astronomy.moon_phase != request.preferences.moon_phase
+            ):
+                continue
+            if scoring_target == TargetKind.MOON and astronomy.moon_phase == MoonPhase.NEW:
+                continue
             inputs = build_score_inputs(
-                target=request.target,
+                target=scoring_target,
                 mode=request.observation_mode,
                 place=place,
                 conditions=item,
@@ -180,14 +219,26 @@ class RecommendationService:
                 search_started_utc=generated_at_utc,
                 distance_km=distance_km,
                 maximum_distance_km=request.max_distance_km,
+                preferences=request.preferences,
+                drive_weight=profile.drive_weight,
             )
             score = calculate_sky_score(
-                target=request.target,
+                target=scoring_target,
                 mode=request.observation_mode,
                 inputs=inputs,
             )
             evaluated.append(_EvaluatedSample(item, astronomy, score))
         return evaluated
+
+    async def _resolve_catalog_target(
+        self, request: RecommendationSearchRequest
+    ) -> CelestialObject | None:
+        target = request.catalog_target
+        if target is None:
+            return None
+        if self._celestial_resolution is None or self._celestial_visibility is None:
+            raise ValueError("catalog target recommendations are not configured")
+        return await self._celestial_resolution.resolve(target)
 
 
 def _best_window(
@@ -237,6 +288,65 @@ def _best_window(
     )
 
 
+def _select_results(
+    ranked: list[RankedPlace],
+    *,
+    profile: RecommendationProfile,
+    max_results: int,
+    nearby_first: bool,
+) -> list[RankedPlace]:
+    if not ranked:
+        return []
+    utility_order = sorted(
+        ranked,
+        key=lambda result: (
+            -result.utility,
+            -result.observation_window.best_score,
+            result.distance_km,
+            result.place.id,
+        ),
+    )
+    if not nearby_first:
+        selected = utility_order[:max_results]
+    else:
+        best_score = max(item.observation_window.best_score for item in ranked)
+        acceptable_floor = min(
+            profile.acceptable_score,
+            max(0.0, best_score - profile.meaningful_quality_gain),
+        )
+        acceptable = [
+            item for item in ranked if item.observation_window.best_score >= acceptable_floor
+        ]
+        nearest = min(
+            acceptable,
+            key=lambda item: (
+                item.distance_km,
+                -item.observation_window.best_score,
+                item.place.id,
+            ),
+        )
+        balanced = utility_order[0]
+        best_quality = min(
+            ranked,
+            key=lambda item: (
+                -item.observation_window.best_score,
+                item.distance_km,
+                item.place.id,
+            ),
+        )
+        ordered = [nearest, balanced, best_quality, *utility_order]
+        selected = []
+        seen: set[str] = set()
+        for item in ordered:
+            if item.place.id in seen:
+                continue
+            seen.add(item.place.id)
+            selected.append(item)
+            if len(selected) >= max_results:
+                break
+    return [result.model_copy(update={"rank": index}) for index, result in enumerate(selected, 1)]
+
+
 def _explain(
     place_name: str,
     distance_km: float,
@@ -268,3 +378,16 @@ def _explain(
             )
         )
     return explanations
+
+
+def _scoring_target(
+    target: TargetKind | CelestialTargetRef,
+    catalog_target: CelestialObject | None,
+) -> TargetKind:
+    if isinstance(target, TargetKind):
+        return target
+    if target.preset is not None:
+        return TargetKind(target.preset)
+    if catalog_target is None:
+        raise ValueError("catalog target was not resolved")
+    return scoring_target_for_catalog(catalog_target)

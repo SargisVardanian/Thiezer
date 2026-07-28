@@ -17,6 +17,16 @@ class Settings(BaseSettings):
 
     environment: str = "development"
     log_level: str = "INFO"
+    storage_mode: Literal["ephemeral"] = "ephemeral"
+    database_enabled: bool = False
+    query_ttl_seconds: int = Field(default=1800, ge=60, le=86_400)
+    result_ttl_seconds: int = Field(default=1800, ge=60, le=86_400)
+    weather_cache_ttl_seconds: int = Field(default=900, ge=60, le=86_400)
+    elevation_cache_ttl_seconds: int = Field(default=86_400, ge=60, le=604_800)
+    stac_cache_ttl_seconds: int = Field(default=3600, ge=60, le=86_400)
+    catalog_cache_ttl_seconds: int = Field(default=86_400, ge=60, le=604_800)
+    horizons_cache_ttl_seconds: int = Field(default=1800, ge=60, le=86_400)
+    overpass_cache_ttl_seconds: int = Field(default=3600, ge=60, le=86_400)
     database_url: str = "postgresql+asyncpg://thiezer:thiezer@localhost:5432/thiezer"
 
     open_meteo_base_url: AnyHttpUrl = Field(default=AnyHttpUrl("https://api.open-meteo.com/v1"))

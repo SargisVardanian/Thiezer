@@ -30,12 +30,20 @@ router = APIRouter(prefix="/v1", tags=["discovery"])
 @router.get("/targets", response_model=list[dict[str, str]])
 async def list_targets() -> list[dict[str, str]]:
     return [
-        {"id": TargetKind.ALPHA_CENTAURI, "label": "Alpha Centauri"},
-        {"id": TargetKind.MARS, "label": "Mars"},
-        {"id": TargetKind.JUPITER, "label": "Jupiter"},
-        {"id": TargetKind.MOON, "label": "Moon"},
-        {"id": TargetKind.MILKY_WAY, "label": "Milky Way core"},
-        {"id": TargetKind.BEST_NIGHT_SKY, "label": "Best general night sky"},
+        {"id": TargetKind.MOON, "label": "Moon", "family": "moon"},
+        {"id": TargetKind.SUN, "label": "Sun", "family": "planet"},
+        {"id": TargetKind.MERCURY, "label": "Mercury", "family": "planet"},
+        {"id": TargetKind.VENUS, "label": "Venus", "family": "planet"},
+        {"id": TargetKind.MARS, "label": "Mars", "family": "planet"},
+        {"id": TargetKind.JUPITER, "label": "Jupiter", "family": "planet"},
+        {"id": TargetKind.SATURN, "label": "Saturn", "family": "planet"},
+        {"id": TargetKind.URANUS, "label": "Uranus", "family": "planet"},
+        {"id": TargetKind.NEPTUNE, "label": "Neptune", "family": "planet"},
+        {"id": "satellites", "label": "Planet satellites (catalog)", "family": "satellite"},
+        {"id": TargetKind.ALPHA_CENTAURI, "label": "Alpha Centauri", "family": "star"},
+        {"id": TargetKind.MILKY_WAY, "label": "Milky Way core", "family": "milky_way"},
+        {"id": "galaxies", "label": "Galaxies", "family": "galaxy"},
+        {"id": TargetKind.BEST_NIGHT_SKY, "label": "Best general night sky", "family": "general"},
     ]
 
 

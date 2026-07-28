@@ -16,6 +16,7 @@ from thiezer.repositories.base import (
     StoreRepository,
     StoreSearchBatch,
 )
+from thiezer.services.progress import ProgressCallback, report_progress
 
 
 class AdaptivePlaceRepository:
@@ -39,6 +40,7 @@ class AdaptivePlaceRepository:
         max_distance_km: float,
         limit: int,
         include_unverified: bool = True,
+        progress: ProgressCallback | None = None,
     ) -> PlaceSearchBatch:
         seed = await self._seed.search(
             user_location=user_location,
@@ -47,6 +49,7 @@ class AdaptivePlaceRepository:
             max_distance_km=max_distance_km,
             limit=limit,
             include_unverified=include_unverified,
+            progress=progress,
         )
         warnings = list(seed.warnings)
         sources = list(seed.discovery_sources)
@@ -54,6 +57,7 @@ class AdaptivePlaceRepository:
         candidates = list(seed.matches)
 
         if self._discovery is not None:
+            await report_progress(progress, "checking_access")
             try:
                 discovered = await self._discovery.discover_places(
                     user_location=user_location,

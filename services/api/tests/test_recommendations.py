@@ -3,6 +3,7 @@ from datetime import UTC, datetime, timedelta
 import pytest
 from conftest import FakeAstronomyProvider, FakeWeatherProvider, make_place
 
+from thiezer.domain.celestial_objects import CatalogSource, CelestialObjectId
 from thiezer.domain.contracts import (
     GeoPoint,
     ObservationMode,
@@ -11,7 +12,10 @@ from thiezer.domain.contracts import (
     TargetKind,
     WarningCode,
 )
+from thiezer.providers.catalogs.simbad import simbad_fixture
 from thiezer.repositories.seed import SeedPlaceRepository
+from thiezer.services.celestial_resolution import CelestialResolutionService
+from thiezer.services.celestial_visibility import CelestialVisibilityService
 from thiezer.services.recommendations import RecommendationService
 
 
@@ -88,3 +92,33 @@ async def test_alpha_centauri_returns_honest_no_result_for_armenia_geometry() ->
     )
     assert response.results == []
     assert response.warnings == [WarningCode.TARGET_NOT_VISIBLE_IN_SCOPE]
+
+
+@pytest.mark.asyncio
+async def test_catalog_target_uses_catalog_geometry_per_candidate_hour() -> None:
+    place = make_place(
+        place_id="m31-site", name="M31 site", latitude_deg=40.3, longitude_deg=44.3, darkness=0.9
+    )
+    resolution = CelestialResolutionService({CatalogSource.SIMBAD: simbad_fixture()})
+    visibility = CelestialVisibilityService(resolution)
+    service = RecommendationService(
+        place_repository=SeedPlaceRepository([place]),
+        weather_provider=FakeWeatherProvider(),
+        astronomy_provider=FakeAstronomyProvider(),
+        celestial_resolution=resolution,
+        celestial_visibility=visibility,
+    )
+    start = datetime(2026, 10, 1, 18, tzinfo=UTC)
+    response = await service.search(
+        RecommendationSearchRequest(
+            user_location=GeoPoint(latitude_deg=40.1772, longitude_deg=44.5035),
+            target={"catalog_object": {"provider": "simbad", "object_id": "M 31"}},
+            start_utc=start,
+            end_utc=start + timedelta(hours=3),
+            minimum_score=0.0,
+        )
+    )
+    assert response.target.catalog_object == CelestialObjectId(
+        provider=CatalogSource.SIMBAD, object_id="M 31"
+    )
+    assert response.results[0].observation_window.best_astronomy.target_label == "Andromeda Galaxy"

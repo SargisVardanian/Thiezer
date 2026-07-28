@@ -8,6 +8,7 @@ from thiezer.domain.contracts import (
     CandidatePlace,
     HourlySkyCondition,
     ObservationMode,
+    ObservationPreferences,
     TargetKind,
 )
 from thiezer.domain.scoring import ScoreInputs
@@ -23,6 +24,8 @@ def build_score_inputs(
     search_started_utc: datetime,
     distance_km: float,
     maximum_distance_km: float,
+    preferences: ObservationPreferences | None = None,
+    drive_weight: float | None = None,
 ) -> ScoreInputs:
     cloud_clearance = cloud_clearance_score(conditions)
     darkness = place.darkness_score * astronomical_darkness_score(
@@ -65,15 +68,16 @@ def build_score_inputs(
         place_accessible=place.accessibility_score >= 0.25,
         normalized_drive_cost=min(1.0, max(0.0, distance_km / maximum_distance_km)),
         normalized_risk=place.risk_score,
+        drive_weight=(
+            drive_weight
+            if drive_weight is not None
+            else (0.30 if preferences is None or preferences.nearby_first else 0.20)
+        ),
     )
 
 
 def cloud_clearance_score(conditions: HourlySkyCondition) -> float:
-    """Layer-aware cloud transmission proxy.
-
-    Low clouds receive the highest penalty because they tend to be optically thicker and can
-    amplify artificial skyglow near settlements. High clouds still matter, but less strongly.
-    """
+    """Layer-aware cloud transmission proxy."""
 
     optical_penalty = (
         2.8 * conditions.low_cloud_fraction
@@ -97,7 +101,7 @@ def astronomical_darkness_score(*, target: TargetKind, sun_altitude_deg: float) 
 def sun_is_dark_enough(target: TargetKind, sun_altitude_deg: float) -> bool:
     if target == TargetKind.MOON:
         return sun_altitude_deg <= -4.0
-    if target in {TargetKind.MARS, TargetKind.JUPITER, TargetKind.BRIGHT_PLANET}:
+    if target in _PLANET_TARGETS:
         return sun_altitude_deg <= -8.0
     return sun_altitude_deg <= -12.0
 
@@ -155,7 +159,7 @@ def target_altitude_score(*, target: TargetKind, altitude_deg: float) -> float:
 def minimum_target_altitude_deg(target: TargetKind) -> float:
     if target == TargetKind.MOON:
         return 5.0
-    if target in {TargetKind.MARS, TargetKind.JUPITER, TargetKind.BRIGHT_PLANET}:
+    if target in _PLANET_TARGETS:
         return 12.0
     if target == TargetKind.ALPHA_CENTAURI:
         return 3.0
@@ -165,8 +169,6 @@ def minimum_target_altitude_deg(target: TargetKind) -> float:
 
 
 def site_altitude_score(elevation_m: float) -> float:
-    # A saturating benefit: most gains occur below roughly 2,500 m; extreme altitude is not
-    # rewarded indefinitely because safety and accessibility are represented separately.
     return _bounded(0.35 + 0.65 * (1.0 - math.exp(-max(0.0, elevation_m) / 1800.0)))
 
 
@@ -191,3 +193,16 @@ def forecast_confidence_score(
 
 def _bounded(value: float) -> float:
     return min(1.0, max(0.0, value))
+
+
+_PLANET_TARGETS = {
+    TargetKind.SUN,
+    TargetKind.MERCURY,
+    TargetKind.VENUS,
+    TargetKind.MARS,
+    TargetKind.JUPITER,
+    TargetKind.SATURN,
+    TargetKind.URANUS,
+    TargetKind.NEPTUNE,
+    TargetKind.BRIGHT_PLANET,
+}

@@ -1,0 +1,8 @@
+{
+  "id": "armenia_300km",
+  "geometry": {"type": "center_radius", "center": [44.5035, 40.1772], "radius_km": 300},
+  "target_crs": "EPSG:4326",
+  "requested_output_resolution_degrees": 0.0009,
+  "output_directory": "data/processed/armenia_300km",
+  "provider_selection": {"dem": "planetary-computer/cop-dem-glo-90", "worldcover": "planetary-computer/esa-worldcover", "viirs": "nasa-earthdata/VNP46A4"}
+}

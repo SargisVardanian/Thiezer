@@ -1,0 +1,8 @@
+{
+  "id": "example_polygon",
+  "geometry": {"type": "Polygon", "coordinates": [[[44.0, 40.0], [44.3, 40.0], [44.3, 40.2], [44.0, 40.2], [44.0, 40.0]]]},
+  "target_crs": "EPSG:4326",
+  "requested_output_resolution_degrees": 0.0009,
+  "output_directory": "data/processed/example_polygon",
+  "provider_selection": {"dem": "planetary-computer/cop-dem-glo-30", "worldcover": "planetary-computer/esa-worldcover", "viirs": "nasa-earthdata/VNP46A4"}
+}

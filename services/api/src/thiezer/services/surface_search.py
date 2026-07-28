@@ -17,6 +17,7 @@ from thiezer.domain.surface import (
 )
 from thiezer.providers.access.base import AccessPointProvider
 from thiezer.providers.static_layers.base import StaticLayerProvider
+from thiezer.services.progress import ProgressCallback, report_progress
 
 
 class SurfaceSearchService:
@@ -43,21 +44,26 @@ class SurfaceSearchService:
         country_code: str | None,
         max_distance_km: float,
         limit: int,
+        progress: ProgressCallback | None = None,
     ) -> SurfaceSearchResult:
         if scope == SearchScope.COUNTRY and (
             country_code is None or not self._boundaries.supports(country_code)
         ):
             return self._empty_result(max_distance_km)
 
+        await report_progress(progress, "generating_cells")
         plan = choose_h3_search_plan(max_distance_km)
         coarse_ids = cover_circle(
             user_location,
             max_distance_km,
             plan.coarse_resolution,
         )
+        await report_progress(progress, "fetching_elevation")
+        await report_progress(progress, "reading_surface_windows")
         coarse_raw = await self._static.evaluate_cells(coarse_ids)
         coarse = [score_raw_features(item) for item in coarse_raw]
         coarse = self._apply_boundary(coarse, scope, country_code)
+        await report_progress(progress, "applying_static_filters")
         coarse_filtered = [
             cell for cell in coarse if passes_static_filters(cell, self._filter_policy)
         ]
@@ -73,6 +79,7 @@ class SurfaceSearchService:
             (cell.h3_index for cell in parents),
             plan.fine_resolution,
         )
+        await report_progress(progress, "reading_surface_windows")
         fine_raw = await self._static.evaluate_cells(fine_ids)
         fine = [score_raw_features(item) for item in fine_raw]
         fine = self._apply_boundary(fine, scope, country_code)
@@ -85,6 +92,7 @@ class SurfaceSearchService:
             limit=self._budget.fine_cell_limit,
         )
 
+        await report_progress(progress, "checking_access")
         sites = await self._access.materialize_sites(
             cells=selected_fine,
             maximum_sites=self._budget.materialized_site_limit,

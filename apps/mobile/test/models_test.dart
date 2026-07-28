@@ -12,6 +12,7 @@ void main() {
         <String, dynamic>{
           'rank': 1,
           'distance_km': 81.2,
+          'utility': 0.74,
           'warnings': <String>['unverified_place'],
           'place': <String, dynamic>{
             'id': 'osm:node:1',
@@ -59,6 +60,47 @@ void main() {
     expect(response.radiusKm, 250);
     expect(response.results.single.place.countryCode, 'GE');
     expect(response.results.single.bestScore, closeTo(0.86, 0.0001));
+    expect(response.results.single.travelUtility, closeTo(0.74, 0.0001));
     expect(response.countryCodes, containsAll(<String>['AM', 'GE']));
+  });
+
+  test('celestial search parses metadata, warnings, and photometry', () {
+    final response = CelestialSearchResponse.fromJson(<String, dynamic>{
+      'source_attributions': <String>['SIMBAD', 'Gaia DR3'],
+      'warnings': <String>['Gaia fallback'],
+      'results': <Map<String, dynamic>>[
+        <String, dynamic>{
+          'identifier': <String, dynamic>{
+            'provider': 'gaia',
+            'object_id': '123',
+          },
+          'name': 'Sirius',
+          'aliases': <String>['Alpha Canis Majoris'],
+          'object_class': 'star',
+          'photometry': <String, dynamic>{'gaia_g_magnitude': -1.4},
+          'physical': null,
+          'host_star': null,
+          'attribution': 'SIMBAD; Gaia DR3',
+          'warnings': <String>['fixture warning'],
+        },
+      ],
+    });
+    expect(response.results.single.apparentMagnitude, closeTo(-1.4, 0.001));
+    expect(response.results.single.aliases, contains('Alpha Canis Majoris'));
+    expect(response.warnings, contains('Gaia fallback'));
+  });
+
+  test('query job parses progress and completed result', () {
+    final job = QueryJobStatus.fromJson(<String, dynamic>{
+      'query_id': 'abc',
+      'stage': 'ranking',
+      'created_at_utc': '2026-07-28T20:00:00Z',
+      'expires_at_utc': '2026-07-28T20:30:00Z',
+      'error': null,
+      'result': null,
+    });
+    expect(job.queryId, 'abc');
+    expect(job.stage, 'ranking');
+    expect(job.isTerminal, isFalse);
   });
 }
