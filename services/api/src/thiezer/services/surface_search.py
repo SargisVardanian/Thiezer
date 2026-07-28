@@ -10,6 +10,7 @@ from thiezer.domain.static_scoring import (
     score_raw_features,
 )
 from thiezer.domain.surface import (
+    SurfaceCell,
     SurfaceSearchBudget,
     SurfaceSearchDiagnostics,
     SurfaceSearchResult,
@@ -125,7 +126,12 @@ class SurfaceSearchService:
             darkness_is_proxy=self._static.darkness_is_proxy,
         )
 
-    def _apply_boundary(self, cells, scope: SearchScope, country_code: str | None):
+    def _apply_boundary(
+        self,
+        cells: list[SurfaceCell],
+        scope: SearchScope,
+        country_code: str | None,
+    ) -> list[SurfaceCell]:
         if scope != SearchScope.COUNTRY or country_code is None:
             return cells
         return [
