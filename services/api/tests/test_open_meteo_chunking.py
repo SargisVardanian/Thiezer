@@ -35,12 +35,8 @@ async def test_chunking_above_25_points_and_elevation_parameter() -> None:
 
     def handler(request: httpx.Request) -> httpx.Response:
         requests.append(request)
-        latitudes = [
-            float(value) for value in request.url.params["latitude"].split(",")
-        ]
-        longitudes = [
-            float(value) for value in request.url.params["longitude"].split(",")
-        ]
+        latitudes = [float(value) for value in request.url.params["latitude"].split(",")]
+        longitudes = [float(value) for value in request.url.params["longitude"].split(",")]
         assert len(request.url.params["elevation"].split(",")) == len(latitudes)
         payloads = [
             _payload(latitude, longitude)
@@ -53,10 +49,7 @@ async def test_chunking_above_25_points_and_elevation_parameter() -> None:
         base_url="https://weather.test/v1",
         client=client,
     )
-    points = [
-        GeoPoint(latitude_deg=39.0 + index * 0.01, longitude_deg=44.0)
-        for index in range(40)
-    ]
+    points = [GeoPoint(latitude_deg=39.0 + index * 0.01, longitude_deg=44.0) for index in range(40)]
     result = await provider.get_hourly_forecasts(
         points=points,
         elevations_m=[1000.0 + index for index in range(40)],
