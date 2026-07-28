@@ -53,11 +53,7 @@ class SurfacePlaceRepository:
             place = CandidatePlace(
                 id=site.id,
                 name=site.name,
-                country_code=(
-                    country_code
-                    if scope == SearchScope.COUNTRY
-                    else site.country_code
-                ),
+                country_code=(country_code if scope == SearchScope.COUNTRY else site.country_code),
                 region=site.region,
                 point=site.point,
                 elevation_m=site.elevation_m,
@@ -86,9 +82,7 @@ class SurfacePlaceRepository:
             distance = haversine_distance_km(user_location, site.point)
             matches.append((place, distance))
         warnings = [WarningCode.DARKNESS_IS_PROXY] if result.darkness_is_proxy else []
-        coverage = sorted(
-            {place.country_code for place, _ in matches if place.country_code}
-        )
+        coverage = sorted({place.country_code for place, _ in matches if place.country_code})
         if scope == SearchScope.COUNTRY and country_code and matches:
             coverage = [country_code]
         return PlaceSearchBatch(
