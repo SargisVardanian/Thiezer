@@ -28,7 +28,7 @@ class CogSurfaceLayerProvider:
     """
 
     source_name = "cog_surface_v1"
-    attributions = (
+    attributions: tuple[str, ...] = (
         "Copernicus DEM",
         "ESA WorldCover (CC BY 4.0)",
         "NASA VIIRS/Black Marble when configured",
