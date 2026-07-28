@@ -124,9 +124,7 @@ class LocalOverpassAccessPointProvider:
                     accessibility_score=accessibility,
                     risk_score=min(
                         1.0,
-                        0.18
-                        + 0.30 * evaluated.uncertainty
-                        + 0.15 * (1.0 - accessibility),
+                        0.18 + 0.30 * evaluated.uncertainty + 0.15 * (1.0 - accessibility),
                     ),
                     road_access=f"Local OSM {kind}; verify legal and seasonal access",
                     source_url=source,
