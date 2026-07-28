@@ -18,7 +18,9 @@ class ProceduralSurfaceLayerProvider:
     """
 
     source_name = "procedural_surface_v1"
-    attributions = ("Procedural development surface model; not calibrated geodata",)
+    attributions: tuple[str, ...] = (
+        "Procedural development surface model; not calibrated geodata",
+    )
     darkness_is_proxy = True
 
     async def evaluate_cells(self, cell_ids: list[str]) -> list[RawSurfaceFeatures]:
