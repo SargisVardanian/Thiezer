@@ -75,13 +75,12 @@ class CogSurfaceLayerProvider:
             import numpy as np
             import rasterio
         except ImportError as exc:  # pragma: no cover - optional deployment dependency
-            raise RuntimeError(
-                "install Thiezer with the geodata extra to use COG layers"
-            ) from exc
+            raise RuntimeError("install Thiezer with the geodata extra to use COG layers") from exc
 
-        with rasterio.open(self._config.dem_url) as dem, rasterio.open(
-            self._config.worldcover_url
-        ) as land:
+        with (
+            rasterio.open(self._config.dem_url) as dem,
+            rasterio.open(self._config.worldcover_url) as land,
+        ):
             viirs = rasterio.open(self._config.viirs_url) if self._config.viirs_url else None
             try:
                 output: list[RawSurfaceFeatures] = []
@@ -137,9 +136,7 @@ class CogSurfaceLayerProvider:
                             forest_fraction=fractions["forest"],
                             open_land_fraction=fractions["open"],
                             distance_to_road_km=_road_distance_proxy(fractions),
-                            distance_to_settlement_km=_settlement_distance_proxy(
-                                fractions
-                            ),
+                            distance_to_settlement_km=_settlement_distance_proxy(fractions),
                             restricted=False,
                             uncertainty=uncertainty,
                             data_quality=quality,
