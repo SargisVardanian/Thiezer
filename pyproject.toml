@@ -77,6 +77,7 @@ plugins = ["pydantic.mypy"]
 
 [[tool.mypy.overrides]]
 module = [
+  "h3.*",
   "skyfield.*",
   "skyfield_data.*",
   "rasterio.*",
