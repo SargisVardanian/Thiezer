@@ -1,1 +1,4 @@
-__version__ = "0.3.0"
+"""Thiezer astronomy travel backend."""
+
+__all__ = ["__version__"]
+__version__ = "0.4.0"
