@@ -42,8 +42,8 @@ class ObservationMode(StrEnum):
 class SearchScope(StrEnum):
     """Boundary policy for a radius-based search.
 
-    ADAPTIVE and GLOBAL both allow crossing borders. COUNTRY restricts known country codes.
-    The engine never scans an entire large country; max_distance_km is always the hard spatial bound.
+    ADAPTIVE and GLOBAL allow crossing borders. COUNTRY is a strict, radius-bounded filter.
+    A large country is never scanned in full; max_distance_km remains the hard spatial bound.
     """
 
     ADAPTIVE = "adaptive"
@@ -57,6 +57,7 @@ class PlaceKind(StrEnum):
     VIEWPOINT = "viewpoint"
     CAMPSITE = "campsite"
     PARKING = "parking"
+    ROAD_ACCESS = "road_access"
 
 
 class VerificationStatus(StrEnum):
@@ -94,7 +95,10 @@ class WarningCode(StrEnum):
     NO_CANDIDATE_PLACES = "no_candidate_places"
     NO_OBSERVATION_WINDOW = "no_observation_window"
     DISCOVERY_PROVIDER_UNAVAILABLE = "discovery_provider_unavailable"
-    DARKNESS_IS_PROXY = "darkness_is_proxy"
+    STATIC_LAYERS_FALLBACK = "static_layers_fallback"
+    STATIC_SURFACE_PACK_UNAVAILABLE = "static_surface_pack_unavailable"
+    COUNTRY_FILTER_APPROXIMATE = "country_filter_approximate"
+    ACCESS_POINT_UNAVAILABLE = "access_point_unavailable"
 
 
 class GeoPoint(BaseModel):
@@ -155,11 +159,22 @@ class SkyScoreComponent(BaseModel):
 class SkyScoreBreakdown(BaseModel):
     valid: bool
     score: UnitScore
+    # Backward-compatible field. It now equals score; travel utility is calculated separately.
     utility: float
     components: list[SkyScoreComponent]
     warnings: list[WarningCode]
     explanation_codes: list[str]
-    scoring_version: str = "v1"
+    scoring_version: str = "v2"
+
+
+class TravelUtilityBreakdown(BaseModel):
+    sky_quality: UnitScore
+    distance_penalty: NonNegativeFloat
+    risk_penalty: NonNegativeFloat
+    uncertainty_penalty: NonNegativeFloat
+    verification_penalty: NonNegativeFloat
+    total: float
+    utility_version: str = "v1"
 
 
 class AstronomySnapshot(BaseModel):
@@ -178,6 +193,39 @@ class AstronomySnapshot(BaseModel):
     @model_validator(mode="after")
     def validate_timestamp(self) -> AstronomySnapshot:
         _require_aware(self.timestamp_utc, "timestamp_utc")
+        return self
+
+
+class SurfaceCell(BaseModel):
+    """Static surface candidate before weather, astronomy and routing."""
+
+    model_config = ConfigDict(frozen=True)
+
+    h3_index: str
+    resolution: Annotated[int, Field(ge=0, le=15)]
+    center: GeoPoint
+    country_code: CountryCode | None = None
+    elevation_m: float | None = None
+    slope_deg: Annotated[float, Field(ge=0.0, le=90.0)] | None = None
+    roughness_score: UnitScore | None = None
+    viirs_radiance_nw_cm2_sr: NonNegativeFloat | None = None
+    darkness_score: UnitScore
+    water_fraction: UnitScore
+    urban_fraction: UnitScore
+    forest_fraction: UnitScore
+    restricted_fraction: UnitScore
+    distance_to_road_km: NonNegativeFloat | None = None
+    distance_to_settlement_km: NonNegativeFloat | None = None
+    horizon_openness_score: UnitScore
+    static_score: UnitScore
+    upper_bound: UnitScore
+    uncertainty: UnitScore
+    source: str
+
+    @model_validator(mode="after")
+    def validate_upper_bound(self) -> SurfaceCell:
+        if self.upper_bound + 1e-9 < self.static_score:
+            raise ValueError("upper_bound must be greater than or equal to static_score")
         return self
 
 
@@ -201,6 +249,8 @@ class CandidatePlace(BaseModel):
     source_url: AnyHttpUrl | None = None
     source_provider: str = "seed"
     darkness_model: str = "seed_value"
+    surface_cell_id: str | None = None
+    static_uncertainty: UnitScore = 0.5
 
 
 class ExplanationItem(BaseModel):
@@ -243,9 +293,20 @@ class RankedPlace(BaseModel):
     distance_km: NonNegativeFloat
     observation_window: ObservationWindow
     utility: float
+    travel_utility: TravelUtilityBreakdown
     explanations: list[ExplanationItem]
     warnings: list[WarningCode]
     routes: list[RouteHandoff]
+
+
+class DiscoveryMetrics(BaseModel):
+    coarse_cells_evaluated: Annotated[int, Field(ge=0)] = 0
+    refined_cells_evaluated: Annotated[int, Field(ge=0)] = 0
+    static_shortlist_count: Annotated[int, Field(ge=0)] = 0
+    access_cells_requested: Annotated[int, Field(ge=0)] = 0
+    materialized_candidates: Annotated[int, Field(ge=0)] = 0
+    weather_points_requested: Annotated[int, Field(ge=0)] = 0
+    weather_batches: Annotated[int, Field(ge=0)] = 0
 
 
 class RecommendationSearchRequest(BaseModel):
@@ -257,7 +318,7 @@ class RecommendationSearchRequest(BaseModel):
     scope: SearchScope = SearchScope.ADAPTIVE
     country_code: CountryCode | None = None
     max_distance_km: Annotated[float, Field(gt=0.0, le=1_000.0)] = 250.0
-    max_candidates: Annotated[int, Field(ge=1, le=40)] = 16
+    max_candidates: Annotated[int, Field(ge=1, le=60)] = 40
     max_results: Annotated[int, Field(ge=1, le=10)] = 5
     minimum_score: UnitScore = 0.35
     include_unverified: bool = True
@@ -285,6 +346,7 @@ class RecommendationSearchResponse(BaseModel):
     results: list[RankedPlace]
     warnings: list[WarningCode]
     provider_attributions: list[str]
+    metrics: DiscoveryMetrics = Field(default_factory=DiscoveryMetrics)
 
 
 class TargetVisibilityResponse(BaseModel):
