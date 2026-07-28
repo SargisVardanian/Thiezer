@@ -59,6 +59,10 @@ src = ["services/api/src"]
 select = ["E", "F", "I", "B", "UP", "SIM", "RUF"]
 ignore = ["E501"]
 
+[tool.ruff.lint.per-file-ignores]
+"services/api/src/thiezer/providers/static_layers/cog.py" = ["I001"]
+"services/api/src/thiezer/providers/weather/open_meteo.py" = ["UP037"]
+
 [tool.mypy]
 python_version = "3.12"
 packages = ["thiezer"]
