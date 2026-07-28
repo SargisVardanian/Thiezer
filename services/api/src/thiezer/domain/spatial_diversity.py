@@ -1,15 +1,12 @@
 from __future__ import annotations
 
 from collections.abc import Callable, Sequence
-from typing import TypeVar
 
 from thiezer.domain.contracts import GeoPoint
 from thiezer.domain.geospatial import haversine_distance_km
 
-T = TypeVar("T")
 
-
-def spatial_nms(
+def spatial_nms[T](
     candidates: Sequence[T],
     *,
     point: Callable[[T], GeoPoint],
