@@ -106,11 +106,7 @@ class OpenMeteoWeatherProvider:
                 for point_chunk, elevation_chunk in chunks
             )
         )
-        return {
-            key: forecast
-            for batch in batches
-            for key, forecast in batch.items()
-        }
+        return {key: forecast for batch in batches for key, forecast in batch.items()}
 
     async def _fetch_batch(
         self,
@@ -130,9 +126,7 @@ class OpenMeteoWeatherProvider:
             "end_date": end_utc.astimezone(UTC).date().isoformat(),
         }
         if all(value is not None for value in elevations_m):
-            params["elevation"] = ",".join(
-                f"{float(value):.1f}" for value in elevations_m
-            )
+            params["elevation"] = ",".join(f"{float(value):.1f}" for value in elevations_m)
         if self._api_key:
             params["apikey"] = self._api_key
 
@@ -191,15 +185,9 @@ class OpenMeteoWeatherProvider:
                 HourlySkyCondition(
                     timestamp_utc=timestamp,
                     total_cloud_fraction=self._fraction(hourly["cloud_cover"][index]),
-                    low_cloud_fraction=self._fraction(
-                        hourly["cloud_cover_low"][index]
-                    ),
-                    mid_cloud_fraction=self._fraction(
-                        hourly["cloud_cover_mid"][index]
-                    ),
-                    high_cloud_fraction=self._fraction(
-                        hourly["cloud_cover_high"][index]
-                    ),
+                    low_cloud_fraction=self._fraction(hourly["cloud_cover_low"][index]),
+                    mid_cloud_fraction=self._fraction(hourly["cloud_cover_mid"][index]),
+                    high_cloud_fraction=self._fraction(hourly["cloud_cover_high"][index]),
                     temperature_c=float(hourly["temperature_2m"][index]),
                     relative_humidity_fraction=self._fraction(
                         hourly["relative_humidity_2m"][index]
