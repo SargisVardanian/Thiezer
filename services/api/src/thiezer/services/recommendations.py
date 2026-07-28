@@ -208,7 +208,6 @@ class RecommendationService:
                 astronomy.moon_phase != request.preferences.moon_phase
             ):
                 continue
-            # A new Moon is useful for deep sky but is not a visual Moon target.
             if scoring_target == TargetKind.MOON and astronomy.moon_phase == MoonPhase.NEW:
                 continue
             inputs = build_score_inputs(
@@ -345,9 +344,7 @@ def _select_results(
             selected.append(item)
             if len(selected) >= max_results:
                 break
-    return [
-        result.model_copy(update={"rank": index}) for index, result in enumerate(selected, 1)
-    ]
+    return [result.model_copy(update={"rank": index}) for index, result in enumerate(selected, 1)]
 
 
 def _explain(
