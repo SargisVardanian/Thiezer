@@ -1,0 +1,47 @@
+[
+  {
+    "id": "am-want-tashir-street",
+    "name": "Want.am - Tashir Street",
+    "kind": "hybrid",
+    "country_code": "AM",
+    "point": {"latitude_deg": 40.1812, "longitude_deg": 44.5147},
+    "address": "6/2 Northern Avenue, Tashir Street shopping center, Yerevan",
+    "website_url": "https://want.am/en/",
+    "catalog_url": "https://want.am/en/catalog/optika/teleskope/",
+    "phone": "+37494092092",
+    "categories": ["telescopes", "optics"],
+    "delivers_countrywide": true,
+    "verification_status": "verified",
+    "source_checked_at_utc": "2026-07-28T00:00:00Z"
+  },
+  {
+    "id": "am-space42",
+    "name": "Space42",
+    "kind": "online",
+    "country_code": "AM",
+    "point": null,
+    "address": null,
+    "website_url": "https://space42.am/en/",
+    "catalog_url": "https://space42.am/en/shop/",
+    "phone": "+37441240420",
+    "categories": ["telescopes", "astrophotography", "accessories", "rentals", "astrotours"],
+    "delivers_countrywide": true,
+    "verification_status": "verified",
+    "source_checked_at_utc": "2026-07-28T00:00:00Z"
+  },
+  {
+    "id": "am-eliteshop",
+    "name": "EliteShop.am",
+    "kind": "online",
+    "country_code": "AM",
+    "point": null,
+    "address": null,
+    "website_url": "https://eliteshop.am/en/",
+    "catalog_url": "https://eliteshop.am/en/catalog/telescope",
+    "phone": "+37433091010",
+    "categories": ["entry_level_telescopes"],
+    "delivers_countrywide": true,
+    "verification_status": "verified",
+    "source_checked_at_utc": "2026-07-28T00:00:00Z"
+  }
+]

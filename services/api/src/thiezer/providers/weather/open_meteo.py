@@ -6,10 +6,11 @@ from typing import Any
 import httpx
 
 from thiezer.domain.contracts import GeoPoint, HourlySkyCondition
+from thiezer.providers.weather.base import WeatherPointKey, weather_point_key
 
 
 class OpenMeteoWeatherProvider:
-    """Normalize Open-Meteo hourly forecast responses into Thiezer contracts."""
+    """Normalize Open-Meteo hourly forecasts and batch nearby candidate locations."""
 
     _HOURLY_FIELDS = (
         "cloud_cover",
@@ -37,8 +38,9 @@ class OpenMeteoWeatherProvider:
         self._api_key = api_key
         self._owns_client = client is None
         self._client = client or httpx.AsyncClient(
-            timeout=httpx.Timeout(connect=5.0, read=15.0, write=5.0, pool=5.0),
-            limits=httpx.Limits(max_connections=20, max_keepalive_connections=10),
+            timeout=httpx.Timeout(connect=5.0, read=20.0, write=5.0, pool=5.0),
+            limits=httpx.Limits(max_connections=10, max_keepalive_connections=5),
+            follow_redirects=False,
         )
 
     async def __aenter__(self) -> OpenMeteoWeatherProvider:
@@ -58,14 +60,29 @@ class OpenMeteoWeatherProvider:
         start_utc: datetime,
         end_utc: datetime,
     ) -> list[HourlySkyCondition]:
-        if start_utc.tzinfo is None or end_utc.tzinfo is None:
-            raise ValueError("forecast bounds must be timezone-aware")
-        if end_utc <= start_utc:
-            raise ValueError("end_utc must be after start_utc")
+        result = await self.get_hourly_forecasts(
+            points=[point],
+            start_utc=start_utc,
+            end_utc=end_utc,
+        )
+        return result[weather_point_key(point)]
+
+    async def get_hourly_forecasts(
+        self,
+        *,
+        points: list[GeoPoint],
+        start_utc: datetime,
+        end_utc: datetime,
+    ) -> dict[WeatherPointKey, list[HourlySkyCondition]]:
+        _validate_bounds(start_utc, end_utc)
+        if not points:
+            return {}
+        if len(points) > 25:
+            raise ValueError("at most 25 locations can be requested in one weather batch")
 
         params: dict[str, str | float] = {
-            "latitude": point.latitude_deg,
-            "longitude": point.longitude_deg,
+            "latitude": ",".join(f"{point.latitude_deg:.6f}" for point in points),
+            "longitude": ",".join(f"{point.longitude_deg:.6f}" for point in points),
             "hourly": ",".join(self._HOURLY_FIELDS),
             "timezone": "UTC",
             "wind_speed_unit": "ms",
@@ -77,15 +94,22 @@ class OpenMeteoWeatherProvider:
 
         response = await self._client.get(f"{self._base_url}/forecast", params=params)
         response.raise_for_status()
-        if len(response.content) > 5_000_000:
+        if len(response.content) > 20_000_000:
             raise ValueError("provider response exceeds safety limit")
-        payload: dict[str, Any] = response.json()
-        return self._normalize(
-            payload=payload,
-            requested_point=point,
-            start_utc=start_utc,
-            end_utc=end_utc,
-        )
+        raw_payload: Any = response.json()
+        payloads = raw_payload if isinstance(raw_payload, list) else [raw_payload]
+        if len(payloads) != len(points):
+            raise ValueError("provider returned an unexpected number of locations")
+
+        return {
+            weather_point_key(point): self._normalize(
+                payload=_require_dict(payload),
+                requested_point=point,
+                start_utc=start_utc,
+                end_utc=end_utc,
+            )
+            for point, payload in zip(points, payloads, strict=True)
+        }
 
     @staticmethod
     def _fraction(percent: float | int) -> float:
@@ -142,3 +166,16 @@ class OpenMeteoWeatherProvider:
                 )
             )
         return conditions
+
+
+def _validate_bounds(start_utc: datetime, end_utc: datetime) -> None:
+    if start_utc.tzinfo is None or end_utc.tzinfo is None:
+        raise ValueError("forecast bounds must be timezone-aware")
+    if end_utc <= start_utc:
+        raise ValueError("end_utc must be after start_utc")
+
+
+def _require_dict(value: Any) -> dict[str, Any]:
+    if not isinstance(value, dict):
+        raise ValueError("provider location payload must be an object")
+    return value

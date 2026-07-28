@@ -19,9 +19,12 @@ class ScorePreviewRequest(BaseModel):
     target_altitude: float = Field(ge=0.0, le=1.0)
     accessibility: float = Field(ge=0.0, le=1.0)
     confidence: float = Field(ge=0.0, le=1.0)
+    altitude: float = Field(default=0.5, ge=0.0, le=1.0)
+    horizon_openness: float = Field(default=0.7, ge=0.0, le=1.0)
     sun_dark_enough: bool = True
     target_above_horizon: bool = True
     severe_cloud: bool = False
+    precipitation: bool = False
     place_accessible: bool = True
     normalized_drive_cost: float = Field(default=0.0, ge=0.0, le=1.0)
     normalized_risk: float = Field(default=0.0, ge=0.0, le=1.0)

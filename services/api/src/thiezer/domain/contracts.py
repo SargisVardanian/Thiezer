@@ -1,26 +1,65 @@
 from __future__ import annotations
 
-from datetime import datetime
+from datetime import UTC, datetime, timedelta
 from enum import StrEnum
 from typing import Annotated
 
-from pydantic import BaseModel, ConfigDict, Field, model_validator
+from pydantic import (
+    AnyHttpUrl,
+    BaseModel,
+    ConfigDict,
+    Field,
+    StringConstraints,
+    model_validator,
+)
 
 UnitScore = Annotated[float, Field(ge=0.0, le=1.0)]
 Latitude = Annotated[float, Field(ge=-90.0, le=90.0)]
 Longitude = Annotated[float, Field(ge=-180.0, le=180.0)]
+NonNegativeFloat = Annotated[float, Field(ge=0.0)]
+CountryCode = Annotated[
+    str,
+    StringConstraints(to_upper=True, min_length=2, max_length=2, pattern=r"^[A-Za-z]{2}$"),
+]
 
 
 class TargetKind(StrEnum):
-    MILKY_WAY = "milky_way"
+    ALPHA_CENTAURI = "alpha_centauri"
+    MARS = "mars"
+    JUPITER = "jupiter"
     MOON = "moon"
-    BRIGHT_PLANET = "bright_planet"
+    MILKY_WAY = "milky_way"
+    BEST_NIGHT_SKY = "best_night_sky"
+    BRIGHT_PLANET = "bright_planet"  # Backward-compatible generic preview target.
 
 
 class ObservationMode(StrEnum):
     NAKED_EYE = "naked_eye"
     BINOCULARS = "binoculars"
     WIDE_ANGLE_CAMERA = "wide_angle_camera"
+
+
+class SearchScope(StrEnum):
+    COUNTRY = "country"
+    GLOBAL = "global"
+
+
+class PlaceKind(StrEnum):
+    OBSERVATION_SITE = "observation_site"
+    OBSERVATORY = "observatory"
+    VIEWPOINT = "viewpoint"
+
+
+class VerificationStatus(StrEnum):
+    VERIFIED = "verified"
+    PARTNER_VERIFIED = "partner_verified"
+    UNVERIFIED_SEED = "unverified_seed"
+
+
+class StoreKind(StrEnum):
+    PHYSICAL = "physical"
+    ONLINE = "online"
+    HYBRID = "hybrid"
 
 
 class ForecastConfidenceBand(StrEnum):
@@ -33,11 +72,16 @@ class ForecastConfidenceBand(StrEnum):
 class WarningCode(StrEnum):
     INVALID_SUN_ALTITUDE = "invalid_sun_altitude"
     TARGET_BELOW_HORIZON = "target_below_horizon"
+    TARGET_NOT_VISIBLE_IN_SCOPE = "target_not_visible_in_scope"
     SEVERE_CLOUD = "severe_cloud"
+    PRECIPITATION = "precipitation"
     INACCESSIBLE = "inaccessible"
     LOW_CONFIDENCE = "low_confidence"
     HIGH_DEW_RISK = "high_dew_risk"
     STRONG_WIND = "strong_wind"
+    UNVERIFIED_PLACE = "unverified_place"
+    WEATHER_UNAVAILABLE = "weather_unavailable"
+    NO_CANDIDATE_PLACES = "no_candidate_places"
 
 
 class GeoPoint(BaseModel):
@@ -69,10 +113,10 @@ class HourlySkyCondition(BaseModel):
     temperature_c: float
     relative_humidity_fraction: UnitScore
     dew_point_c: float
-    precipitation_mm: Annotated[float, Field(ge=0.0)]
-    visibility_m: Annotated[float, Field(ge=0.0)] | None = None
-    wind_speed_mps: Annotated[float, Field(ge=0.0)]
-    wind_gust_mps: Annotated[float, Field(ge=0.0)] | None = None
+    precipitation_mm: NonNegativeFloat
+    visibility_m: NonNegativeFloat | None = None
+    wind_speed_mps: NonNegativeFloat
+    wind_gust_mps: NonNegativeFloat | None = None
     pressure_hpa: Annotated[float, Field(gt=0.0)] | None = None
     provider: str
     model_name: str | None = None
@@ -83,8 +127,9 @@ class HourlySkyCondition(BaseModel):
 
     @model_validator(mode="after")
     def require_utc(self) -> HourlySkyCondition:
-        if self.timestamp_utc.tzinfo is None or self.timestamp_utc.utcoffset() is None:
-            raise ValueError("timestamp_utc must be timezone-aware")
+        _require_aware(self.timestamp_utc, "timestamp_utc")
+        if self.run_timestamp_utc is not None:
+            _require_aware(self.run_timestamp_utc, "run_timestamp_utc")
         return self
 
 
@@ -101,4 +146,183 @@ class SkyScoreBreakdown(BaseModel):
     components: list[SkyScoreComponent]
     warnings: list[WarningCode]
     explanation_codes: list[str]
-    scoring_version: str = "v0"
+    scoring_version: str = "v1"
+
+
+class AstronomySnapshot(BaseModel):
+    timestamp_utc: datetime
+    target: TargetKind
+    target_label: str
+    altitude_deg: float
+    azimuth_deg: Annotated[float, Field(ge=0.0, lt=360.0)]
+    sun_altitude_deg: float
+    moon_altitude_deg: float
+    moon_illumination_fraction: UnitScore
+    moon_separation_deg: Annotated[float, Field(ge=0.0, le=180.0)]
+    airmass: NonNegativeFloat | None
+    above_geometric_horizon: bool
+
+    @model_validator(mode="after")
+    def validate_timestamp(self) -> AstronomySnapshot:
+        _require_aware(self.timestamp_utc, "timestamp_utc")
+        return self
+
+
+class CandidatePlace(BaseModel):
+    model_config = ConfigDict(frozen=True)
+
+    id: str
+    name: str
+    country_code: CountryCode
+    region: str | None = None
+    point: GeoPoint
+    elevation_m: float
+    kind: PlaceKind
+    verification_status: VerificationStatus
+    darkness_score: UnitScore
+    horizon_openness_score: UnitScore
+    accessibility_score: UnitScore
+    risk_score: UnitScore
+    road_access: str
+    notes: str | None = None
+    source_url: AnyHttpUrl | None = None
+
+
+class ExplanationItem(BaseModel):
+    code: str
+    message: str
+    impact: str
+
+
+class ObservationWindow(BaseModel):
+    start_utc: datetime
+    end_utc: datetime
+    best_time_utc: datetime
+    best_score: UnitScore
+    mean_score: UnitScore
+    best_astronomy: AstronomySnapshot
+    best_conditions: HourlySkyCondition
+    score_breakdown: SkyScoreBreakdown
+
+    @model_validator(mode="after")
+    def validate_window(self) -> ObservationWindow:
+        for field_name in ("start_utc", "end_utc", "best_time_utc"):
+            _require_aware(getattr(self, field_name), field_name)
+        if self.end_utc < self.start_utc:
+            raise ValueError("end_utc must not precede start_utc")
+        if not self.start_utc <= self.best_time_utc <= self.end_utc:
+            raise ValueError("best_time_utc must fall inside the window")
+        return self
+
+
+class RouteHandoff(BaseModel):
+    provider: str
+    url: str
+    requires_api_key: bool = False
+    note: str | None = None
+
+
+class RankedPlace(BaseModel):
+    rank: Annotated[int, Field(ge=1)]
+    place: CandidatePlace
+    distance_km: NonNegativeFloat
+    observation_window: ObservationWindow
+    utility: float
+    explanations: list[ExplanationItem]
+    warnings: list[WarningCode]
+    routes: list[RouteHandoff]
+
+
+class RecommendationSearchRequest(BaseModel):
+    user_location: GeoPoint
+    target: TargetKind
+    observation_mode: ObservationMode = ObservationMode.NAKED_EYE
+    start_utc: datetime
+    end_utc: datetime
+    scope: SearchScope = SearchScope.COUNTRY
+    country_code: CountryCode | None = "AM"
+    max_distance_km: Annotated[float, Field(gt=0.0, le=20_000.0)] = 300.0
+    max_candidates: Annotated[int, Field(ge=1, le=25)] = 8
+    max_results: Annotated[int, Field(ge=1, le=10)] = 5
+    minimum_score: UnitScore = 0.35
+
+    @model_validator(mode="after")
+    def validate_request(self) -> RecommendationSearchRequest:
+        _require_aware(self.start_utc, "start_utc")
+        _require_aware(self.end_utc, "end_utc")
+        if self.end_utc <= self.start_utc:
+            raise ValueError("end_utc must be after start_utc")
+        if self.end_utc - self.start_utc > _MAX_SEARCH_RANGE:
+            raise ValueError("search range cannot exceed 16 days")
+        if self.scope == SearchScope.COUNTRY and self.country_code is None:
+            raise ValueError("country_code is required for country scope")
+        return self
+
+
+class RecommendationSearchResponse(BaseModel):
+    generated_at_utc: datetime
+    target: TargetKind
+    scope: SearchScope
+    coverage_country_codes: list[str]
+    results: list[RankedPlace]
+    warnings: list[WarningCode]
+    provider_attributions: list[str]
+
+
+class TargetVisibilityResponse(BaseModel):
+    point: GeoPoint
+    snapshot: AstronomySnapshot
+    visible: bool
+    reason: str
+
+
+class EquipmentStore(BaseModel):
+    id: str
+    name: str
+    kind: StoreKind
+    country_code: CountryCode
+    point: GeoPoint | None = None
+    address: str | None = None
+    website_url: AnyHttpUrl
+    catalog_url: AnyHttpUrl | None = None
+    phone: str | None = None
+    categories: list[str]
+    delivers_countrywide: bool = False
+    verification_status: VerificationStatus
+    source_checked_at_utc: datetime
+
+    @model_validator(mode="after")
+    def validate_store(self) -> EquipmentStore:
+        _require_aware(self.source_checked_at_utc, "source_checked_at_utc")
+        if self.kind == StoreKind.PHYSICAL and self.point is None:
+            raise ValueError("physical stores require coordinates")
+        return self
+
+
+class StoreSearchRequest(BaseModel):
+    user_location: GeoPoint
+    scope: SearchScope = SearchScope.COUNTRY
+    country_code: CountryCode | None = "AM"
+    max_distance_km: Annotated[float, Field(gt=0.0, le=20_000.0)] = 300.0
+    max_results: Annotated[int, Field(ge=1, le=20)] = 10
+
+
+class StoreSearchResult(BaseModel):
+    store: EquipmentStore
+    distance_km: NonNegativeFloat | None
+    routes: list[RouteHandoff]
+
+
+class StoreSearchResponse(BaseModel):
+    results: list[StoreSearchResult]
+    coverage_country_codes: list[str]
+
+
+def _require_aware(value: datetime, field_name: str) -> None:
+    if value.tzinfo is None or value.utcoffset() is None:
+        raise ValueError(f"{field_name} must be timezone-aware")
+    if value.astimezone(UTC).utcoffset() is None:  # Defensive for custom tzinfo implementations.
+        raise ValueError(f"{field_name} cannot be converted to UTC")
+
+
+_MAX_SEARCH_RANGE = timedelta(days=16)
