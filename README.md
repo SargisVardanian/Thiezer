@@ -39,6 +39,10 @@ candidate.
 - Google Maps, Apple Maps, Yandex web and `geo:` route handoffs.
 - Equipment-store search and Flutter UI for iOS and macOS.
 
+`adaptive` and `global` are radius-first and border-agnostic. The bundled strict-country polygon is
+currently limited to Armenia (`AM`); production country mode requires a global administrative
+boundary dataset.
+
 All generated and OSM-discovered sites remain unverified until legal access, roads, parking,
 private-land constraints and nighttime safety are confirmed.
 
@@ -64,6 +68,13 @@ export THIEZER_SURFACE_PROVIDER=cog
 export THIEZER_DEM_COG_URL=/data/copernicus-dem.tif
 export THIEZER_WORLDCOVER_COG_URL=/data/worldcover.tif
 export THIEZER_VIIRS_COG_URL=/data/viirs-night-lights.tif
+```
+
+Production refuses to start with the procedural fixture. Use:
+
+```bash
+export THIEZER_ENVIRONMENT=production
+export THIEZER_SURFACE_PROVIDER=cog
 ```
 
 Without a VIIRS asset, darkness is marked as a proxy. See `docs/SURFACE_SEARCH.md`.
