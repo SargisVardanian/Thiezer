@@ -21,12 +21,12 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install -e '.[dev]'
-      - name: Ruff diagnostic
-        run: ruff check . --output-format=json > ruff-report.json || true
+      - name: Ruff format diagnostic
+        run: ruff format --diff . > ruff-format.diff || true
       - uses: actions/upload-artifact@v4
         with:
-          name: surface-ruff-report
-          path: ruff-report.json
+          name: surface-ruff-format
+          path: ruff-format.diff
       - name: Ruff lint
         run: ruff check .
       - name: Ruff format
