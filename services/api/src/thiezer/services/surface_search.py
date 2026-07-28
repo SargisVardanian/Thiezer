@@ -59,9 +59,7 @@ class SurfaceSearchService:
         coarse = [score_raw_features(item) for item in coarse_raw]
         coarse = self._apply_boundary(coarse, scope, country_code)
         coarse_filtered = [
-            cell
-            for cell in coarse
-            if passes_static_filters(cell, self._filter_policy)
+            cell for cell in coarse if passes_static_filters(cell, self._filter_policy)
         ]
         parents = spatial_nms(
             coarse_filtered,
@@ -78,11 +76,7 @@ class SurfaceSearchService:
         fine_raw = await self._static.evaluate_cells(fine_ids)
         fine = [score_raw_features(item) for item in fine_raw]
         fine = self._apply_boundary(fine, scope, country_code)
-        fine_filtered = [
-            cell
-            for cell in fine
-            if passes_static_filters(cell, self._filter_policy)
-        ]
+        fine_filtered = [cell for cell in fine if passes_static_filters(cell, self._filter_policy)]
         selected_fine = spatial_nms(
             fine_filtered,
             point=lambda cell: cell.center,
@@ -116,9 +110,7 @@ class SurfaceSearchService:
             static_evaluations=len(coarse_ids) + len(fine_ids),
             large_radius_overpass_calls=self._access.large_radius_calls,
         )
-        attributions = tuple(
-            dict.fromkeys([*self._static.attributions, self._access.attribution])
-        )
+        attributions = tuple(dict.fromkeys([*self._static.attributions, self._access.attribution]))
         return SurfaceSearchResult(
             sites=selected_sites,
             diagnostics=diagnostics,
@@ -134,11 +126,7 @@ class SurfaceSearchService:
     ) -> list[SurfaceCell]:
         if scope != SearchScope.COUNTRY or country_code is None:
             return cells
-        return [
-            cell
-            for cell in cells
-            if self._boundaries.contains(country_code, cell.center)
-        ]
+        return [cell for cell in cells if self._boundaries.contains(country_code, cell.center)]
 
     def _empty_result(self, max_distance_km: float) -> SurfaceSearchResult:
         plan = choose_h3_search_plan(max_distance_km)
