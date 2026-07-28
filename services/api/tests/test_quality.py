@@ -46,9 +46,7 @@ def test_moon_below_horizon_has_no_interference() -> None:
     below = _snapshot(moon_altitude=-2.0, moon_illumination=1.0, separation=10.0)
     bright_nearby = _snapshot(moon_altitude=60.0, moon_illumination=1.0, separation=10.0)
     assert moon_interference_score(target=TargetKind.MILKY_WAY, astronomy=below) == 1.0
-    assert moon_interference_score(
-        target=TargetKind.MILKY_WAY, astronomy=bright_nearby
-    ) < 0.3
+    assert moon_interference_score(target=TargetKind.MILKY_WAY, astronomy=bright_nearby) < 0.3
 
 
 def test_dew_and_altitude_scores_are_bounded_and_monotonic() -> None:

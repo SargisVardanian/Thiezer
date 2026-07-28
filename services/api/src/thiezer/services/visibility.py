@@ -25,8 +25,7 @@ class VisibilityService:
         )
         minimum_altitude = minimum_target_altitude_deg(target)
         altitude_ok = (
-            target == TargetKind.BEST_NIGHT_SKY
-            or snapshot.altitude_deg >= minimum_altitude
+            target == TargetKind.BEST_NIGHT_SKY or snapshot.altitude_deg >= minimum_altitude
         )
         darkness_ok = sun_is_dark_enough(target, snapshot.sun_altitude_deg)
         visible = altitude_ok and darkness_ok

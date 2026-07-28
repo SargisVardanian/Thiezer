@@ -120,8 +120,7 @@ class RecommendationService:
             )
         )
         results = [
-            result.model_copy(update={"rank": index})
-            for index, result in enumerate(ranked, 1)
+            result.model_copy(update={"rank": index}) for index, result in enumerate(ranked, 1)
         ]
         results = results[: request.max_results]
         response_warnings: list[WarningCode] = []
@@ -183,9 +182,7 @@ def _best_window(
     minimum_score: float,
 ) -> ObservationWindow | None:
     eligible = [
-        sample
-        for sample in samples
-        if sample.score.valid and sample.score.score >= minimum_score
+        sample for sample in samples if sample.score.valid and sample.score.score >= minimum_score
     ]
     if not eligible:
         return None
@@ -243,8 +240,7 @@ def _explain(
             ExplanationItem(
                 code=f"component_{component.name}",
                 message=(
-                    f"{component.name.replace('_', ' ')} score is "
-                    f"{component.value * 100:.0f}%."
+                    f"{component.name.replace('_', ' ')} score is {component.value * 100:.0f}%."
                 ),
                 impact="positive",
             )

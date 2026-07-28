@@ -111,9 +111,7 @@ def transparency_score(
         visibility = 0.55
     else:
         visibility = _bounded((conditions.visibility_m / 1000.0 - 5.0) / 35.0)
-    humidity = 1.0 - 0.55 * _bounded(
-        (conditions.relative_humidity_fraction - 0.55) / 0.45
-    )
+    humidity = 1.0 - 0.55 * _bounded((conditions.relative_humidity_fraction - 0.55) / 0.45)
     airmass = astronomy.airmass
     airmass_factor = 1.0 if airmass is None else _bounded(1.35 / max(1.0, airmass))
     return _bounded(0.50 * visibility + 0.30 * humidity + 0.20 * airmass_factor)
@@ -127,9 +125,7 @@ def moon_interference_score(*, target: TargetKind, astronomy: AstronomySnapshot)
     altitude_factor = _bounded(math.sin(math.radians(astronomy.moon_altitude_deg)))
     proximity = _bounded((120.0 - astronomy.moon_separation_deg) / 120.0)
     interference = (
-        astronomy.moon_illumination_fraction
-        * altitude_factor
-        * (0.35 + 0.65 * proximity)
+        astronomy.moon_illumination_fraction * altitude_factor * (0.35 + 0.65 * proximity)
     )
     sensitivity = 0.95 if target in {TargetKind.MILKY_WAY, TargetKind.BEST_NIGHT_SKY} else 0.55
     return _bounded(1.0 - sensitivity * interference)
@@ -181,9 +177,7 @@ def forecast_confidence_score(
 ) -> float:
     lead_hours = max(
         0.0,
-        (
-            forecast_time_utc.astimezone(UTC) - search_started_utc.astimezone(UTC)
-        ).total_seconds()
+        (forecast_time_utc.astimezone(UTC) - search_started_utc.astimezone(UTC)).total_seconds()
         / 3600.0,
     )
     if lead_hours <= 72.0:

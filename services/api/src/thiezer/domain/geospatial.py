@@ -63,10 +63,7 @@ def build_route_handoffs(
         ),
         RouteHandoff(
             provider="yandex_maps_web",
-            url=(
-                "https://yandex.com/maps/?"
-                f"rtext={yandex_origin}~{yandex_destination}&rtt=auto"
-            ),
+            url=(f"https://yandex.com/maps/?rtext={yandex_origin}~{yandex_destination}&rtt=auto"),
             note=(
                 "Best-effort web handoff. Native Yandex Navigator integration requires "
                 "a Yandex access key."

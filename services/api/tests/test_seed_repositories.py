@@ -14,8 +14,7 @@ def test_packaged_armenia_places_are_explicitly_unverified() -> None:
     assert len(results) >= 8
     assert all(place.country_code == "AM" for place, _ in results)
     assert all(
-        place.verification_status == VerificationStatus.UNVERIFIED_SEED
-        for place, _ in results
+        place.verification_status == VerificationStatus.UNVERIFIED_SEED for place, _ in results
     )
 
 

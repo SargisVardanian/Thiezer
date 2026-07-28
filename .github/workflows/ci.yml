@@ -23,18 +23,8 @@ jobs:
           pip install -e '.[dev]'
       - name: Ruff lint
         run: ruff check .
-      - name: Ruff format report
-        id: ruff_format
-        continue-on-error: true
-        run: ruff format --check --diff . > ruff-format.diff
-      - name: Upload Ruff format report
-        uses: actions/upload-artifact@v4
-        with:
-          name: ruff-format-report-pr2
-          path: ruff-format.diff
-      - name: Enforce Ruff format
-        if: steps.ruff_format.outcome == 'failure'
-        run: exit 1
+      - name: Ruff format
+        run: ruff format --check .
       - name: Type check
         run: mypy services/api/src
       - name: Test
