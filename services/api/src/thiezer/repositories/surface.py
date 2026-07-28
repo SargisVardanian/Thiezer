@@ -13,6 +13,8 @@ from thiezer.repositories.base import PlaceSearchBatch
 from thiezer.services.progress import ProgressCallback
 from thiezer.services.surface_search import SurfaceSearchService
 
+_RADIUS_TOLERANCE_KM = 0.5
+
 
 class SurfacePlaceRepository:
     def __init__(self, search_service: SurfaceSearchService) -> None:
@@ -46,6 +48,8 @@ class SurfacePlaceRepository:
             progress=progress,
         )
         matches: list[tuple[CandidatePlace, float]] = []
+        seen_ids: set[str] = set()
+        seen_points: set[tuple[int, int]] = set()
         for site in result.sites:
             if (
                 scope == SearchScope.COUNTRY
@@ -53,6 +57,19 @@ class SurfacePlaceRepository:
                 and site.country_code not in {country_code, None}
             ):
                 continue
+            distance = haversine_distance_km(user_location, site.point)
+            # H3 coverage includes cells intersecting the circle. Access materialization can move
+            # the representative point outside it, so the final point must be checked again.
+            if distance > max_distance_km + _RADIUS_TOLERANCE_KM:
+                continue
+            point_key = (
+                round(site.point.latitude_deg * 100_000),
+                round(site.point.longitude_deg * 100_000),
+            )
+            if site.id in seen_ids or point_key in seen_points:
+                continue
+            seen_ids.add(site.id)
+            seen_points.add(point_key)
             place = CandidatePlace(
                 id=site.id,
                 name=site.name,
@@ -82,8 +99,8 @@ class SurfacePlaceRepository:
                     else "surface_light_proxy_v1"
                 ),
             )
-            distance = haversine_distance_km(user_location, site.point)
             matches.append((place, distance))
+        matches.sort(key=lambda item: (item[1], -item[0].darkness_score, item[0].id))
         warnings = [WarningCode.DARKNESS_IS_PROXY] if result.darkness_is_proxy else []
         coverage = sorted({place.country_code for place, _ in matches if place.country_code})
         if scope == SearchScope.COUNTRY and country_code and matches:
