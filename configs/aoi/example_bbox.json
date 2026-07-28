@@ -1,0 +1,8 @@
+{
+  "id": "example_bbox",
+  "geometry": {"type": "bbox", "bbox": [44.0, 39.8, 44.5, 40.2]},
+  "target_crs": "EPSG:4326",
+  "requested_output_resolution_degrees": 0.0009,
+  "output_directory": "data/processed/example_bbox",
+  "provider_selection": {"dem": "planetary-computer/cop-dem-glo-30", "worldcover": "planetary-computer/esa-worldcover", "viirs": "nasa-earthdata/VNP46A4"}
+}

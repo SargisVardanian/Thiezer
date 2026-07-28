@@ -79,6 +79,10 @@ export THIEZER_SURFACE_PROVIDER=cog
 
 Without a VIIRS asset, darkness is marked as a proxy. See `docs/SURFACE_SEARCH.md`.
 
+To build the Armenia + 300 km field package from official source assets, see
+[`docs/LOCAL_REAL_DATA_SETUP.md`](docs/LOCAL_REAL_DATA_SETUP.md). Rasters stay local; the tracked
+manifest records source attribution, checksums and processed metadata.
+
 ## Apple client
 
 ```bash

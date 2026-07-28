@@ -1,0 +1,807 @@
+{
+  "aoi": {
+    "geometry": {
+      "center": [
+        44.5035,
+        40.1772
+      ],
+      "radius_km": 300,
+      "type": "center_radius"
+    },
+    "id": "armenia_300km",
+    "output_directory": "data/processed/armenia_300km",
+    "provider_selection": {
+      "dem": "planetary-computer/cop-dem-glo-90",
+      "viirs": "nasa-earthdata/VNP46A4",
+      "worldcover": "planetary-computer/esa-worldcover"
+    },
+    "requested_output_resolution_degrees": 0.0009,
+    "target_crs": "EPSG:4326"
+  },
+  "aoi_geometry_wgs84": {
+    "coordinates": [
+      [
+        [
+          44.5035,
+          42.8751610911736
+        ],
+        [
+          44.82419355257941,
+          42.864462118188406
+        ],
+        [
+          45.142125349958384,
+          42.83245769354217
+        ],
+        [
+          45.45456628026071,
+          42.77942418137573
+        ],
+        [
+          45.758851765350855,
+          42.70581848689849
+        ],
+        [
+          46.05241218023856,
+          42.61227259904883
+        ],
+        [
+          46.33280115034999,
+          42.49958613570377
+        ],
+        [
+          46.597721169749214,
+          42.368717065867116
+        ],
+        [
+          46.84504609805414,
+          42.2207708183053
+        ],
+        [
+          47.07284022103281,
+          42.0569880116629
+        ],
+        [
+          47.27937369147367,
+          41.878731056641804
+        ],
+        [
+          47.46313429507532,
+          41.687469886502925
+        ],
+        [
+          47.622835604000365,
+          41.48476706867231
+        ],
+        [
+          47.75742168305309,
+          41.27226253879985
+        ],
+        [
+          47.86606859655804,
+          41.05165818075218
+        ],
+        [
+          47.94818302608328,
+          40.82470245341467
+        ],
+        [
+          48.00339834994878,
+          40.59317523955179
+        ],
+        [
+          48.031568556147754,
+          40.35887306495185
+        ],
+        [
+          48.03276036309486,
+          40.12359480909682
+        ],
+        [
+          48.007243910400895,
+          39.889128002826105
+        ],
+        [
+          47.95548235790369,
+          39.657235784807895
+        ],
+        [
+          47.87812069875943,
+          39.42964456770304
+        ],
+        [
+          47.77597405462784,
+          39.20803244705438
+        ],
+        [
+          47.650015680630766,
+          38.99401837127516
+        ],
+        [
+          47.501364867135734,
+          38.789152079570066
+        ],
+        [
+          47.33127488633026,
+          38.59490480598359
+        ],
+        [
+          47.14112109533322,
+          38.41266074171633
+        ],
+        [
+          46.932389275108115,
+          38.243709244003476
+        ],
+        [
+          46.70666425617285,
+          38.08923777780979
+        ],
+        [
+          46.4656188581869,
+          37.9503255759652
+        ],
+        [
+          46.211003150828226,
+          37.827938003773156
+        ],
+        [
+          45.94463402764914,
+          37.722921615238924
+        ],
+        [
+          45.66838507239743,
+          37.63599988960857
+        ],
+        [
+          45.38417668811192,
+          37.56776963865629
+        ],
+        [
+          45.09396645263088,
+          37.51869807694358
+        ],
+        [
+          44.7997396594827,
+          37.48912054898429
+        ],
+        [
+          44.5035,
+          37.47923890882638
+        ],
+        [
+          44.20726034051731,
+          37.48912054898429
+        ],
+        [
+          43.913033547369125,
+          37.51869807694358
+        ],
+        [
+          43.622823311888084,
+          37.56776963865629
+        ],
+        [
+          43.338614927602585,
+          37.63599988960857
+        ],
+        [
+          43.06236597235087,
+          37.722921615238924
+        ],
+        [
+          42.79599684917178,
+          37.827938003773156
+        ],
+        [
+          42.541381141813105,
+          37.9503255759652
+        ],
+        [
+          42.300335743827155,
+          38.08923777780979
+        ],
+        [
+          42.07461072489189,
+          38.243709244003476
+        ],
+        [
+          41.865878904666786,
+          38.41266074171633
+        ],
+        [
+          41.67572511366974,
+          38.59490480598359
+        ],
+        [
+          41.50563513286427,
+          38.789152079570066
+        ],
+        [
+          41.35698431936924,
+          38.99401837127516
+        ],
+        [
+          41.23102594537217,
+          39.20803244705438
+        ],
+        [
+          41.12887930124057,
+          39.42964456770304
+        ],
+        [
+          41.051517642096314,
+          39.657235784807895
+        ],
+        [
+          40.99975608959911,
+          39.889128002826105
+        ],
+        [
+          40.974239636905146,
+          40.12359480909682
+        ],
+        [
+          40.97543144385225,
+          40.35887306495185
+        ],
+        [
+          41.00360165005122,
+          40.59317523955179
+        ],
+        [
+          41.05881697391673,
+          40.82470245341467
+        ],
+        [
+          41.14093140344197,
+          41.05165818075218
+        ],
+        [
+          41.249578316946916,
+          41.27226253879985
+        ],
+        [
+          41.38416439599964,
+          41.48476706867231
+        ],
+        [
+          41.543865704924684,
+          41.687469886502925
+        ],
+        [
+          41.72762630852633,
+          41.878731056641804
+        ],
+        [
+          41.93415977896719,
+          42.0569880116629
+        ],
+        [
+          42.161953901945864,
+          42.2207708183053
+        ],
+        [
+          42.409278830250784,
+          42.368717065867116
+        ],
+        [
+          42.67419884965002,
+          42.49958613570377
+        ],
+        [
+          42.95458781976144,
+          42.61227259904883
+        ],
+        [
+          43.24814823464915,
+          42.70581848689849
+        ],
+        [
+          43.5524337197393,
+          42.77942418137573
+        ],
+        [
+          43.86487465004162,
+          42.83245769354217
+        ],
+        [
+          44.1828064474206,
+          42.864462118188406
+        ],
+        [
+          44.5035,
+          42.8751610911736
+        ]
+      ]
+    ],
+    "type": "Polygon"
+  },
+  "created_at_utc": "2026-07-28T14:04:02Z",
+  "datasets": {
+    "dem": {
+      "asset": "data",
+      "assets": [
+        {
+          "bytes": 541775,
+          "item_id": "Copernicus_DSM_COG_30_N42_00_E048_00_DEM",
+          "official_href": "https://elevationeuwest.blob.core.windows.net/copernicus-dem/COP90_hh/Copernicus_DSM_COG_30_N42_00_E048_00_DEM.tif",
+          "path": "data/raw/armenia_300km/dem/Copernicus_DSM_COG_30_N42_00_E048_00_DEM.tif",
+          "sha256": "8add4b797495fc90b01c042cb45c10be8242ff588cf317ee7c2b4283647820db"
+        },
+        {
+          "bytes": 4636287,
+          "item_id": "Copernicus_DSM_COG_30_N42_00_E047_00_DEM",
+          "official_href": "https://elevationeuwest.blob.core.windows.net/copernicus-dem/COP90_hh/Copernicus_DSM_COG_30_N42_00_E047_00_DEM.tif",
+          "path": "data/raw/armenia_300km/dem/Copernicus_DSM_COG_30_N42_00_E047_00_DEM.tif",
+          "sha256": "e695709a1dfd4146dbf0df5d83cae82908ec55eade6d692debaad54fdd13670f"
+        },
+        {
+          "bytes": 5234313,
+          "item_id": "Copernicus_DSM_COG_30_N42_00_E046_00_DEM",
+          "official_href": "https://elevationeuwest.blob.core.windows.net/copernicus-dem/COP90_hh/Copernicus_DSM_COG_30_N42_00_E046_00_DEM.tif",
+          "path": "data/raw/armenia_300km/dem/Copernicus_DSM_COG_30_N42_00_E046_00_DEM.tif",
+          "sha256": "818b84291989e0c9dde2808c9460c1331e98c388c06e27945f0a672b7a3c5606"
+        },
+        {
+          "bytes": 5259017,
+          "item_id": "Copernicus_DSM_COG_30_N42_00_E045_00_DEM",
+          "official_href": "https://elevationeuwest.blob.core.windows.net/copernicus-dem/COP90_hh/Copernicus_DSM_COG_30_N42_00_E045_00_DEM.tif",
+          "path": "data/raw/armenia_300km/dem/Copernicus_DSM_COG_30_N42_00_E045_00_DEM.tif",
+          "sha256": "dbf30a2ed35ad17a03437a8f072ebd8d647a5461976f9ecb7f771e99bf2c2a40"
+        },
+        {
+          "bytes": 5167227,
+          "item_id": "Copernicus_DSM_COG_30_N42_00_E044_00_DEM",
+          "official_href": "https://elevationeuwest.blob.core.windows.net/copernicus-dem/COP90_hh/Copernicus_DSM_COG_30_N42_00_E044_00_DEM.tif",
+          "path": "data/raw/armenia_300km/dem/Copernicus_DSM_COG_30_N42_00_E044_00_DEM.tif",
+          "sha256": "73f1c4eabf27b68f173fcb3aafdc064986ce4668a82c9adc893f53dd65dfbc1f"
+        },
+        {
+          "bytes": 5230760,
+          "item_id": "Copernicus_DSM_COG_30_N42_00_E043_00_DEM",
+          "official_href": "https://elevationeuwest.blob.core.windows.net/copernicus-dem/COP90_hh/Copernicus_DSM_COG_30_N42_00_E043_00_DEM.tif",
+          "path": "data/raw/armenia_300km/dem/Copernicus_DSM_COG_30_N42_00_E043_00_DEM.tif",
+          "sha256": "91fe187e341dbf734bc68c2f2e4d19d315289b039d78897a58c6a717f800d963"
+        },
+        {
+          "bytes": 5460922,
+          "item_id": "Copernicus_DSM_COG_30_N42_00_E042_00_DEM",
+          "official_href": "https://elevationeuwest.blob.core.windows.net/copernicus-dem/COP90_hh/Copernicus_DSM_COG_30_N42_00_E042_00_DEM.tif",
+          "path": "data/raw/armenia_300km/dem/Copernicus_DSM_COG_30_N42_00_E042_00_DEM.tif",
+          "sha256": "ad1ad3dee85b1e4ea06516a059c39d85be5b007972423b4fd2374d3f0ae00493"
+        },
+        {
+          "bytes": 3081839,
+          "item_id": "Copernicus_DSM_COG_30_N42_00_E041_00_DEM",
+          "official_href": "https://elevationeuwest.blob.core.windows.net/copernicus-dem/COP90_hh/Copernicus_DSM_COG_30_N42_00_E041_00_DEM.tif",
+          "path": "data/raw/armenia_300km/dem/Copernicus_DSM_COG_30_N42_00_E041_00_DEM.tif",
+          "sha256": "5064859ac11eb4b51275c7218fb0245910d02936555947d161767f9248436d30"
+        },
+        {
+          "bytes": 54804,
+          "item_id": "Copernicus_DSM_COG_30_N42_00_E040_00_DEM",
+          "official_href": "https://elevationeuwest.blob.core.windows.net/copernicus-dem/COP90_hh/Copernicus_DSM_COG_30_N42_00_E040_00_DEM.tif",
+          "path": "data/raw/armenia_300km/dem/Copernicus_DSM_COG_30_N42_00_E040_00_DEM.tif",
+          "sha256": "784fe2f5017bd85dd5221536cf964dd9b3678e7732af5a5a587266f36ea9538f"
+        },
+        {
+          "bytes": 4515836,
+          "item_id": "Copernicus_DSM_COG_30_N41_00_E048_00_DEM",
+          "official_href": "https://elevationeuwest.blob.core.windows.net/copernicus-dem/COP90_hh/Copernicus_DSM_COG_30_N41_00_E048_00_DEM.tif",
+          "path": "data/raw/armenia_300km/dem/Copernicus_DSM_COG_30_N41_00_E048_00_DEM.tif",
+          "sha256": "013d9829a5dd9cd02fe0c4dc11cf501c30a4a14732671d7c499c51a53ec2b9bf"
+        },
+        {
+          "bytes": 5176718,
+          "item_id": "Copernicus_DSM_COG_30_N41_00_E047_00_DEM",
+          "official_href": "https://elevationeuwest.blob.core.windows.net/copernicus-dem/COP90_hh/Copernicus_DSM_COG_30_N41_00_E047_00_DEM.tif",
+          "path": "data/raw/armenia_300km/dem/Copernicus_DSM_COG_30_N41_00_E047_00_DEM.tif",
+          "sha256": "f81019567dcf756bef36c6421fd97a20ac8f41c65790a57542f5af4c571d9576"
+        },
+        {
+          "bytes": 5125938,
+          "item_id": "Copernicus_DSM_COG_30_N41_00_E046_00_DEM",
+          "official_href": "https://elevationeuwest.blob.core.windows.net/copernicus-dem/COP90_hh/Copernicus_DSM_COG_30_N41_00_E046_00_DEM.tif",
+          "path": "data/raw/armenia_300km/dem/Copernicus_DSM_COG_30_N41_00_E046_00_DEM.tif",
+          "sha256": "23e89a1a6fc413ce458753a3e5c5a4bd14f1cf5594cbbae0ae9422536ec8708b"
+        },
+        {
+          "bytes": 5061246,
+          "item_id": "Copernicus_DSM_COG_30_N41_00_E045_00_DEM",
+          "official_href": "https://elevationeuwest.blob.core.windows.net/copernicus-dem/COP90_hh/Copernicus_DSM_COG_30_N41_00_E045_00_DEM.tif",
+          "path": "data/raw/armenia_300km/dem/Copernicus_DSM_COG_30_N41_00_E045_00_DEM.tif",
+          "sha256": "d78b9cf55290294f1a600634a71f7013ce4c70afd6153c2938f22b0341028d7a"
+        },
+        {
+          "bytes": 5044365,
+          "item_id": "Copernicus_DSM_COG_30_N41_00_E044_00_DEM",
+          "official_href": "https://elevationeuwest.blob.core.windows.net/copernicus-dem/COP90_hh/Copernicus_DSM_COG_30_N41_00_E044_00_DEM.tif",
+          "path": "data/raw/armenia_300km/dem/Copernicus_DSM_COG_30_N41_00_E044_00_DEM.tif",
+          "sha256": "3efa5e9def8b800a9ec999719c4d2fec94b471a3c8c55f537d91a7824cdf8fce"
+        },
+        {
+          "bytes": 4825493,
+          "item_id": "Copernicus_DSM_COG_30_N41_00_E043_00_DEM",
+          "official_href": "https://elevationeuwest.blob.core.windows.net/copernicus-dem/COP90_hh/Copernicus_DSM_COG_30_N41_00_E043_00_DEM.tif",
+          "path": "data/raw/armenia_300km/dem/Copernicus_DSM_COG_30_N41_00_E043_00_DEM.tif",
+          "sha256": "e6ace5a08f16b1f6092050f7cd7193777e7b93e7e0fcf54c2023c35ef984af6d"
+        },
+        {
+          "bytes": 5192812,
+          "item_id": "Copernicus_DSM_COG_30_N41_00_E042_00_DEM",
+          "official_href": "https://elevationeuwest.blob.core.windows.net/copernicus-dem/COP90_hh/Copernicus_DSM_COG_30_N41_00_E042_00_DEM.tif",
+          "path": "data/raw/armenia_300km/dem/Copernicus_DSM_COG_30_N41_00_E042_00_DEM.tif",
+          "sha256": "7dd556f8ac585dba0689732f16c4034ca70f172fc2d912f4c8fdb1deb51ff753"
+        },
+        {
+          "bytes": 3243561,
+          "item_id": "Copernicus_DSM_COG_30_N41_00_E041_00_DEM",
+          "official_href": "https://elevationeuwest.blob.core.windows.net/copernicus-dem/COP90_hh/Copernicus_DSM_COG_30_N41_00_E041_00_DEM.tif",
+          "path": "data/raw/armenia_300km/dem/Copernicus_DSM_COG_30_N41_00_E041_00_DEM.tif",
+          "sha256": "c6f30c1e01f49036ccb93d2a75a800db07eb9257da7ce76bb71a361218fca98d"
+        },
+        {
+          "bytes": 431712,
+          "item_id": "Copernicus_DSM_COG_30_N41_00_E040_00_DEM",
+          "official_href": "https://elevationeuwest.blob.core.windows.net/copernicus-dem/COP90_hh/Copernicus_DSM_COG_30_N41_00_E040_00_DEM.tif",
+          "path": "data/raw/armenia_300km/dem/Copernicus_DSM_COG_30_N41_00_E040_00_DEM.tif",
+          "sha256": "9ea4f3ab661e2d963532bc7dec457275f972294ec4ea49e61294b3d4637d5953"
+        },
+        {
+          "bytes": 5368625,
+          "item_id": "Copernicus_DSM_COG_30_N40_00_E048_00_DEM",
+          "official_href": "https://elevationeuwest.blob.core.windows.net/copernicus-dem/COP90_hh/Copernicus_DSM_COG_30_N40_00_E048_00_DEM.tif",
+          "path": "data/raw/armenia_300km/dem/Copernicus_DSM_COG_30_N40_00_E048_00_DEM.tif",
+          "sha256": "e31c53e7aa9389ca57562b04e26a25b33d7c91c102a96ddbd83e7c698e145868"
+        },
+        {
+          "bytes": 5420654,
+          "item_id": "Copernicus_DSM_COG_30_N40_00_E047_00_DEM",
+          "official_href": "https://elevationeuwest.blob.core.windows.net/copernicus-dem/COP90_hh/Copernicus_DSM_COG_30_N40_00_E047_00_DEM.tif",
+          "path": "data/raw/armenia_300km/dem/Copernicus_DSM_COG_30_N40_00_E047_00_DEM.tif",
+          "sha256": "ebaa10d100c285cf4aa63dd69a00163331bf0957e305f56ea0f69f516f330825"
+        },
+        {
+          "bytes": 4934062,
+          "item_id": "Copernicus_DSM_COG_30_N40_00_E046_00_DEM",
+          "official_href": "https://elevationeuwest.blob.core.windows.net/copernicus-dem/COP90_hh/Copernicus_DSM_COG_30_N40_00_E046_00_DEM.tif",
+          "path": "data/raw/armenia_300km/dem/Copernicus_DSM_COG_30_N40_00_E046_00_DEM.tif",
+          "sha256": "30b2d09d4200ef128bf8d2e49a58c063ff85a0b0325f16fb45a3fc5509657521"
+        },
+        {
+          "bytes": 4407075,
+          "item_id": "Copernicus_DSM_COG_30_N40_00_E045_00_DEM",
+          "official_href": "https://elevationeuwest.blob.core.windows.net/copernicus-dem/COP90_hh/Copernicus_DSM_COG_30_N40_00_E045_00_DEM.tif",
+          "path": "data/raw/armenia_300km/dem/Copernicus_DSM_COG_30_N40_00_E045_00_DEM.tif",
+          "sha256": "c7502bb9c42428836bf43dc59ccb05ac9cfc101abcdd4a61598b86485073e5f2"
+        },
+        {
+          "bytes": 4849088,
+          "item_id": "Copernicus_DSM_COG_30_N40_00_E044_00_DEM",
+          "official_href": "https://elevationeuwest.blob.core.windows.net/copernicus-dem/COP90_hh/Copernicus_DSM_COG_30_N40_00_E044_00_DEM.tif",
+          "path": "data/raw/armenia_300km/dem/Copernicus_DSM_COG_30_N40_00_E044_00_DEM.tif",
+          "sha256": "76c1bea8c149ac3ad06760255818460f605cc8f5c9d0fbfaf86f905c365675cd"
+        },
+        {
+          "bytes": 4706733,
+          "item_id": "Copernicus_DSM_COG_30_N40_00_E043_00_DEM",
+          "official_href": "https://elevationeuwest.blob.core.windows.net/copernicus-dem/COP90_hh/Copernicus_DSM_COG_30_N40_00_E043_00_DEM.tif",
+          "path": "data/raw/armenia_300km/dem/Copernicus_DSM_COG_30_N40_00_E043_00_DEM.tif",
+          "sha256": "dda53b5fb38664d34a2449f818d3fe00fcd487cb44c7ee92499fa8a4e04eb782"
+        },
+        {
+          "bytes": 4904648,
+          "item_id": "Copernicus_DSM_COG_30_N40_00_E042_00_DEM",
+          "official_href": "https://elevationeuwest.blob.core.windows.net/copernicus-dem/COP90_hh/Copernicus_DSM_COG_30_N40_00_E042_00_DEM.tif",
+          "path": "data/raw/armenia_300km/dem/Copernicus_DSM_COG_30_N40_00_E042_00_DEM.tif",
+          "sha256": "fca1f14602b5ab924d7880f5f4b3f60b9bc586df0ff2f106a175dd90ecc253d9"
+        },
+        {
+          "bytes": 5133088,
+          "item_id": "Copernicus_DSM_COG_30_N40_00_E041_00_DEM",
+          "official_href": "https://elevationeuwest.blob.core.windows.net/copernicus-dem/COP90_hh/Copernicus_DSM_COG_30_N40_00_E041_00_DEM.tif",
+          "path": "data/raw/armenia_300km/dem/Copernicus_DSM_COG_30_N40_00_E041_00_DEM.tif",
+          "sha256": "e7a406e1f14017e2dc0e449ac5d29403cd89add3063394ed91677b06ea1e87b7"
+        },
+        {
+          "bytes": 5120923,
+          "item_id": "Copernicus_DSM_COG_30_N40_00_E040_00_DEM",
+          "official_href": "https://elevationeuwest.blob.core.windows.net/copernicus-dem/COP90_hh/Copernicus_DSM_COG_30_N40_00_E040_00_DEM.tif",
+          "path": "data/raw/armenia_300km/dem/Copernicus_DSM_COG_30_N40_00_E040_00_DEM.tif",
+          "sha256": "e8c43c61e4ebabc0b9bd5f9976e0abc00a421b7ee66d4abcc23e8811a4e2ad7c"
+        },
+        {
+          "bytes": 5396000,
+          "item_id": "Copernicus_DSM_COG_30_N39_00_E048_00_DEM",
+          "official_href": "https://elevationeuwest.blob.core.windows.net/copernicus-dem/COP90_hh/Copernicus_DSM_COG_30_N39_00_E048_00_DEM.tif",
+          "path": "data/raw/armenia_300km/dem/Copernicus_DSM_COG_30_N39_00_E048_00_DEM.tif",
+          "sha256": "d2f10f14898b8fb40b5f02237193fcc37ee1ce577ea02720755b7bfc29542c30"
+        },
+        {
+          "bytes": 5328153,
+          "item_id": "Copernicus_DSM_COG_30_N39_00_E047_00_DEM",
+          "official_href": "https://elevationeuwest.blob.core.windows.net/copernicus-dem/COP90_hh/Copernicus_DSM_COG_30_N39_00_E047_00_DEM.tif",
+          "path": "data/raw/armenia_300km/dem/Copernicus_DSM_COG_30_N39_00_E047_00_DEM.tif",
+          "sha256": "0a519c658924b7753e360b8f16977dd3ae339f68524c4206a8bd073a84e5b3e9"
+        },
+        {
+          "bytes": 5224227,
+          "item_id": "Copernicus_DSM_COG_30_N39_00_E046_00_DEM",
+          "official_href": "https://elevationeuwest.blob.core.windows.net/copernicus-dem/COP90_hh/Copernicus_DSM_COG_30_N39_00_E046_00_DEM.tif",
+          "path": "data/raw/armenia_300km/dem/Copernicus_DSM_COG_30_N39_00_E046_00_DEM.tif",
+          "sha256": "2c9da6c5f27f0be4bef578a60733325370299a87db9f5af3b01899dd9b713a8e"
+        },
+        {
+          "bytes": 4945172,
+          "item_id": "Copernicus_DSM_COG_30_N39_00_E045_00_DEM",
+          "official_href": "https://elevationeuwest.blob.core.windows.net/copernicus-dem/COP90_hh/Copernicus_DSM_COG_30_N39_00_E045_00_DEM.tif",
+          "path": "data/raw/armenia_300km/dem/Copernicus_DSM_COG_30_N39_00_E045_00_DEM.tif",
+          "sha256": "fd2d5b83ddd4b941a1005a2e7d2d8ffa5d962164fe82a33008bc67bfd19f9adc"
+        },
+        {
+          "bytes": 4798173,
+          "item_id": "Copernicus_DSM_COG_30_N39_00_E044_00_DEM",
+          "official_href": "https://elevationeuwest.blob.core.windows.net/copernicus-dem/COP90_hh/Copernicus_DSM_COG_30_N39_00_E044_00_DEM.tif",
+          "path": "data/raw/armenia_300km/dem/Copernicus_DSM_COG_30_N39_00_E044_00_DEM.tif",
+          "sha256": "d7bc4ea69113b9ecaa38b90943be6baf094c54b45baba899bcd5e8b23188c12f"
+        },
+        {
+          "bytes": 4775984,
+          "item_id": "Copernicus_DSM_COG_30_N39_00_E043_00_DEM",
+          "official_href": "https://elevationeuwest.blob.core.windows.net/copernicus-dem/COP90_hh/Copernicus_DSM_COG_30_N39_00_E043_00_DEM.tif",
+          "path": "data/raw/armenia_300km/dem/Copernicus_DSM_COG_30_N39_00_E043_00_DEM.tif",
+          "sha256": "ba0c7a3b07d600dd07cce2354f28074c40c8983d7ca3e5679e2bc78dbf466754"
+        },
+        {
+          "bytes": 4772078,
+          "item_id": "Copernicus_DSM_COG_30_N39_00_E042_00_DEM",
+          "official_href": "https://elevationeuwest.blob.core.windows.net/copernicus-dem/COP90_hh/Copernicus_DSM_COG_30_N39_00_E042_00_DEM.tif",
+          "path": "data/raw/armenia_300km/dem/Copernicus_DSM_COG_30_N39_00_E042_00_DEM.tif",
+          "sha256": "32f0472a05e9dc4e964be295902e64d322ac1c6ebdbbb21e695fd9fbcd3997e8"
+        },
+        {
+          "bytes": 4782746,
+          "item_id": "Copernicus_DSM_COG_30_N39_00_E041_00_DEM",
+          "official_href": "https://elevationeuwest.blob.core.windows.net/copernicus-dem/COP90_hh/Copernicus_DSM_COG_30_N39_00_E041_00_DEM.tif",
+          "path": "data/raw/armenia_300km/dem/Copernicus_DSM_COG_30_N39_00_E041_00_DEM.tif",
+          "sha256": "1bd118d5a244975e7b53bf798038dc85307aaac75a69a3aeadf3910c62faacd6"
+        },
+        {
+          "bytes": 5039679,
+          "item_id": "Copernicus_DSM_COG_30_N39_00_E040_00_DEM",
+          "official_href": "https://elevationeuwest.blob.core.windows.net/copernicus-dem/COP90_hh/Copernicus_DSM_COG_30_N39_00_E040_00_DEM.tif",
+          "path": "data/raw/armenia_300km/dem/Copernicus_DSM_COG_30_N39_00_E040_00_DEM.tif",
+          "sha256": "917cb54cd58035316be714f0def0ee36d99c4d8a083ac15cf5593c0d069ecaef"
+        },
+        {
+          "bytes": 4600616,
+          "item_id": "Copernicus_DSM_COG_30_N38_00_E048_00_DEM",
+          "official_href": "https://elevationeuwest.blob.core.windows.net/copernicus-dem/COP90_hh/Copernicus_DSM_COG_30_N38_00_E048_00_DEM.tif",
+          "path": "data/raw/armenia_300km/dem/Copernicus_DSM_COG_30_N38_00_E048_00_DEM.tif",
+          "sha256": "185f5bbd080b4f9c6fd51e24ddae6e06b8da8fa235e40715b82e91bae83b22e9"
+        },
+        {
+          "bytes": 5017405,
+          "item_id": "Copernicus_DSM_COG_30_N38_00_E047_00_DEM",
+          "official_href": "https://elevationeuwest.blob.core.windows.net/copernicus-dem/COP90_hh/Copernicus_DSM_COG_30_N38_00_E047_00_DEM.tif",
+          "path": "data/raw/armenia_300km/dem/Copernicus_DSM_COG_30_N38_00_E047_00_DEM.tif",
+          "sha256": "95a1c0972af15d8561f0d41f9c5d280b79f270c37f73ac4bf408bfb57e94fb32"
+        },
+        {
+          "bytes": 5067420,
+          "item_id": "Copernicus_DSM_COG_30_N38_00_E046_00_DEM",
+          "official_href": "https://elevationeuwest.blob.core.windows.net/copernicus-dem/COP90_hh/Copernicus_DSM_COG_30_N38_00_E046_00_DEM.tif",
+          "path": "data/raw/armenia_300km/dem/Copernicus_DSM_COG_30_N38_00_E046_00_DEM.tif",
+          "sha256": "6dfb130a9e1c21ad4c2d08c7411e98bf03360b06e5cf1536f87f6bbf67fd7611"
+        },
+        {
+          "bytes": 4534831,
+          "item_id": "Copernicus_DSM_COG_30_N38_00_E045_00_DEM",
+          "official_href": "https://elevationeuwest.blob.core.windows.net/copernicus-dem/COP90_hh/Copernicus_DSM_COG_30_N38_00_E045_00_DEM.tif",
+          "path": "data/raw/armenia_300km/dem/Copernicus_DSM_COG_30_N38_00_E045_00_DEM.tif",
+          "sha256": "7ebc3794a228a95bd208d2d07e4657ccf78525c173b2ce0ea84639f6e6d7f545"
+        },
+        {
+          "bytes": 4879970,
+          "item_id": "Copernicus_DSM_COG_30_N38_00_E044_00_DEM",
+          "official_href": "https://elevationeuwest.blob.core.windows.net/copernicus-dem/COP90_hh/Copernicus_DSM_COG_30_N38_00_E044_00_DEM.tif",
+          "path": "data/raw/armenia_300km/dem/Copernicus_DSM_COG_30_N38_00_E044_00_DEM.tif",
+          "sha256": "e1198bc0680269dd09f896fdcb1a34f68a9ef6345112c89965bab6edee0636fd"
+        },
+        {
+          "bytes": 3986649,
+          "item_id": "Copernicus_DSM_COG_30_N38_00_E043_00_DEM",
+          "official_href": "https://elevationeuwest.blob.core.windows.net/copernicus-dem/COP90_hh/Copernicus_DSM_COG_30_N38_00_E043_00_DEM.tif",
+          "path": "data/raw/armenia_300km/dem/Copernicus_DSM_COG_30_N38_00_E043_00_DEM.tif",
+          "sha256": "fc3b80e7167668679fb6bf23d27a9f81acbaa56dbbedf2a13b988534353e6ec9"
+        },
+        {
+          "bytes": 4078229,
+          "item_id": "Copernicus_DSM_COG_30_N38_00_E042_00_DEM",
+          "official_href": "https://elevationeuwest.blob.core.windows.net/copernicus-dem/COP90_hh/Copernicus_DSM_COG_30_N38_00_E042_00_DEM.tif",
+          "path": "data/raw/armenia_300km/dem/Copernicus_DSM_COG_30_N38_00_E042_00_DEM.tif",
+          "sha256": "e24a4b3d7dbd390e69851c4851935bb3ae144418795e914a4a48ba44d2845f77"
+        },
+        {
+          "bytes": 5109805,
+          "item_id": "Copernicus_DSM_COG_30_N38_00_E041_00_DEM",
+          "official_href": "https://elevationeuwest.blob.core.windows.net/copernicus-dem/COP90_hh/Copernicus_DSM_COG_30_N38_00_E041_00_DEM.tif",
+          "path": "data/raw/armenia_300km/dem/Copernicus_DSM_COG_30_N38_00_E041_00_DEM.tif",
+          "sha256": "426fe273400fa32541ebdee547edd2b2fe5c155d9eb3bbeecfa190112d4913fc"
+        },
+        {
+          "bytes": 5065766,
+          "item_id": "Copernicus_DSM_COG_30_N38_00_E040_00_DEM",
+          "official_href": "https://elevationeuwest.blob.core.windows.net/copernicus-dem/COP90_hh/Copernicus_DSM_COG_30_N38_00_E040_00_DEM.tif",
+          "path": "data/raw/armenia_300km/dem/Copernicus_DSM_COG_30_N38_00_E040_00_DEM.tif",
+          "sha256": "94d3df652cbff700e4fd9d069aedf8210c556a26d9be2f23abb9bdbc97bc3ee4"
+        },
+        {
+          "bytes": 5189148,
+          "item_id": "Copernicus_DSM_COG_30_N37_00_E048_00_DEM",
+          "official_href": "https://elevationeuwest.blob.core.windows.net/copernicus-dem/COP90_hh/Copernicus_DSM_COG_30_N37_00_E048_00_DEM.tif",
+          "path": "data/raw/armenia_300km/dem/Copernicus_DSM_COG_30_N37_00_E048_00_DEM.tif",
+          "sha256": "21216e2594c17f28948bba774ad64be5c434171e1cad105a3da1a9eeb13ad4c6"
+        },
+        {
+          "bytes": 4898199,
+          "item_id": "Copernicus_DSM_COG_30_N37_00_E047_00_DEM",
+          "official_href": "https://elevationeuwest.blob.core.windows.net/copernicus-dem/COP90_hh/Copernicus_DSM_COG_30_N37_00_E047_00_DEM.tif",
+          "path": "data/raw/armenia_300km/dem/Copernicus_DSM_COG_30_N37_00_E047_00_DEM.tif",
+          "sha256": "b3d57019359cf55af73f2467ec354bd424d7682cbf52eab1fae45668962704a4"
+        },
+        {
+          "bytes": 4878666,
+          "item_id": "Copernicus_DSM_COG_30_N37_00_E046_00_DEM",
+          "official_href": "https://elevationeuwest.blob.core.windows.net/copernicus-dem/COP90_hh/Copernicus_DSM_COG_30_N37_00_E046_00_DEM.tif",
+          "path": "data/raw/armenia_300km/dem/Copernicus_DSM_COG_30_N37_00_E046_00_DEM.tif",
+          "sha256": "256ac90f569fa7eeec4cbf07b2b595dbc213aaa2d5874b8b54db1c78e52110da"
+        },
+        {
+          "bytes": 3236678,
+          "item_id": "Copernicus_DSM_COG_30_N37_00_E045_00_DEM",
+          "official_href": "https://elevationeuwest.blob.core.windows.net/copernicus-dem/COP90_hh/Copernicus_DSM_COG_30_N37_00_E045_00_DEM.tif",
+          "path": "data/raw/armenia_300km/dem/Copernicus_DSM_COG_30_N37_00_E045_00_DEM.tif",
+          "sha256": "daddf0d4f33a134261085ca332f8db4470ec66d6607a2adc2a9efc05ae9a1af2"
+        },
+        {
+          "bytes": 5125495,
+          "item_id": "Copernicus_DSM_COG_30_N37_00_E044_00_DEM",
+          "official_href": "https://elevationeuwest.blob.core.windows.net/copernicus-dem/COP90_hh/Copernicus_DSM_COG_30_N37_00_E044_00_DEM.tif",
+          "path": "data/raw/armenia_300km/dem/Copernicus_DSM_COG_30_N37_00_E044_00_DEM.tif",
+          "sha256": "da9ff23c8321ada83f33f8367d1b9ed7b99fb723b46274629aecd275ecfa9b4b"
+        },
+        {
+          "bytes": 5166141,
+          "item_id": "Copernicus_DSM_COG_30_N37_00_E043_00_DEM",
+          "official_href": "https://elevationeuwest.blob.core.windows.net/copernicus-dem/COP90_hh/Copernicus_DSM_COG_30_N37_00_E043_00_DEM.tif",
+          "path": "data/raw/armenia_300km/dem/Copernicus_DSM_COG_30_N37_00_E043_00_DEM.tif",
+          "sha256": "87caf4dd60ab09ae83ef2c27cfcfb65724bb21524f97d4f89dec3ca0dfa2b261"
+        },
+        {
+          "bytes": 5220091,
+          "item_id": "Copernicus_DSM_COG_30_N37_00_E042_00_DEM",
+          "official_href": "https://elevationeuwest.blob.core.windows.net/copernicus-dem/COP90_hh/Copernicus_DSM_COG_30_N37_00_E042_00_DEM.tif",
+          "path": "data/raw/armenia_300km/dem/Copernicus_DSM_COG_30_N37_00_E042_00_DEM.tif",
+          "sha256": "82fa9193b72750deaa259e927e122cdceb812b37009f415ffeb7a121495c2e45"
+        },
+        {
+          "bytes": 5139801,
+          "item_id": "Copernicus_DSM_COG_30_N37_00_E041_00_DEM",
+          "official_href": "https://elevationeuwest.blob.core.windows.net/copernicus-dem/COP90_hh/Copernicus_DSM_COG_30_N37_00_E041_00_DEM.tif",
+          "path": "data/raw/armenia_300km/dem/Copernicus_DSM_COG_30_N37_00_E041_00_DEM.tif",
+          "sha256": "90fec49ae39a8223a8bf5fe18f4443156d0b6f74e2174dd142bf875e5d31b63d"
+        },
+        {
+          "bytes": 4875824,
+          "item_id": "Copernicus_DSM_COG_30_N37_00_E040_00_DEM",
+          "official_href": "https://elevationeuwest.blob.core.windows.net/copernicus-dem/COP90_hh/Copernicus_DSM_COG_30_N37_00_E040_00_DEM.tif",
+          "path": "data/raw/armenia_300km/dem/Copernicus_DSM_COG_30_N37_00_E040_00_DEM.tif",
+          "sha256": "951dbf6bddf539684706ea628cda6cded2abbf849a26834b6fc630a51be2310d"
+        }
+      ],
+      "collection": "cop-dem-glo-90",
+      "license": "Copernicus DEM GLO-90 free and open licence; see official Copernicus terms.",
+      "source_url": "https://planetarycomputer.microsoft.com/dataset/cop-dem-glo-90"
+    },
+    "worldcover": {
+      "asset": "map",
+      "assets": [
+        {
+          "bytes": 5454070,
+          "item_id": "ESA_WorldCover_10m_2021_v200_N42E048",
+          "official_href": "https://ai4edataeuwest.blob.core.windows.net/esa-worldcover/v200/2021/map/ESA_WorldCover_10m_2021_v200_N42E048_Map.tif",
+          "path": "data/raw/armenia_300km/worldcover/ESA_WorldCover_10m_2021_v200_N42E048.tif",
+          "sha256": "a657ea8974ffc897663f04d88922207ba2900774d18937f939a5a198b223c2d7"
+        },
+        {
+          "bytes": 55836521,
+          "item_id": "ESA_WorldCover_10m_2021_v200_N42E045",
+          "official_href": "https://ai4edataeuwest.blob.core.windows.net/esa-worldcover/v200/2021/map/ESA_WorldCover_10m_2021_v200_N42E045_Map.tif",
+          "path": "data/raw/armenia_300km/worldcover/ESA_WorldCover_10m_2021_v200_N42E045.tif",
+          "sha256": "fb5474dbb243ad3272fc5bccbc34ef483d7b99431bbfd8c90a9e9f26a5576f4e"
+        },
+        {
+          "bytes": 66035601,
+          "item_id": "ESA_WorldCover_10m_2021_v200_N42E042",
+          "official_href": "https://ai4edataeuwest.blob.core.windows.net/esa-worldcover/v200/2021/map/ESA_WorldCover_10m_2021_v200_N42E042_Map.tif",
+          "path": "data/raw/armenia_300km/worldcover/ESA_WorldCover_10m_2021_v200_N42E042.tif",
+          "sha256": "3bcfc9075e1a9ffeeb0f7e5d9f63151f8b4e966ee2bbed0fc0d685c1924af93b"
+        },
+        {
+          "bytes": 40890688,
+          "item_id": "ESA_WorldCover_10m_2021_v200_N42E039",
+          "official_href": "https://ai4edataeuwest.blob.core.windows.net/esa-worldcover/v200/2021/map/ESA_WorldCover_10m_2021_v200_N42E039_Map.tif",
+          "path": "data/raw/armenia_300km/worldcover/ESA_WorldCover_10m_2021_v200_N42E039.tif",
+          "sha256": "bd44df9c68cb1b7777618b4636d73004bfbdba37266f3cb62f93e27c36143a3e"
+        },
+        {
+          "bytes": 52917668,
+          "item_id": "ESA_WorldCover_10m_2021_v200_N39E048",
+          "official_href": "https://ai4edataeuwest.blob.core.windows.net/esa-worldcover/v200/2021/map/ESA_WorldCover_10m_2021_v200_N39E048_Map.tif",
+          "path": "data/raw/armenia_300km/worldcover/ESA_WorldCover_10m_2021_v200_N39E048.tif",
+          "sha256": "b688b0433830f7fbae1d69262ce477d954f6d801a6d7742db80ed0086e6e5e37"
+        },
+        {
+          "bytes": 91670643,
+          "item_id": "ESA_WorldCover_10m_2021_v200_N39E045",
+          "official_href": "https://ai4edataeuwest.blob.core.windows.net/esa-worldcover/v200/2021/map/ESA_WorldCover_10m_2021_v200_N39E045_Map.tif",
+          "path": "data/raw/armenia_300km/worldcover/ESA_WorldCover_10m_2021_v200_N39E045.tif",
+          "sha256": "655959dd17e02401edc548ff24cc2e825c3490ac30267032e556ff28a7c3461d"
+        },
+        {
+          "bytes": 73868387,
+          "item_id": "ESA_WorldCover_10m_2021_v200_N39E042",
+          "official_href": "https://ai4edataeuwest.blob.core.windows.net/esa-worldcover/v200/2021/map/ESA_WorldCover_10m_2021_v200_N39E042_Map.tif",
+          "path": "data/raw/armenia_300km/worldcover/ESA_WorldCover_10m_2021_v200_N39E042.tif",
+          "sha256": "ad78c75e48831ab17d28b5ca08f2dc1d1ac747f1f0152cb30e8abaa75cdf18a0"
+        },
+        {
+          "bytes": 56837246,
+          "item_id": "ESA_WorldCover_10m_2021_v200_N39E039",
+          "official_href": "https://ai4edataeuwest.blob.core.windows.net/esa-worldcover/v200/2021/map/ESA_WorldCover_10m_2021_v200_N39E039_Map.tif",
+          "path": "data/raw/armenia_300km/worldcover/ESA_WorldCover_10m_2021_v200_N39E039.tif",
+          "sha256": "9790bb7a73eb52830f0d3b55f95d9a79febe1256ab04efc6e85d9acdc8f5e162"
+        },
+        {
+          "bytes": 56859608,
+          "item_id": "ESA_WorldCover_10m_2021_v200_N36E048",
+          "official_href": "https://ai4edataeuwest.blob.core.windows.net/esa-worldcover/v200/2021/map/ESA_WorldCover_10m_2021_v200_N36E048_Map.tif",
+          "path": "data/raw/armenia_300km/worldcover/ESA_WorldCover_10m_2021_v200_N36E048.tif",
+          "sha256": "e1fe50196a270277291ccec7196a215245a60f8613ef3d2af1499dc577a317e7"
+        },
+        {
+          "bytes": 101766368,
+          "item_id": "ESA_WorldCover_10m_2021_v200_N36E045",
+          "official_href": "https://ai4edataeuwest.blob.core.windows.net/esa-worldcover/v200/2021/map/ESA_WorldCover_10m_2021_v200_N36E045_Map.tif",
+          "path": "data/raw/armenia_300km/worldcover/ESA_WorldCover_10m_2021_v200_N36E045.tif",
+          "sha256": "5fa21239052a6b0e7cd329c72a831af65ca1bf2e9ef3b4027fe2fa9410067695"
+        },
+        {
+          "bytes": 92029110,
+          "item_id": "ESA_WorldCover_10m_2021_v200_N36E042",
+          "official_href": "https://ai4edataeuwest.blob.core.windows.net/esa-worldcover/v200/2021/map/ESA_WorldCover_10m_2021_v200_N36E042_Map.tif",
+          "path": "data/raw/armenia_300km/worldcover/ESA_WorldCover_10m_2021_v200_N36E042.tif",
+          "sha256": "09abaad9470fb1932b570ac82a463ae54424dcd9e0791073cd56d66ababf41f4"
+        },
+        {
+          "bytes": 89382536,
+          "item_id": "ESA_WorldCover_10m_2021_v200_N36E039",
+          "official_href": "https://ai4edataeuwest.blob.core.windows.net/esa-worldcover/v200/2021/map/ESA_WorldCover_10m_2021_v200_N36E039_Map.tif",
+          "path": "data/raw/armenia_300km/worldcover/ESA_WorldCover_10m_2021_v200_N36E039.tif",
+          "sha256": "33e9a1280b3254270489ca8fea3d355dbc9cb83d83fc8a3ef743372fb9e6c5b2"
+        }
+      ],
+      "collection": "esa-worldcover",
+      "license": "CC BY 4.0",
+      "source_url": "https://esa-worldcover.org/en/data-access"
+    }
+  },
+  "schema_version": "1.0",
+  "viirs": {
+    "product": "VNP46A4",
+    "reason": "NASA Earthdata Login is required; set THIEZER_EARTHDATA_TOKEN for a future authenticated downloader. No proxy replaces VIIRS.",
+    "status": "blocked"
+  }
+}
