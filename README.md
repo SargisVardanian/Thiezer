@@ -2,60 +2,68 @@
 
 **Find the sky worth traveling for.**
 
-Thiezer is a global, radius-based astronomy travel application. It combines offline JPL
-ephemerides, hourly weather, dynamically discovered observation candidates, explainable Sky Score,
-equipment-store discovery, a Flutter client, and zero-key route handoffs.
+Thiezer is a global, radius-first astronomy travel application. It combines surface-first site
+discovery, static geospatial layers, hourly weather, offline ephemerides, explainable sky quality,
+equipment-store discovery, and zero-key navigator handoffs.
 
-## Spatial model
+## What works now
 
-The default search radius is 250 km.
-
-- Large countries are naturally divided into local searches around the user.
-- Small countries can include nearby countries without special-case code.
-- `scope=country` is available when a strict national boundary is required.
-- `scope=adaptive` is the default and is border-agnostic inside the radius.
-
-Armenia remains a packaged validation dataset because it is convenient for field testing; it is not
-the product boundary.
-
-## Implemented
-
-- Alpha Centauri, Mars, Jupiter, Moon, Milky Way core, and general night sky.
-- Offline Skyfield/JPL DE421 geometry.
-- Batched Open-Meteo weather.
-- Global OSM/Overpass discovery for observatories, viewpoints, campsites, parking, and candidate
-  equipment stores.
-- Explainable Sky Score v1.
+- Targets: Alpha Centauri, Mars, Jupiter, Moon, Milky Way core, and general dark sky.
+- `adaptive`, strict `country`, and border-agnostic `global` search scopes.
+- Default 250 km hard radius; large countries are searched locally, small countries may cross borders.
+- H3 coarse-to-fine surface search before OSM access-point lookup.
+- Optional local VIIRS/DEM/land-cover surface packs with conservative global fallback.
+- Open-Meteo elevation and chunked hourly weather requests.
+- Offline Skyfield/JPL DE421 astronomy calculations.
+- Separate `SkyQuality` and `TravelUtility` calculations.
 - Google Maps, Apple Maps, Yandex web, and `geo:` route handoffs.
-- Flutter UI for iOS and macOS.
-- Ruff, Mypy, Pytest, Flutter analyze, and Flutter test CI.
+- Flutter client for iOS and macOS.
 
-## Backend
+All dynamically discovered locations are unverified until legal access, road condition, parking and
+nighttime safety are checked.
+
+## Repository map
+
+- `services/api` — FastAPI modular backend and scientific/domain code.
+- `apps/mobile` — shared Flutter client for iOS and macOS.
+- `docs/GLOBAL_DISCOVERY.md` — discovery pipeline, budgets and limitations.
+- `docs/SURFACE_PACK.md` — optional static surface-pack contract.
+- `scripts` — local bootstrap and Apple demo commands.
+
+## Run locally on macOS
 
 ```bash
-python3 -m venv .venv
-source .venv/bin/activate
-pip install -e '.[dev]'
-uvicorn thiezer.main:app --reload --host 0.0.0.0
+./scripts/bootstrap_local.sh
+./scripts/run_macos_demo.sh
 ```
 
-Swagger: `http://127.0.0.1:8000/docs`
+The API is available at `http://127.0.0.1:8000/docs`.
 
-## Apple client
+## Run in the iOS Simulator
+
+```bash
+./scripts/bootstrap_local.sh
+./scripts/run_ios_simulator_demo.sh
+```
+
+For a physical iPhone, run the API with `--host 0.0.0.0` and enter
+`http://<your-mac-lan-ip>:8000` in the app settings. Local HTTP is development-only; production
+builds must use HTTPS.
+
+## Backend validation
+
+```bash
+source .venv/bin/activate
+ruff check .
+ruff format --check .
+mypy services/api/src
+pytest -q
+```
+
+## Flutter validation
 
 ```bash
 cd apps/mobile
-chmod +x scripts/bootstrap_platforms.sh
-./scripts/bootstrap_platforms.sh
-flutter run -d macos \
-  --dart-define=THIEZER_API_BASE_URL=http://127.0.0.1:8000
+flutter analyze
+flutter test
 ```
-
-See:
-
-- `docs/GLOBAL_DISCOVERY.md`
-- `docs/ARMENIA_MVP.md`
-- `apps/mobile/README.md`
-
-All packaged and dynamically discovered observation points remain unverified until field or partner
-validation confirms legal access, parking, roads, and nighttime safety.
