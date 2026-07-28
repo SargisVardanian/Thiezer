@@ -13,6 +13,8 @@ from thiezer.repositories.base import PlaceSearchBatch
 from thiezer.services.progress import ProgressCallback
 from thiezer.services.surface_search import SurfaceSearchService
 
+_RADIUS_TOLERANCE_KM = 0.5
+
 
 class SurfacePlaceRepository:
     def __init__(self, search_service: SurfaceSearchService) -> None:
@@ -46,6 +48,8 @@ class SurfacePlaceRepository:
             progress=progress,
         )
         matches: list[tuple[CandidatePlace, float]] = []
+        seen_ids: set[str] = set()
+        seen_points: set[tuple[int, int]] = set()
         for site in result.sites:
             if (
                 scope == SearchScope.COUNTRY
@@ -53,6 +57,17 @@ class SurfacePlaceRepository:
                 and site.country_code not in {country_code, None}
             ):
                 continue
+            distance = haversine_distance_km(user_location, site.point)
+            if distance > max_distance_km + _RADIUS_TOLERANCE_KM:
+                continue
+            point_key = (
+                round(site.point.latitude_deg * 100_000),
+                round(site.point.longitude_deg * 100_000),
+            )
+            if site.id in seen_ids or point_key in seen_points:
+                continue
+            seen_ids.add(site.id)
+            seen_points.add(point_key)
             place = CandidatePlace(
                 id=site.id,
                 name=site.name,
@@ -82,8 +97,41 @@ class SurfacePlaceRepository:
                     else "surface_light_proxy_v1"
                 ),
             )
-            distance = haversine_distance_km(user_location, site.point)
             matches.append((place, distance))
+
+        origin_key = (
+            round(user_location.latitude_deg * 100_000),
+            round(user_location.longitude_deg * 100_000),
+        )
+        if origin_key not in seen_points:
+            matches.append(
+                (
+                    CandidatePlace(
+                        id=(f"observer-location:{origin_key[0]:+d}:{origin_key[1]:+d}"),
+                        name="Текущая позиция",
+                        country_code=country_code if scope == SearchScope.COUNTRY else None,
+                        region=None,
+                        point=user_location,
+                        elevation_m=0.0,
+                        kind=PlaceKind.OBSERVATION_SITE,
+                        verification_status=VerificationStatus.UNVERIFIED_DISCOVERED,
+                        darkness_score=0.001,
+                        horizon_openness_score=0.50,
+                        accessibility_score=1.0,
+                        risk_score=0.05,
+                        road_access="Current observer location; local horizon is not measured",
+                        notes=(
+                            "No travel required. Darkness and local horizon are deliberately "
+                            "unknown and must not be presented as calibrated values."
+                        ),
+                        source_provider="user_origin",
+                        darkness_model="unknown_origin_proxy",
+                    ),
+                    0.0,
+                )
+            )
+
+        matches.sort(key=lambda item: (item[1], -item[0].darkness_score, item[0].id))
         warnings = [WarningCode.DARKNESS_IS_PROXY] if result.darkness_is_proxy else []
         coverage = sorted({place.country_code for place, _ in matches if place.country_code})
         if scope == SearchScope.COUNTRY and country_code and matches:

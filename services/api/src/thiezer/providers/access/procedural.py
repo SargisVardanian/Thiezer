@@ -37,10 +37,18 @@ class ProceduralAccessPointProvider:
                 continue
             best = max(valid, key=lambda item: item.static_score)
             accessibility = best.access_potential
+            coordinate_token = (
+                f"{round(best.center.latitude_deg * 100_000):+d}:"
+                f"{round(best.center.longitude_deg * 100_000):+d}"
+            )
+            short_h3 = f"{cell.h3_index[:8]}…{cell.h3_index[-4:]}"
             sites.append(
                 SurfaceSite(
-                    id=f"surface:{cell.h3_index}",
-                    name=f"Surface candidate {cell.h3_index[-7:]}",
+                    id=f"surface:{cell.h3_index}:{coordinate_token}",
+                    name=(
+                        f"Тёмная площадка {short_h3} · "
+                        f"{best.center.latitude_deg:.3f}, {best.center.longitude_deg:.3f}"
+                    ),
                     point=best.center,
                     cell=best,
                     elevation_m=best.elevation_m,
