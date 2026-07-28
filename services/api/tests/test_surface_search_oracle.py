@@ -34,9 +34,7 @@ async def test_armenia_coarse_to_fine_matches_exhaustive_res7_oracle() -> None:
     oracle_raw = await static.evaluate_cells(oracle_ids)
     policy = StaticFilterPolicy()
     oracle_cells = [score_raw_features(item) for item in oracle_raw]
-    oracle_cells = [
-        cell for cell in oracle_cells if passes_static_filters(cell, policy)
-    ]
+    oracle_cells = [cell for cell in oracle_cells if passes_static_filters(cell, policy)]
     oracle_top = sorted(
         oracle_cells,
         key=lambda cell: cell.static_score,
@@ -45,10 +43,7 @@ async def test_armenia_coarse_to_fine_matches_exhaustive_res7_oracle() -> None:
     production_best = max(site.cell.static_score for site in result.sites)
     oracle_best = oracle_top[0].static_score
     recalled = sum(
-        any(
-            haversine_distance_km(cell.center, site.point) <= 15.0
-            for site in result.sites
-        )
+        any(haversine_distance_km(cell.center, site.point) <= 15.0 for site in result.sites)
         for cell in oracle_top
     )
 
