@@ -25,12 +25,6 @@ jobs:
         run: ruff check .
       - name: Ruff format
         run: ruff format --check .
-      - name: Mypy diagnostic
-        run: mypy services/api/src > mypy-report.txt || true
-      - uses: actions/upload-artifact@v4
-        with:
-          name: surface-mypy-report
-          path: mypy-report.txt
       - name: Type check
         run: mypy services/api/src
       - name: Test
