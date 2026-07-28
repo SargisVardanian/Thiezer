@@ -24,15 +24,7 @@ jobs:
       - name: Ruff lint
         run: ruff check .
       - name: Ruff format
-        run: |
-          ruff format --diff . > /tmp/ruff-format.diff
-          test ! -s /tmp/ruff-format.diff
-      - name: Upload Ruff format report
-        if: failure()
-        uses: actions/upload-artifact@v4
-        with:
-          name: stabilization-ruff-format
-          path: /tmp/ruff-format.diff
+        run: ruff format --check .
       - name: Type check
         run: mypy services/api/src
       - name: Test
@@ -52,14 +44,6 @@ jobs:
       - name: Dependencies
         run: flutter pub get
       - name: Analyze
-        run: |
-          set -o pipefail
-          flutter analyze 2>&1 | tee /tmp/flutter-analyze.txt
-      - name: Upload Flutter analyze report
-        if: failure()
-        uses: actions/upload-artifact@v4
-        with:
-          name: stabilization-flutter-analyze
-          path: /tmp/flutter-analyze.txt
+        run: flutter analyze
       - name: Test
         run: flutter test
