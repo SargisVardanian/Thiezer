@@ -364,6 +364,8 @@ class AstronomicalPlanRequest(BaseModel):
         _require_aware(self.start_utc, "start_utc")
         if self.scope == SearchScope.COUNTRY and self.country_code is None:
             raise ValueError("country_code is required for country scope")
+        if self.target == TargetKind.BEST_NIGHT_SKY:
+            raise ValueError("best_night_sky is a near-term place search, not an astronomical plan")
         return self
 
 

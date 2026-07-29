@@ -232,6 +232,7 @@ class ObservationPlace {
     required this.kind,
     required this.verificationStatus,
     required this.darknessScore,
+    required this.horizonOpennessScore,
     required this.sourceProvider,
     this.countryCode,
     this.region,
@@ -243,6 +244,7 @@ class ObservationPlace {
   final String kind;
   final String verificationStatus;
   final double darknessScore;
+  final double horizonOpennessScore;
   final String sourceProvider;
   final String? countryCode;
   final String? region;
@@ -257,6 +259,8 @@ class ObservationPlace {
         kind: json['kind'] as String,
         verificationStatus: json['verification_status'] as String,
         darknessScore: (json['darkness_score'] as num).toDouble(),
+        horizonOpennessScore:
+            (json['horizon_openness_score'] as num?)?.toDouble() ?? 0.0,
         sourceProvider: (json['source_provider'] as String?) ?? 'unknown',
       );
 }
@@ -409,7 +413,8 @@ class AstronomicalPlanResponse {
         bestTime: _optionalDate(json['best_time_utc'])?.toLocal(),
         horizonDays: json['planning_horizon_days'] as int,
         candidates: (json['candidates'] as List<dynamic>)
-            .map((item) => AstronomicalPlanCandidate.fromJson(item as Map<String, dynamic>))
+            .map((item) => AstronomicalPlanCandidate.fromJson(
+                item as Map<String, dynamic>))
             .toList(growable: false),
         warnings: (json['warnings'] as List<dynamic>? ?? const <dynamic>[])
             .map((item) => item as String)

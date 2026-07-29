@@ -196,8 +196,22 @@ class RecommendationService:
             limit=request.max_candidates,
             include_unverified=True,
         )
-        travel = [item for item in batch.matches if item[0].source_provider != "user_origin"]
-        candidates = travel or batch.matches
+        # A long-range plan is a travel recommendation. Returning the observer's
+        # current city as a destination would be misleading, particularly when the
+        # caller chose a country or cross-border scope.
+        candidates = [item for item in batch.matches if item[0].source_provider != "user_origin"]
+        if not candidates:
+            return AstronomicalPlanResponse(
+                generated_at_utc=datetime.now(UTC),
+                target=request.target,
+                scope=request.scope,
+                search_radius_km=request.max_distance_km,
+                planning_horizon_days=request.horizon_days,
+                best_time_utc=None,
+                candidates=[],
+                warnings=list(dict.fromkeys([*batch.warnings, WarningCode.NO_CANDIDATE_PLACES])),
+                provider_attributions=batch.attributions,
+            )
         best_time = _best_astronomical_time(
             astronomy=self._astronomy,
             target=request.target,

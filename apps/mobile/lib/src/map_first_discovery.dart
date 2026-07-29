@@ -50,6 +50,8 @@ class _MapFirstDiscoveryScreenState extends State<MapFirstDiscoveryScreen> {
   int _horizonDays = 7;
   bool _astronomicalPlan = false;
   int _selectedResult = 0;
+  int _selectedPlanResult = 0;
+  bool _showDirection = false;
   int _mapRevision = 0;
   String? _queryId;
   String? _stage;
@@ -111,9 +113,11 @@ class _MapFirstDiscoveryScreenState extends State<MapFirstDiscoveryScreen> {
       _results = const [];
       _planResults = const [];
       _selectedResult = 0;
+      _selectedPlanResult = 0;
+      _showDirection = false;
     });
     try {
-      if (_astronomicalPlan) {
+      if (_astronomicalPlan && _target != 'best_night_sky') {
         final plan = await _api.planAstronomy(
           location: _location,
           target: _target,
@@ -227,14 +231,22 @@ class _MapFirstDiscoveryScreenState extends State<MapFirstDiscoveryScreen> {
     return _results[_selectedResult.clamp(0, _results.length - 1)];
   }
 
+  AstronomicalPlanCandidate? get _selectedPlan {
+    if (_planResults.isEmpty) return null;
+    return _planResults[_selectedPlanResult.clamp(0, _planResults.length - 1)];
+  }
+
+  GeoPoint? get _selectedDestination =>
+      _selectedPlan?.place.point ?? _selected?.place.point;
+
   LatLng get _mapCenter {
-    final selected = _selected;
-    if (selected == null) {
+    final destination = _selectedDestination;
+    if (destination == null) {
       return LatLng(_location.latitude, _location.longitude);
     }
     return LatLng(
-      (selected.place.point.latitude + _location.latitude) / 2,
-      (selected.place.point.longitude + _location.longitude) / 2,
+      (destination.latitude + _location.latitude) / 2,
+      (destination.longitude + _location.longitude) / 2,
     );
   }
 
@@ -261,6 +273,7 @@ class _MapFirstDiscoveryScreenState extends State<MapFirstDiscoveryScreen> {
     setState(() {
       _target = target;
       _catalogObject = null;
+      if (target == 'best_night_sky') _astronomicalPlan = false;
     });
     Navigator.of(context).maybePop();
   }
@@ -313,7 +326,10 @@ class _MapFirstDiscoveryScreenState extends State<MapFirstDiscoveryScreen> {
                   point: _location,
                   selected: _catalogObject,
                   onSelected: (object) {
-                    setState(() => _catalogObject = object);
+                    setState(() {
+                      _catalogObject = object;
+                      if (object != null) _astronomicalPlan = false;
+                    });
                     if (object != null) Navigator.of(context).pop();
                   },
                 ),
@@ -329,7 +345,9 @@ class _MapFirstDiscoveryScreenState extends State<MapFirstDiscoveryScreen> {
     var radius = _radiusKm;
     var scope = _scope;
     var days = _horizonDays;
-    var astronomicalPlan = _astronomicalPlan;
+    var astronomicalPlan = _astronomicalPlan && _target != 'best_night_sky';
+    final canUseAstronomicalPlan =
+        _target != 'best_night_sky' && _catalogObject == null;
     await showModalBottomSheet<void>(
       context: context,
       backgroundColor: const Color(0xFF10192B),
@@ -358,12 +376,19 @@ class _MapFirstDiscoveryScreenState extends State<MapFirstDiscoveryScreen> {
                         value: 'country', label: Text('In my country')),
                     ButtonSegment(
                         value: 'adaptive', label: Text('Within radius')),
-                    ButtonSegment(value: 'global', label: Text('Worldwide')),
+                    ButtonSegment(value: 'global', label: Text('Cross-border')),
                   ],
                   selected: {scope},
                   onSelectionChanged: (value) =>
                       setSheetState(() => scope = value.first),
                 ),
+                if (scope == 'global') ...[
+                  const SizedBox(height: 8),
+                  const Text(
+                    'Cross-border search still uses the selected radius; it does not scan the entire planet.',
+                    style: TextStyle(fontSize: 12, color: Colors.white70),
+                  ),
+                ],
                 if (scope == 'country') ...[
                   const SizedBox(height: 12),
                   TextField(
@@ -389,11 +414,13 @@ class _MapFirstDiscoveryScreenState extends State<MapFirstDiscoveryScreen> {
                 SwitchListTile(
                   contentPadding: EdgeInsets.zero,
                   title: const Text('One-year astronomical plan'),
-                  subtitle: const Text(
-                      'No weather forecast: altitude, azimuth, Sun, and Moon.'),
+                  subtitle: Text(canUseAstronomicalPlan
+                      ? 'For a celestial target only. It uses altitude, azimuth, Sun, and Moon — not weather.'
+                      : 'Best night sky is a near-term destination search, so it always uses the forecast window.'),
                   value: astronomicalPlan,
-                  onChanged: (value) =>
-                      setSheetState(() => astronomicalPlan = value),
+                  onChanged: canUseAstronomicalPlan
+                      ? (value) => setSheetState(() => astronomicalPlan = value)
+                      : null,
                 ),
                 const SizedBox(height: 18),
                 SizedBox(
@@ -404,7 +431,8 @@ class _MapFirstDiscoveryScreenState extends State<MapFirstDiscoveryScreen> {
                         _radiusKm = radius;
                         _scope = scope;
                         _horizonDays = days;
-                        _astronomicalPlan = astronomicalPlan;
+                        _astronomicalPlan =
+                            canUseAstronomicalPlan && astronomicalPlan;
                       });
                       Navigator.pop(context);
                     },
@@ -502,6 +530,7 @@ class _MapFirstDiscoveryScreenState extends State<MapFirstDiscoveryScreen> {
   @override
   Widget build(BuildContext context) {
     final selected = _selected;
+    final selectedPlan = _selectedPlan;
     return Scaffold(
       backgroundColor: const Color(0xFF071020),
       body: Stack(
@@ -520,6 +549,22 @@ class _MapFirstDiscoveryScreenState extends State<MapFirstDiscoveryScreen> {
                   userAgentPackageName: 'com.thiezer.app',
                 ),
                 MarkerLayer(markers: _markers()),
+                if (_showDirection && _selectedDestination != null)
+                  PolylineLayer(
+                    polylines: [
+                      Polyline(
+                        points: [
+                          LatLng(_location.latitude, _location.longitude),
+                          LatLng(
+                            _selectedDestination!.latitude,
+                            _selectedDestination!.longitude,
+                          ),
+                        ],
+                        color: const Color(0xFFFFD166),
+                        strokeWidth: 4,
+                      ),
+                    ],
+                  ),
                 const RichAttributionWidget(
                   attributions: [
                     TextSourceAttribution('OpenStreetMap contributors')
@@ -577,12 +622,9 @@ class _MapFirstDiscoveryScreenState extends State<MapFirstDiscoveryScreen> {
             Positioned(left: 16, right: 16, top: 112, child: _progressCard()),
           if (!_loading && _error != null)
             Positioned(left: 16, right: 16, top: 112, child: _errorCard()),
-          if (_planResults.isNotEmpty)
+          if (selectedPlan != null)
             Positioned(
-                left: 16,
-                right: 16,
-                bottom: 18,
-                child: _planCard(_planResults.first))
+                left: 16, right: 16, bottom: 18, child: _planCard(selectedPlan))
           else if (selected != null)
             Positioned(
                 left: 16, right: 16, bottom: 18, child: _resultCard(selected))
@@ -624,18 +666,29 @@ class _MapFirstDiscoveryScreenState extends State<MapFirstDiscoveryScreen> {
             ),
           );
         }),
-        ..._planResults.asMap().entries.map((entry) => Marker(
-              point: LatLng(entry.value.place.point.latitude,
-                  entry.value.place.point.longitude),
-              width: 52,
-              height: 52,
+        ..._planResults.asMap().entries.map((entry) {
+          final selected = entry.key == _selectedPlanResult;
+          return Marker(
+            point: LatLng(entry.value.place.point.latitude,
+                entry.value.place.point.longitude),
+            width: selected ? 60 : 52,
+            height: selected ? 60 : 52,
+            child: GestureDetector(
+              onTap: () => setState(() {
+                _selectedPlanResult = entry.key;
+                _mapRevision++;
+              }),
               child: CircleAvatar(
-                backgroundColor: const Color(0xFFB79CFF),
+                backgroundColor: selected
+                    ? const Color(0xFFD7C8FF)
+                    : const Color(0xFFB79CFF),
                 foregroundColor: Colors.black,
                 child: Text('${entry.key + 1}',
                     style: const TextStyle(fontWeight: FontWeight.bold)),
               ),
-            )),
+            ),
+          );
+        }),
       ];
 
   Widget _topBar() => Padding(
@@ -810,12 +863,41 @@ class _MapFirstDiscoveryScreenState extends State<MapFirstDiscoveryScreen> {
                     _Metric('Quality', '${(result.bestScore * 100).round()}%'),
                     _Metric('Clouds',
                         '${(result.conditions.cloud * 100).round()}%'),
-                    _Metric('Target altitude',
-                        '${result.astronomy.altitudeDeg.toStringAsFixed(0)}°'),
+                    if (_target == 'best_night_sky') ...[
+                      _Metric('Darkness estimate',
+                          '${(result.place.darknessScore * 100).round()}%'),
+                      _Metric('Open horizon',
+                          '${(result.place.horizonOpennessScore * 100).round()}%'),
+                    ] else
+                      _Metric('Target altitude',
+                          '${result.astronomy.altitudeDeg.toStringAsFixed(0)}°'),
                     _Metric('Wind',
                         '${result.conditions.windMps.toStringAsFixed(1)} m/s'),
                   ],
                 ),
+                if (_target == 'best_night_sky')
+                  const Padding(
+                    padding: EdgeInsets.only(top: 8),
+                    child: Text(
+                      'Best night sky ranks darkness, terrain openness, access estimate, and the near-term forecast. It has no celestial target altitude or azimuth.',
+                      style: TextStyle(fontSize: 12, color: Colors.white70),
+                    ),
+                  ),
+                const SizedBox(height: 8),
+                OutlinedButton.icon(
+                  onPressed: () =>
+                      setState(() => _showDirection = !_showDirection),
+                  icon: Icon(
+                      _showDirection ? Icons.visibility_off : Icons.alt_route),
+                  label: Text(_showDirection
+                      ? 'Hide direction'
+                      : 'Show direction on map'),
+                ),
+                if (_showDirection)
+                  const Text(
+                    'The line shows a straight-line direction. Use Navigate for a road route.',
+                    style: TextStyle(fontSize: 12, color: Colors.white70),
+                  ),
                 if (result.warnings.isNotEmpty) ...[
                   const SizedBox(height: 9),
                   Text(
@@ -859,7 +941,7 @@ class _MapFirstDiscoveryScreenState extends State<MapFirstDiscoveryScreen> {
 
   Widget _planCard(AstronomicalPlanCandidate result) {
     final time =
-        DateFormat('EEEE, dd MMMM y, HH:mm', 'ru').format(result.bestTime);
+        DateFormat('EEEE, dd MMMM y, HH:mm', 'en').format(result.bestTime);
     return Center(
       child: ConstrainedBox(
         constraints: const BoxConstraints(maxWidth: 880),
@@ -885,6 +967,26 @@ class _MapFirstDiscoveryScreenState extends State<MapFirstDiscoveryScreen> {
                       'Azimuth', '${result.azimuthDeg.toStringAsFixed(0)}°'),
                   _Metric('Geometry', '${(result.score * 100).round()}%'),
                 ]),
+                const SizedBox(height: 8),
+                const Text(
+                  'Altitude is the target height above the horizon. Azimuth is its direction clockwise from north. Geometry combines target altitude, darkness, and Moon interference.',
+                  style: TextStyle(fontSize: 12, color: Colors.white70),
+                ),
+                const SizedBox(height: 8),
+                OutlinedButton.icon(
+                  onPressed: () =>
+                      setState(() => _showDirection = !_showDirection),
+                  icon: Icon(
+                      _showDirection ? Icons.visibility_off : Icons.alt_route),
+                  label: Text(_showDirection
+                      ? 'Hide direction'
+                      : 'Show direction on map'),
+                ),
+                if (_showDirection)
+                  const Text(
+                    'The line shows a straight-line direction. Road routing is opened through Navigate for verified map providers.',
+                    style: TextStyle(fontSize: 12, color: Colors.white70),
+                  ),
               ],
             ),
           ),
@@ -946,7 +1048,7 @@ String _targetLabel(String value) => switch (value) {
 String _scopeLabel(String value) => switch (value) {
       'adaptive' => 'within the selected radius',
       'country' => 'in my country only',
-      'global' => 'worldwide',
+      'global' => 'cross-border',
       _ => value,
     };
 
