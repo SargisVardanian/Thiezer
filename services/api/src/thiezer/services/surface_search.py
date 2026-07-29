@@ -3,7 +3,13 @@ from __future__ import annotations
 from thiezer.domain.boundaries import CountryBoundaryProvider, StaticCountryBoundaryProvider
 from thiezer.domain.contracts import GeoPoint, SearchScope
 from thiezer.domain.geospatial import haversine_distance_km
-from thiezer.domain.search_cells import choose_h3_search_plan, cover_circle, refine_cells
+from thiezer.domain.search_cells import (
+    H3SearchPlan,
+    choose_h3_search_plan,
+    cover_circle,
+    cover_world,
+    refine_cells,
+)
 from thiezer.domain.spatial_diversity import spatial_nms
 from thiezer.domain.static_scoring import (
     StaticFilterPolicy,
@@ -51,13 +57,25 @@ class SurfaceSearchService:
             country_code is None or not self._boundaries.supports(country_code)
         ):
             return self._empty_result(max_distance_km)
+        if (
+            scope == SearchScope.GLOBAL
+            and getattr(self._static, "source_name", "") == "procedural_surface_v1"
+        ):
+            # The development provider models only Armenia and would fabricate global rankings.
+            # Worldwide discovery requires calibrated global COG layers.
+            return self._empty_result(max_distance_km)
 
         await report_progress(progress, "generating_cells")
-        plan = choose_h3_search_plan(max_distance_km)
-        coarse_ids = cover_circle(
-            user_location,
-            max_distance_km,
-            plan.coarse_resolution,
+        worldwide = scope == SearchScope.GLOBAL
+        plan = H3SearchPlan(1, 3) if worldwide else choose_h3_search_plan(max_distance_km)
+        coarse_ids = (
+            cover_world(plan.coarse_resolution)
+            if worldwide
+            else cover_circle(
+                user_location,
+                max_distance_km,
+                plan.coarse_resolution,
+            )
         )
         await report_progress(progress, "fetching_elevation")
         await report_progress(progress, "reading_surface_windows")
@@ -101,11 +119,12 @@ class SurfaceSearchService:
         # Materialized access points are sampled inside H3 cells. Keep the hard radius
         # before ranking/truncating; otherwise a cross-border search can spend every
         # available slot on attractive but distant points and leave no local destination.
-        sites = [
-            site
-            for site in sites
-            if haversine_distance_km(user_location, site.point) <= max_distance_km
-        ]
+        if not worldwide:
+            sites = [
+                site
+                for site in sites
+                if haversine_distance_km(user_location, site.point) <= max_distance_km
+            ]
         # An H3 cell may straddle a border and a sampled access point can land on the
         # other side. Re-apply the requested country boundary before ranking or truncating.
         if scope == SearchScope.COUNTRY and country_code is not None:

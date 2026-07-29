@@ -315,6 +315,9 @@ class ThiezerApiClient {
       'max_results': 6,
       'minimum_score': 0.28,
       'include_unverified': true,
+      'preferences': <String, dynamic>{
+        'nearby_first': scope != 'global',
+      },
     };
   }
 }

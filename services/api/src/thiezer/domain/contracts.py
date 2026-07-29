@@ -66,11 +66,7 @@ class ObservationMode(StrEnum):
 
 
 class SearchScope(StrEnum):
-    """Boundary policy for a radius-based search.
-
-    ADAPTIVE and GLOBAL both allow crossing borders. COUNTRY restricts known country codes.
-    The engine never scans an entire large country; max_distance_km is always the hard spatial bound.
-    """
+    """Spatial policy: local radius, country boundary, or global discovery."""
 
     ADAPTIVE = "adaptive"
     COUNTRY = "country"
@@ -297,7 +293,7 @@ class RecommendationSearchRequest(BaseModel):
     end_utc: datetime
     scope: SearchScope = SearchScope.ADAPTIVE
     country_code: CountryCode | None = None
-    max_distance_km: Annotated[float, Field(gt=0.0, le=1_000.0)] = 250.0
+    max_distance_km: Annotated[float, Field(gt=0.0, le=20_100.0)] = 250.0
     max_candidates: Annotated[int, Field(ge=1, le=40)] = 16
     max_results: Annotated[int, Field(ge=1, le=10)] = 5
     minimum_score: UnitScore = 0.35
@@ -368,7 +364,7 @@ class AstronomicalPlanRequest(BaseModel):
     horizon_days: Annotated[int, Field(ge=1, le=730)] = 365
     scope: SearchScope = SearchScope.ADAPTIVE
     country_code: CountryCode | None = None
-    max_distance_km: Annotated[float, Field(gt=0.0, le=2_000.0)] = 250.0
+    max_distance_km: Annotated[float, Field(gt=0.0, le=20_100.0)] = 250.0
     max_candidates: Annotated[int, Field(ge=1, le=20)] = 12
     max_results: Annotated[int, Field(ge=1, le=8)] = 6
 

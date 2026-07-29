@@ -54,7 +54,7 @@ async def test_armenia_coarse_to_fine_matches_exhaustive_res7_oracle() -> None:
 
 
 @pytest.mark.asyncio
-async def test_cross_border_search_keeps_nearby_sites_before_candidate_truncation() -> None:
+async def test_worldwide_search_refuses_uncalibrated_development_surface_data() -> None:
     center = GeoPoint(latitude_deg=40.1772, longitude_deg=44.5035)
     radius_km = 150.0
     static = ProceduralSurfaceLayerProvider()
@@ -71,5 +71,4 @@ async def test_cross_border_search_keeps_nearby_sites_before_candidate_truncatio
         limit=12,
     )
 
-    assert result.sites
-    assert all(haversine_distance_km(center, site.point) <= radius_km for site in result.sites)
+    assert result.sites == []

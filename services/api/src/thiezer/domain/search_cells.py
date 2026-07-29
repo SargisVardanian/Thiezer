@@ -42,6 +42,17 @@ def cover_circle(center: GeoPoint, radius_km: float, resolution: int) -> list[st
     )
 
 
+def cover_world(resolution: int) -> list[str]:
+    """Return a deterministic, bounded global H3 cover for worldwide discovery."""
+    cells: set[str] = set()
+    for root in h3.get_res0_cells():
+        if resolution == 0:
+            cells.add(root)
+        else:
+            cells.update(h3.cell_to_children(root, resolution))
+    return sorted(cells)
+
+
 def refine_cells(parent_cells: Iterable[str], fine_resolution: int) -> list[str]:
     children: set[str] = set()
     for parent in parent_cells:

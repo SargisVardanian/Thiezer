@@ -70,7 +70,7 @@ class SurfacePlaceRepository:
             ):
                 continue
             distance = haversine_distance_km(user_location, site.point)
-            if distance > max_distance_km + _RADIUS_TOLERANCE_KM:
+            if scope != SearchScope.GLOBAL and distance > max_distance_km + _RADIUS_TOLERANCE_KM:
                 continue
             point_key = (
                 round(site.point.latitude_deg * 100_000),
@@ -115,7 +115,7 @@ class SurfacePlaceRepository:
             round(user_location.latitude_deg * 100_000),
             round(user_location.longitude_deg * 100_000),
         )
-        if origin_key not in seen_points:
+        if scope != SearchScope.GLOBAL and origin_key not in seen_points:
             matches.append(
                 (
                     CandidatePlace(
@@ -143,7 +143,17 @@ class SurfacePlaceRepository:
                 )
             )
 
-        matches.sort(key=lambda item: (item[1], -item[0].darkness_score, item[0].id))
+        if scope == SearchScope.GLOBAL:
+            matches.sort(
+                key=lambda item: (
+                    -item[0].darkness_score,
+                    -item[0].horizon_openness_score,
+                    -item[0].accessibility_score,
+                    item[0].id,
+                )
+            )
+        else:
+            matches.sort(key=lambda item: (item[1], -item[0].darkness_score, item[0].id))
         warnings = [WarningCode.DARKNESS_IS_PROXY] if result.darkness_is_proxy else []
         coverage = sorted({place.country_code for place, _ in matches if place.country_code})
         if scope == SearchScope.COUNTRY and country_code and matches:

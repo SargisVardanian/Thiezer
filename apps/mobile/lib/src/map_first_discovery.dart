@@ -61,6 +61,8 @@ class _MapFirstDiscoveryScreenState extends State<MapFirstDiscoveryScreen> {
   bool _locating = false;
   bool _didAutoExpandHorizon = false;
 
+  double get _effectiveSearchRadiusKm => _scope == 'global' ? 20100 : _radiusKm;
+
   @override
   void initState() {
     super.initState();
@@ -122,7 +124,7 @@ class _MapFirstDiscoveryScreenState extends State<MapFirstDiscoveryScreen> {
         final plan = await _api.planAstronomy(
           location: _location,
           target: _target,
-          radiusKm: _radiusKm,
+          radiusKm: _effectiveSearchRadiusKm,
           scope: _scope,
           countryCode: _countryController.text.trim(),
           horizonDays: 365,
@@ -143,7 +145,7 @@ class _MapFirstDiscoveryScreenState extends State<MapFirstDiscoveryScreen> {
         location: _location,
         target: _target,
         catalogObject: _catalogObject,
-        radiusKm: _radiusKm,
+        radiusKm: _effectiveSearchRadiusKm,
         scope: _scope,
         countryCode: _countryController.text.trim(),
         horizon: Duration(days: _horizonDays),
@@ -184,7 +186,9 @@ class _MapFirstDiscoveryScreenState extends State<MapFirstDiscoveryScreen> {
           _selectedResult = 0;
           _loading = false;
           _error = results.isEmpty
-              ? _warningsMessage(response?.warnings ?? const <String>[])
+              ? (_scope == 'global'
+                  ? 'Worldwide search needs calibrated global surface data. The local development provider is limited to Armenia and will not fabricate global recommendations.'
+                  : _warningsMessage(response?.warnings ?? const <String>[]))
               : null;
           _mapRevision++;
         });
@@ -391,21 +395,23 @@ class _MapFirstDiscoveryScreenState extends State<MapFirstDiscoveryScreen> {
                 Text('Search settings',
                     style: Theme.of(context).textTheme.titleLarge),
                 const SizedBox(height: 14),
-                Text('Radius: ${radius.round()} km'),
-                Slider(
-                  value: radius,
-                  min: 25,
-                  max: 500,
-                  divisions: 19,
-                  onChanged: (value) => setSheetState(() => radius = value),
-                ),
+                if (scope != 'global') ...[
+                  Text('Radius: ${radius.round()} km'),
+                  Slider(
+                    value: radius,
+                    min: 25,
+                    max: 500,
+                    divisions: 19,
+                    onChanged: (value) => setSheetState(() => radius = value),
+                  ),
+                ],
                 SegmentedButton<String>(
                   segments: const [
                     ButtonSegment(
                         value: 'country', label: Text('In my country')),
                     ButtonSegment(
                         value: 'adaptive', label: Text('Within radius')),
-                    ButtonSegment(value: 'global', label: Text('Cross-border')),
+                    ButtonSegment(value: 'global', label: Text('Worldwide')),
                   ],
                   selected: {scope},
                   onSelectionChanged: (value) =>
@@ -414,7 +420,7 @@ class _MapFirstDiscoveryScreenState extends State<MapFirstDiscoveryScreen> {
                 if (scope == 'global') ...[
                   const SizedBox(height: 8),
                   const Text(
-                    'Cross-border search still uses the selected radius; it does not scan the entire planet.',
+                    'Worldwide search ignores the radius and ranks global candidates. Results may be far away, so build a road route before planning a trip.',
                     style: TextStyle(fontSize: 12, color: Colors.white70),
                   ),
                 ],
@@ -771,7 +777,7 @@ class _MapFirstDiscoveryScreenState extends State<MapFirstDiscoveryScreen> {
                             ),
                             const SizedBox(height: 3),
                             Text(
-                              '${_radiusKm.round()} km · ${_scopeLabel(_scope)} · ${_astronomicalPlan ? 'one-year plan' : '$_horizonDays-day forecast'}',
+                              '${_scope == 'global' ? 'No radius' : '${_radiusKm.round()} km'} · ${_scopeLabel(_scope)} · ${_astronomicalPlan ? 'one-year plan' : '$_horizonDays-day forecast'}',
                               style: const TextStyle(
                                 fontSize: 12,
                                 color: Colors.white70,
@@ -1154,7 +1160,7 @@ String _targetLabel(String value) => switch (value) {
 String _scopeLabel(String value) => switch (value) {
       'adaptive' => 'within the selected radius',
       'country' => 'in my country only',
-      'global' => 'cross-border',
+      'global' => 'worldwide',
       _ => value,
     };
 
