@@ -5,7 +5,7 @@ import 'src/map_first_discovery.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await initializeDateFormatting('ru');
+  await initializeDateFormatting('en');
   final scheme = ColorScheme.fromSeed(
     seedColor: const Color(0xFF89B4FF),
     brightness: Brightness.dark,
@@ -14,6 +14,7 @@ Future<void> main() async {
     MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Thiezer',
+      locale: const Locale('en'),
       theme: ThemeData(
         brightness: Brightness.dark,
         colorScheme: scheme,

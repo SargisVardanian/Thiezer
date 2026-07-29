@@ -20,17 +20,18 @@ class MapFirstDiscoveryScreen extends StatefulWidget {
   const MapFirstDiscoveryScreen({super.key});
 
   @override
-  State<MapFirstDiscoveryScreen> createState() => _MapFirstDiscoveryScreenState();
+  State<MapFirstDiscoveryScreen> createState() =>
+      _MapFirstDiscoveryScreenState();
 }
 
 class _MapFirstDiscoveryScreenState extends State<MapFirstDiscoveryScreen> {
   static const _fallbackTargets = <TargetOption>[
-    TargetOption(id: 'moon', label: 'Луна'),
-    TargetOption(id: 'milky_way', label: 'Млечный Путь'),
-    TargetOption(id: 'jupiter', label: 'Юпитер'),
-    TargetOption(id: 'saturn', label: 'Сатурн'),
-    TargetOption(id: 'mars', label: 'Марс'),
-    TargetOption(id: 'best_night_sky', label: 'Лучшее небо'),
+    TargetOption(id: 'moon', label: 'Moon'),
+    TargetOption(id: 'milky_way', label: 'Milky Way'),
+    TargetOption(id: 'jupiter', label: 'Jupiter'),
+    TargetOption(id: 'saturn', label: 'Saturn'),
+    TargetOption(id: 'mars', label: 'Mars'),
+    TargetOption(id: 'best_night_sky', label: 'Best night sky'),
   ];
 
   late final ThiezerApiClient _api;
@@ -127,7 +128,7 @@ class _MapFirstDiscoveryScreenState extends State<MapFirstDiscoveryScreen> {
           _loading = false;
           _stage = 'completed';
           _error = plan.candidates.isEmpty
-              ? 'На выбранном горизонте нет астрономического окна для этой цели.'
+              ? 'There is no astronomical window for this target within the selected horizon.'
               : null;
           _mapRevision++;
         });
@@ -147,7 +148,7 @@ class _MapFirstDiscoveryScreenState extends State<MapFirstDiscoveryScreen> {
     } on Object catch (error) {
       if (mounted) {
         setState(() {
-          _error = 'Не удалось выполнить расчёт: $error';
+          _error = 'Could not complete the calculation: $error';
           _loading = false;
         });
       }
@@ -198,7 +199,7 @@ class _MapFirstDiscoveryScreenState extends State<MapFirstDiscoveryScreen> {
     if (mounted) {
       setState(() {
         _loading = false;
-        _error = 'Расчёт занял слишком много времени. Попробуйте меньший радиус.';
+        _error = 'The calculation took too long. Try a smaller radius.';
       });
     }
   }
@@ -228,7 +229,9 @@ class _MapFirstDiscoveryScreenState extends State<MapFirstDiscoveryScreen> {
 
   LatLng get _mapCenter {
     final selected = _selected;
-    if (selected == null) return LatLng(_location.latitude, _location.longitude);
+    if (selected == null) {
+      return LatLng(_location.latitude, _location.longitude);
+    }
     return LatLng(
       (selected.place.point.latitude + _location.latitude) / 2,
       (selected.place.point.longitude + _location.longitude) / 2,
@@ -239,7 +242,9 @@ class _MapFirstDiscoveryScreenState extends State<MapFirstDiscoveryScreen> {
     final uri = Uri.tryParse(value);
     if (uri == null ||
         !await launchUrl(uri, mode: LaunchMode.externalApplication)) {
-      if (mounted) setState(() => _error = 'Не удалось открыть навигатор.');
+      if (mounted) {
+        setState(() => _error = 'Could not open the navigation app.');
+      }
     }
   }
 
@@ -277,7 +282,8 @@ class _MapFirstDiscoveryScreenState extends State<MapFirstDiscoveryScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('Что наблюдаем?', style: Theme.of(context).textTheme.headlineSmall),
+                Text('What would you like to observe?',
+                    style: Theme.of(context).textTheme.headlineSmall),
                 const SizedBox(height: 12),
                 Wrap(
                   spacing: 8,
@@ -293,7 +299,8 @@ class _MapFirstDiscoveryScreenState extends State<MapFirstDiscoveryScreen> {
                           }.contains(item.id))
                       .map(
                         (item) => ChoiceChip(
-                          selected: _catalogObject == null && _target == item.id,
+                          selected:
+                              _catalogObject == null && _target == item.id,
                           label: Text(item.label),
                           onSelected: (_) => _selectPreset(item.id),
                         ),
@@ -334,9 +341,10 @@ class _MapFirstDiscoveryScreenState extends State<MapFirstDiscoveryScreen> {
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('Параметры поиска', style: Theme.of(context).textTheme.titleLarge),
+                Text('Search settings',
+                    style: Theme.of(context).textTheme.titleLarge),
                 const SizedBox(height: 14),
-                Text('Радиус: ${radius.round()} км'),
+                Text('Radius: ${radius.round()} km'),
                 Slider(
                   value: radius,
                   min: 25,
@@ -346,39 +354,46 @@ class _MapFirstDiscoveryScreenState extends State<MapFirstDiscoveryScreen> {
                 ),
                 SegmentedButton<String>(
                   segments: const [
-                    ButtonSegment(value: 'country', label: Text('В моей стране')),
-                    ButtonSegment(value: 'adaptive', label: Text('В радиусе')),
-                    ButtonSegment(value: 'global', label: Text('По всему миру')),
+                    ButtonSegment(
+                        value: 'country', label: Text('In my country')),
+                    ButtonSegment(
+                        value: 'adaptive', label: Text('Within radius')),
+                    ButtonSegment(value: 'global', label: Text('Worldwide')),
                   ],
                   selected: {scope},
-                  onSelectionChanged: (value) => setSheetState(() => scope = value.first),
+                  onSelectionChanged: (value) =>
+                      setSheetState(() => scope = value.first),
                 ),
                 if (scope == 'country') ...[
                   const SizedBox(height: 12),
                   TextField(
                     controller: _countryController,
                     textCapitalization: TextCapitalization.characters,
-                    decoration: const InputDecoration(labelText: 'ISO-код страны'),
+                    decoration:
+                        const InputDecoration(labelText: 'Country ISO code'),
                   ),
                 ],
                 const SizedBox(height: 14),
                 SegmentedButton<int>(
                   segments: const [
-                    ButtonSegment(value: 1, label: Text('1 день')),
-                    ButtonSegment(value: 3, label: Text('3 дня')),
-                    ButtonSegment(value: 7, label: Text('7 дней')),
-                    ButtonSegment(value: 14, label: Text('14 дней')),
+                    ButtonSegment(value: 1, label: Text('1 day')),
+                    ButtonSegment(value: 3, label: Text('3 days')),
+                    ButtonSegment(value: 7, label: Text('7 days')),
+                    ButtonSegment(value: 14, label: Text('14 days')),
                   ],
                   selected: {days},
-                  onSelectionChanged: (value) => setSheetState(() => days = value.first),
+                  onSelectionChanged: (value) =>
+                      setSheetState(() => days = value.first),
                 ),
                 const SizedBox(height: 14),
                 SwitchListTile(
                   contentPadding: EdgeInsets.zero,
-                  title: const Text('Астрономический план на год'),
-                  subtitle: const Text('Без прогноза погоды: высота, азимут, Солнце и Луна.'),
+                  title: const Text('One-year astronomical plan'),
+                  subtitle: const Text(
+                      'No weather forecast: altitude, azimuth, Sun, and Moon.'),
                   value: astronomicalPlan,
-                  onChanged: (value) => setSheetState(() => astronomicalPlan = value),
+                  onChanged: (value) =>
+                      setSheetState(() => astronomicalPlan = value),
                 ),
                 const SizedBox(height: 18),
                 SizedBox(
@@ -393,7 +408,7 @@ class _MapFirstDiscoveryScreenState extends State<MapFirstDiscoveryScreen> {
                       });
                       Navigator.pop(context);
                     },
-                    child: const Text('Применить'),
+                    child: const Text('Apply'),
                   ),
                 ),
               ],
@@ -414,14 +429,16 @@ class _MapFirstDiscoveryScreenState extends State<MapFirstDiscoveryScreen> {
           decoration: const InputDecoration(labelText: 'URL'),
         ),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(context), child: const Text('Отмена')),
+          TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text('Cancel')),
           FilledButton(
             onPressed: () {
               _api.baseUrl = _apiController.text;
               Navigator.pop(context);
               _loadTargets();
             },
-            child: const Text('Сохранить'),
+            child: const Text('Save'),
           ),
         ],
       ),
@@ -451,7 +468,8 @@ class _MapFirstDiscoveryScreenState extends State<MapFirstDiscoveryScreen> {
                 if (index == 0) {
                   return Padding(
                     padding: const EdgeInsets.only(bottom: 12),
-                    child: Text('Техника поблизости', style: Theme.of(context).textTheme.titleLarge),
+                    child: Text('Equipment nearby',
+                        style: Theme.of(context).textTheme.titleLarge),
                   );
                 }
                 final store = stores[index - 1];
@@ -459,12 +477,15 @@ class _MapFirstDiscoveryScreenState extends State<MapFirstDiscoveryScreen> {
                   child: ListTile(
                     title: Text(store.name),
                     subtitle: Text([
-                      if (store.distanceKm != null) '${store.distanceKm!.toStringAsFixed(1)} км',
+                      if (store.distanceKm != null)
+                        '${store.distanceKm!.toStringAsFixed(1)} km',
                       store.categories.take(3).join(', '),
                     ].join(' · ')),
                     trailing: const Icon(Icons.open_in_new),
                     onTap: () => _openUrl(
-                      store.routes.isNotEmpty ? store.routes.first.url : store.website,
+                      store.routes.isNotEmpty
+                          ? store.routes.first.url
+                          : store.website,
                     ),
                   ),
                 );
@@ -474,7 +495,7 @@ class _MapFirstDiscoveryScreenState extends State<MapFirstDiscoveryScreen> {
         ),
       );
     } on Object catch (error) {
-      if (mounted) setState(() => _error = 'Не удалось загрузить магазины: $error');
+      if (mounted) setState(() => _error = 'Could not load stores: $error');
     }
   }
 
@@ -487,7 +508,8 @@ class _MapFirstDiscoveryScreenState extends State<MapFirstDiscoveryScreen> {
         children: [
           Positioned.fill(
             child: FlutterMap(
-              key: ValueKey('map-$_mapRevision-${selected?.place.id ?? 'origin'}'),
+              key: ValueKey(
+                  'map-$_mapRevision-${selected?.place.id ?? 'origin'}'),
               options: MapOptions(
                 initialCenter: _mapCenter,
                 initialZoom: selected == null ? 8 : 7,
@@ -499,7 +521,9 @@ class _MapFirstDiscoveryScreenState extends State<MapFirstDiscoveryScreen> {
                 ),
                 MarkerLayer(markers: _markers()),
                 const RichAttributionWidget(
-                  attributions: [TextSourceAttribution('OpenStreetMap contributors')],
+                  attributions: [
+                    TextSourceAttribution('OpenStreetMap contributors')
+                  ],
                 ),
               ],
             ),
@@ -511,7 +535,10 @@ class _MapFirstDiscoveryScreenState extends State<MapFirstDiscoveryScreen> {
                   gradient: LinearGradient(
                     begin: Alignment.topCenter,
                     end: Alignment.center,
-                    colors: [Colors.black.withValues(alpha: .48), Colors.transparent],
+                    colors: [
+                      Colors.black.withValues(alpha: .48),
+                      Colors.transparent
+                    ],
                   ),
                 ),
               ),
@@ -524,26 +551,41 @@ class _MapFirstDiscoveryScreenState extends State<MapFirstDiscoveryScreen> {
             child: Column(
               children: [
                 _MapAction(
-                  tooltip: 'Моя геолокация',
+                  tooltip: 'My location',
                   icon: _locating ? Icons.hourglass_top : Icons.my_location,
                   onPressed: _locating ? null : _useCurrentLocation,
                 ),
                 const SizedBox(height: 8),
-                _MapAction(tooltip: 'Фильтры', icon: Icons.tune, onPressed: _showFilters),
+                _MapAction(
+                    tooltip: 'Filters',
+                    icon: Icons.tune,
+                    onPressed: _showFilters),
                 const SizedBox(height: 8),
-                _MapAction(tooltip: 'Магазины', icon: Icons.storefront, onPressed: _showStores),
+                _MapAction(
+                    tooltip: 'Stores',
+                    icon: Icons.storefront,
+                    onPressed: _showStores),
                 const SizedBox(height: 8),
-                _MapAction(tooltip: 'Настройки', icon: Icons.settings, onPressed: _showSettings),
+                _MapAction(
+                    tooltip: 'Settings',
+                    icon: Icons.settings,
+                    onPressed: _showSettings),
               ],
             ),
           ),
-          if (_loading) Positioned(left: 16, right: 16, top: 112, child: _progressCard()),
+          if (_loading)
+            Positioned(left: 16, right: 16, top: 112, child: _progressCard()),
           if (!_loading && _error != null)
             Positioned(left: 16, right: 16, top: 112, child: _errorCard()),
           if (_planResults.isNotEmpty)
-            Positioned(left: 16, right: 16, bottom: 18, child: _planCard(_planResults.first))
+            Positioned(
+                left: 16,
+                right: 16,
+                bottom: 18,
+                child: _planCard(_planResults.first))
           else if (selected != null)
-            Positioned(left: 16, right: 16, bottom: 18, child: _resultCard(selected))
+            Positioned(
+                left: 16, right: 16, bottom: 18, child: _resultCard(selected))
           else if (!_loading)
             Positioned(left: 16, right: 16, bottom: 18, child: _welcomeCard()),
         ],
@@ -556,12 +598,14 @@ class _MapFirstDiscoveryScreenState extends State<MapFirstDiscoveryScreen> {
           point: LatLng(_location.latitude, _location.longitude),
           width: 48,
           height: 48,
-          child: const Icon(Icons.my_location, size: 34, color: Color(0xFF64D8FF)),
+          child:
+              const Icon(Icons.my_location, size: 34, color: Color(0xFF64D8FF)),
         ),
         ..._results.asMap().entries.map((entry) {
           final selected = entry.key == _selectedResult;
           return Marker(
-            point: LatLng(entry.value.place.point.latitude, entry.value.place.point.longitude),
+            point: LatLng(entry.value.place.point.latitude,
+                entry.value.place.point.longitude),
             width: selected ? 58 : 46,
             height: selected ? 58 : 46,
             child: GestureDetector(
@@ -570,21 +614,26 @@ class _MapFirstDiscoveryScreenState extends State<MapFirstDiscoveryScreen> {
                 _mapRevision++;
               }),
               child: CircleAvatar(
-                backgroundColor: selected ? const Color(0xFF91F2B6) : const Color(0xFF8AB4FF),
+                backgroundColor: selected
+                    ? const Color(0xFF91F2B6)
+                    : const Color(0xFF8AB4FF),
                 foregroundColor: Colors.black,
-                child: Text('${entry.key + 1}', style: const TextStyle(fontWeight: FontWeight.bold)),
+                child: Text('${entry.key + 1}',
+                    style: const TextStyle(fontWeight: FontWeight.bold)),
               ),
             ),
           );
         }),
         ..._planResults.asMap().entries.map((entry) => Marker(
-              point: LatLng(entry.value.place.point.latitude, entry.value.place.point.longitude),
+              point: LatLng(entry.value.place.point.latitude,
+                  entry.value.place.point.longitude),
               width: 52,
               height: 52,
               child: CircleAvatar(
                 backgroundColor: const Color(0xFFB79CFF),
                 foregroundColor: Colors.black,
-                child: Text('${entry.key + 1}', style: const TextStyle(fontWeight: FontWeight.bold)),
+                child: Text('${entry.key + 1}',
+                    style: const TextStyle(fontWeight: FontWeight.bold)),
               ),
             )),
       ];
@@ -602,7 +651,8 @@ class _MapFirstDiscoveryScreenState extends State<MapFirstDiscoveryScreen> {
                 borderRadius: BorderRadius.circular(20),
                 onTap: _showTargetPicker,
                 child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 13),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 16, vertical: 13),
                   child: Row(
                     children: [
                       const Icon(Icons.search, color: Color(0xFF9FC1FF)),
@@ -616,11 +666,13 @@ class _MapFirstDiscoveryScreenState extends State<MapFirstDiscoveryScreen> {
                               _catalogObject?.name ?? _targetLabel(_target),
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
-                              style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 17),
+                              style: const TextStyle(
+                                  fontWeight: FontWeight.w700, fontSize: 17),
                             ),
                             Text(
-                              '${_radiusKm.round()} км · ${_scopeLabel(_scope)} · ${_astronomicalPlan ? 'астроплан на год' : '$_horizonDays дн.'}',
-                              style: const TextStyle(fontSize: 12, color: Colors.white70),
+                              '${_radiusKm.round()} km · ${_scopeLabel(_scope)} · ${_astronomicalPlan ? 'one-year plan' : '$_horizonDays days'}',
+                              style: const TextStyle(
+                                  fontSize: 12, color: Colors.white70),
                             ),
                           ],
                         ),
@@ -628,7 +680,7 @@ class _MapFirstDiscoveryScreenState extends State<MapFirstDiscoveryScreen> {
                       FilledButton.icon(
                         onPressed: _loading ? null : _startSearch,
                         icon: const Icon(Icons.travel_explore),
-                        label: const Text('Найти'),
+                        label: const Text('Search'),
                       ),
                     ],
                   ),
@@ -654,7 +706,8 @@ class _MapFirstDiscoveryScreenState extends State<MapFirstDiscoveryScreen> {
                   ),
                   const SizedBox(width: 14),
                   Expanded(child: Text(_stageLabel(_stage ?? 'queued'))),
-                  TextButton(onPressed: _cancelSearch, child: const Text('Отменить')),
+                  TextButton(
+                      onPressed: _cancelSearch, child: const Text('Cancel')),
                 ],
               ),
             ),
@@ -674,7 +727,8 @@ class _MapFirstDiscoveryScreenState extends State<MapFirstDiscoveryScreen> {
                   const Icon(Icons.info_outline, color: Colors.orangeAccent),
                   const SizedBox(width: 12),
                   Expanded(child: Text(_error!)),
-                  TextButton(onPressed: _startSearch, child: const Text('Повторить')),
+                  TextButton(
+                      onPressed: _startSearch, child: const Text('Try again')),
                 ],
               ),
             ),
@@ -691,11 +745,12 @@ class _MapFirstDiscoveryScreenState extends State<MapFirstDiscoveryScreen> {
               padding: const EdgeInsets.all(18),
               child: Row(
                 children: [
-                  const Icon(Icons.nightlight_round, size: 32, color: Color(0xFFB3C9FF)),
+                  const Icon(Icons.nightlight_round,
+                      size: 32, color: Color(0xFFB3C9FF)),
                   const SizedBox(width: 14),
                   const Expanded(
                     child: Text(
-                      'Выберите объект и нажмите «Найти». Карта останется доступной во время расчёта.',
+                      'Choose a target and tap Search. The map stays available during the calculation.',
                     ),
                   ),
                 ],
@@ -731,9 +786,10 @@ class _MapFirstDiscoveryScreenState extends State<MapFirstDiscoveryScreen> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(result.place.name, style: Theme.of(context).textTheme.titleMedium),
+                          Text(result.place.name,
+                              style: Theme.of(context).textTheme.titleMedium),
                           Text(
-                            '${result.distanceKm.toStringAsFixed(1)} км · лучше $time',
+                            '${result.distanceKm.toStringAsFixed(1)} km · best $time',
                             style: const TextStyle(color: Colors.white70),
                           ),
                         ],
@@ -742,7 +798,7 @@ class _MapFirstDiscoveryScreenState extends State<MapFirstDiscoveryScreen> {
                     FilledButton.icon(
                       onPressed: () => _openPreferredRoute(result),
                       icon: const Icon(Icons.directions_car),
-                      label: const Text('Поехать'),
+                      label: const Text('Navigate'),
                     ),
                   ],
                 ),
@@ -751,17 +807,21 @@ class _MapFirstDiscoveryScreenState extends State<MapFirstDiscoveryScreen> {
                   spacing: 14,
                   runSpacing: 8,
                   children: [
-                    _Metric('Качество', '${(result.bestScore * 100).round()}%'),
-                    _Metric('Облака', '${(result.conditions.cloud * 100).round()}%'),
-                    _Metric('Высота цели', '${result.astronomy.altitudeDeg.toStringAsFixed(0)}°'),
-                    _Metric('Ветер', '${result.conditions.windMps.toStringAsFixed(1)} м/с'),
+                    _Metric('Quality', '${(result.bestScore * 100).round()}%'),
+                    _Metric('Clouds',
+                        '${(result.conditions.cloud * 100).round()}%'),
+                    _Metric('Target altitude',
+                        '${result.astronomy.altitudeDeg.toStringAsFixed(0)}°'),
+                    _Metric('Wind',
+                        '${result.conditions.windMps.toStringAsFixed(1)} m/s'),
                   ],
                 ),
                 if (result.warnings.isNotEmpty) ...[
                   const SizedBox(height: 9),
                   Text(
                     result.warnings.map(_warningLabel).join(' · '),
-                    style: const TextStyle(fontSize: 12, color: Colors.amberAccent),
+                    style: const TextStyle(
+                        fontSize: 12, color: Colors.amberAccent),
                   ),
                 ],
                 if (_results.length > 1) ...[
@@ -776,8 +836,8 @@ class _MapFirstDiscoveryScreenState extends State<MapFirstDiscoveryScreen> {
                             selected: entry.key == _selectedResult,
                             label: Text(
                               entry.key == 0
-                                  ? 'Ближайшее хорошее'
-                                  : '${entry.value.distanceKm.toStringAsFixed(0)} км · ${(entry.value.bestScore * 100).round()}%',
+                                  ? 'Nearest good option'
+                                  : '${entry.value.distanceKm.toStringAsFixed(0)} km · ${(entry.value.bestScore * 100).round()}%',
                             ),
                             onSelected: (_) => setState(() {
                               _selectedResult = entry.key;
@@ -798,7 +858,8 @@ class _MapFirstDiscoveryScreenState extends State<MapFirstDiscoveryScreen> {
   }
 
   Widget _planCard(AstronomicalPlanCandidate result) {
-    final time = DateFormat('EEEE, dd MMMM y, HH:mm', 'ru').format(result.bestTime);
+    final time =
+        DateFormat('EEEE, dd MMMM y, HH:mm', 'ru').format(result.bestTime);
     return Center(
       child: ConstrainedBox(
         constraints: const BoxConstraints(maxWidth: 880),
@@ -810,15 +871,19 @@ class _MapFirstDiscoveryScreenState extends State<MapFirstDiscoveryScreen> {
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('Астрономический план — без прогноза погоды', style: Theme.of(context).textTheme.titleMedium),
+                Text('Astronomical plan — no weather forecast',
+                    style: Theme.of(context).textTheme.titleMedium),
                 const SizedBox(height: 8),
                 Text(result.place.name),
-                Text('${result.distanceKm.toStringAsFixed(1)} км · $time', style: const TextStyle(color: Colors.white70)),
+                Text('${result.distanceKm.toStringAsFixed(1)} km · $time',
+                    style: const TextStyle(color: Colors.white70)),
                 const SizedBox(height: 12),
                 Wrap(spacing: 14, children: [
-                  _Metric('Высота цели', '${result.altitudeDeg.toStringAsFixed(0)}°'),
-                  _Metric('Азимут', '${result.azimuthDeg.toStringAsFixed(0)}°'),
-                  _Metric('Геометрия', '${(result.score * 100).round()}%'),
+                  _Metric('Target altitude',
+                      '${result.altitudeDeg.toStringAsFixed(0)}°'),
+                  _Metric(
+                      'Azimuth', '${result.azimuthDeg.toStringAsFixed(0)}°'),
+                  _Metric('Geometry', '${(result.score * 100).round()}%'),
                 ]),
               ],
             ),
@@ -845,7 +910,8 @@ class _MapAction extends StatelessWidget {
         color: const Color(0xE8111B2E),
         elevation: 8,
         shape: const CircleBorder(),
-        child: IconButton(tooltip: tooltip, icon: Icon(icon), onPressed: onPressed),
+        child: IconButton(
+            tooltip: tooltip, icon: Icon(icon), onPressed: onPressed),
       );
 }
 
@@ -860,71 +926,73 @@ class _Metric extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisSize: MainAxisSize.min,
         children: [
-          Text(label, style: const TextStyle(fontSize: 11, color: Colors.white60)),
+          Text(label,
+              style: const TextStyle(fontSize: 11, color: Colors.white60)),
           Text(value, style: const TextStyle(fontWeight: FontWeight.w600)),
         ],
       );
 }
 
 String _targetLabel(String value) => switch (value) {
-      'moon' => 'Луна',
-      'milky_way' => 'Млечный Путь',
-      'jupiter' => 'Юпитер',
-      'saturn' => 'Сатурн',
-      'mars' => 'Марс',
-      'best_night_sky' => 'Лучшее ночное небо',
+      'moon' => 'Moon',
+      'milky_way' => 'Milky Way',
+      'jupiter' => 'Jupiter',
+      'saturn' => 'Saturn',
+      'mars' => 'Mars',
+      'best_night_sky' => 'Best night sky',
       _ => value,
     };
 
 String _scopeLabel(String value) => switch (value) {
-      'adaptive' => 'в заданном радиусе',
-      'country' => 'только в моей стране',
-      'global' => 'по всему миру',
+      'adaptive' => 'within the selected radius',
+      'country' => 'in my country only',
+      'global' => 'worldwide',
       _ => value,
     };
 
 String _stageLabel(String value) => switch (value) {
-      'queued' => 'Подготавливаем запрос…',
-      'resolving_target' => 'Уточняем небесный объект…',
-      'generating_cells' => 'Ищем поверхности поблизости…',
-      'fetching_elevation' => 'Проверяем рельеф…',
-      'reading_surface_windows' => 'Оцениваем поверхность…',
-      'applying_static_filters' => 'Отсеиваем неподходящие точки…',
-      'fetching_weather' => 'Получаем прогноз погоды…',
-      'calculating_astronomy' => 'Рассчитываем видимость…',
-      'checking_access' => 'Проверяем подъезд…',
-      'ranking' => 'Выбираем ближайший хороший вариант…',
-      'expanding_horizon' => 'В ближайшие дни окна нет — проверяем две недели…',
-      _ => 'Выполняем расчёт…',
+      'queued' => 'Preparing the request…',
+      'resolving_target' => 'Resolving the celestial target…',
+      'generating_cells' => 'Finding nearby surfaces…',
+      'fetching_elevation' => 'Checking terrain…',
+      'reading_surface_windows' => 'Evaluating the surface…',
+      'applying_static_filters' => 'Filtering unsuitable locations…',
+      'fetching_weather' => 'Fetching the weather forecast…',
+      'calculating_astronomy' => 'Calculating visibility…',
+      'checking_access' => 'Checking access…',
+      'ranking' => 'Selecting the nearest good option…',
+      'expanding_horizon' =>
+        'No window in the next few days — checking two weeks…',
+      _ => 'Calculating…',
     };
 
 String _terminalMessage(String value) => switch (value) {
-      'cancelled' => 'Расчёт отменён.',
-      'expired' => 'Результат устарел. Запустите поиск снова.',
-      _ => 'Расчёт завершился с ошибкой.',
+      'cancelled' => 'Calculation cancelled.',
+      'expired' => 'The result expired. Run the search again.',
+      _ => 'Calculation failed.',
     };
 
 String _warningsMessage(List<String> warnings) {
   if (warnings.contains('target_not_visible_in_scope')) {
-    return 'Объект не поднимается достаточно высоко в выбранной области. Измените регион или цель.';
+    return 'The target does not rise high enough in the selected area. Change the region or target.';
   }
   if (warnings.contains('weather_unavailable')) {
-    return 'Прогноз временно недоступен. Повторите запрос через несколько минут.';
+    return 'The forecast is temporarily unavailable. Try again in a few minutes.';
   }
   if (warnings.contains('no_candidate_places')) {
-    return 'В этом радиусе не найдено подходящей поверхности. Увеличьте радиус.';
+    return 'No suitable surface was found within this radius. Increase the radius.';
   }
   if (warnings.contains('no_observation_window')) {
-    return 'За две недели нет подтверждённого погодой окна: мешают горизонт, Солнце, Луна или облачность. Для более дальней даты нужен астрономический план без прогноза погоды.';
+    return 'There is no weather-confirmed window in the next two weeks: the horizon, Sun, Moon, or clouds interfere. Use the astronomical plan for a later date without weather forecasts.';
   }
-  return warnings.isEmpty ? 'Подходящий результат не найден.' : warnings.join(' · ');
+  return warnings.isEmpty ? 'No suitable result found.' : warnings.join(' · ');
 }
 
 String _warningLabel(String value) => switch (value) {
-      'unverified_place' => 'точка не проверена',
-      'darkness_is_proxy' => 'темнота оценена приближённо',
-      'low_confidence' => 'предварительный прогноз',
-      'high_dew_risk' => 'возможна роса',
-      'strong_wind' => 'сильный ветер',
+      'unverified_place' => 'location is unverified',
+      'darkness_is_proxy' => 'darkness is estimated',
+      'low_confidence' => 'preliminary forecast',
+      'high_dew_risk' => 'dew is possible',
+      'strong_wind' => 'strong wind',
       _ => value,
     };

@@ -203,14 +203,14 @@ async def test_travel_destination_ranks_before_observer_location_for_bright_targ
     origin = GeoPoint(latitude_deg=40.1772, longitude_deg=44.5035)
     observer = make_place(
         place_id="observer",
-        name="Текущая позиция",
+        name="Current location",
         latitude_deg=origin.latitude_deg,
         longitude_deg=origin.longitude_deg,
         darkness=0.001,
     ).model_copy(update={"source_provider": "user_origin"})
     destination = make_place(
         place_id="destination",
-        name="Тёмная площадка",
+        name="Dark-sky site",
         latitude_deg=40.5,
         longitude_deg=44.2,
         darkness=0.82,

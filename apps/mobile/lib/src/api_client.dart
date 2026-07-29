@@ -124,7 +124,8 @@ class ThiezerApiClient {
             'start_utc': DateTime.now().toUtc().toIso8601String(),
             'horizon_days': horizonDays,
             'scope': scope,
-            'country_code': scope == 'country' ? countryCode?.toUpperCase() : null,
+            'country_code':
+                scope == 'country' ? countryCode?.toUpperCase() : null,
             'max_distance_km': radiusKm,
             'max_candidates': 12,
             'max_results': 6,
@@ -239,7 +240,7 @@ class ThiezerApiClient {
       body = jsonDecode(response.body);
     } on FormatException {
       throw ApiException(
-        'Сервер вернул не-JSON ответ (${response.statusCode}).',
+        'The server returned a non-JSON response (${response.statusCode}).',
       );
     }
     if (response.statusCode < 200 || response.statusCode >= 300) {

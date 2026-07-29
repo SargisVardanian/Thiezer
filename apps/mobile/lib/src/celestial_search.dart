@@ -26,13 +26,13 @@ class CelestialSearchField extends StatefulWidget {
 
 class _CelestialSearchFieldState extends State<CelestialSearchField> {
   static const _filters = <String, String>{
-    'star': 'Звёзды',
-    'galaxy': 'Галактики',
-    'nebula': 'Туманности',
-    'cluster': 'Скопления',
-    'exoplanet': 'Экзопланеты',
-    'comet': 'Кометы',
-    'asteroid': 'Астероиды',
+    'star': 'Stars',
+    'galaxy': 'Galaxies',
+    'nebula': 'Nebulae',
+    'cluster': 'Clusters',
+    'exoplanet': 'Exoplanets',
+    'comet': 'Comets',
+    'asteroid': 'Asteroids',
   };
 
   final _controller = TextEditingController();
@@ -89,7 +89,7 @@ class _CelestialSearchFieldState extends State<CelestialSearchField> {
           _results = response.results;
           _providerWarnings = response.warnings;
           _error = response.results.isEmpty
-              ? 'Объекты не найдены. Измените фильтр или уточните имя.'
+              ? 'No objects found. Change the filter or refine the name.'
               : null;
         });
       } on ApiRequestCancelled {
@@ -97,7 +97,8 @@ class _CelestialSearchFieldState extends State<CelestialSearchField> {
       } on Object {
         if (!mounted || request != _request) return;
         setState(
-          () => _error = 'Каталог временно недоступен. Можно выбрать preset.',
+          () => _error =
+              'The catalog is temporarily unavailable. You can select a preset.',
         );
       } finally {
         if (mounted && request == _request) {
@@ -132,7 +133,7 @@ class _CelestialSearchFieldState extends State<CelestialSearchField> {
     } on Object {
       if (mounted) {
         setState(
-          () => _error = 'Предпросмотр видимости временно недоступен.',
+          () => _error = 'The visibility preview is temporarily unavailable.',
         );
       }
     }
@@ -147,7 +148,7 @@ class _CelestialSearchFieldState extends State<CelestialSearchField> {
           controller: _controller,
           onChanged: _onChanged,
           decoration: InputDecoration(
-            labelText: 'Искать звезду, галактику, комету или экзопланету',
+            labelText: 'Search for a star, galaxy, comet, or exoplanet',
             prefixIcon: const Icon(Icons.search),
             suffixIcon: _searching
                 ? const Padding(
@@ -191,7 +192,7 @@ class _CelestialSearchFieldState extends State<CelestialSearchField> {
             const Padding(
               padding: EdgeInsets.only(top: 4),
               child: Text(
-                'Показывается видимость звезды-хозяина; сама экзопланета напрямую не видна.',
+                'Showing host-star visibility; the exoplanet itself is not directly visible.',
                 style: TextStyle(fontSize: 12, color: Colors.amberAccent),
               ),
             ),
@@ -229,7 +230,7 @@ class _CelestialSearchFieldState extends State<CelestialSearchField> {
                 ].join(' · '),
               ),
               trailing: IconButton(
-                tooltip: 'Детали',
+                tooltip: 'Details',
                 onPressed: () => _showDetails(context, item),
                 icon: const Icon(Icons.info_outline),
               ),
@@ -258,21 +259,21 @@ class _VisibilityCard extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'Сейчас ${preview.altitudeDeg.toStringAsFixed(1)}° · '
-              '${preview.aboveHorizon ? 'над горизонтом' : 'ниже горизонта'}',
+              'Now ${preview.altitudeDeg.toStringAsFixed(1)}° · '
+              '${preview.aboveHorizon ? 'above the horizon' : 'below the horizon'}',
             ),
-            Text('Азимут ${preview.azimuthDeg.toStringAsFixed(1)}°'),
+            Text('Azimuth ${preview.azimuthDeg.toStringAsFixed(1)}°'),
             if (preview.riseUtc != null)
-              Text('Восход: ${format.format(preview.riseUtc!)}'),
+              Text('Rise: ${format.format(preview.riseUtc!)}'),
             if (preview.setUtc != null)
-              Text('Заход: ${format.format(preview.setUtc!)}'),
+              Text('Set: ${format.format(preview.setUtc!)}'),
             if (preview.culminationUtc != null)
               Text(
-                'Кульминация: ${format.format(preview.culminationUtc!)}'
+                'Culmination: ${format.format(preview.culminationUtc!)}'
                 '${preview.maximumAltitudeDeg == null ? '' : ' · ${preview.maximumAltitudeDeg!.toStringAsFixed(1)}°'}',
               ),
             Text(
-              'Режимы: ${preview.observationCapabilities.map(_modeLabel).join(', ')}',
+              'Modes: ${preview.observationCapabilities.map(_modeLabel).join(', ')}',
             ),
             if (preview.warnings.isNotEmpty)
               Text(
@@ -296,19 +297,20 @@ Future<void> _showDetails(BuildContext context, CelestialObject item) async {
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisSize: MainAxisSize.min,
           children: [
-            Text('Тип: ${_typeLabel(item.objectClass)}'),
+            Text('Type: ${_typeLabel(item.objectClass)}'),
             Text('Provider ID: ${item.provider}/${item.objectId}'),
             if (item.aliases.isNotEmpty)
-              Text('Имена: ${item.aliases.join(', ')}'),
+              Text('Names: ${item.aliases.join(', ')}'),
             if (item.apparentMagnitude != null)
               Text(
-                  'Видимая величина: ${item.apparentMagnitude!.toStringAsFixed(2)}'),
-            if (item.spectralType != null) Text('Спектр: ${item.spectralType}'),
+                  'Apparent magnitude: ${item.apparentMagnitude!.toStringAsFixed(2)}'),
+            if (item.spectralType != null)
+              Text('Spectrum: ${item.spectralType}'),
             if (item.redshift != null) Text('Redshift: ${item.redshift}'),
             if (item.orbitalPeriodDays != null)
-              Text('Орбитальный период: ${item.orbitalPeriodDays} суток'),
+              Text('Orbital period: ${item.orbitalPeriodDays} days'),
             if (item.hostStarName != null)
-              Text('Звезда-хозяин: ${item.hostStarName}'),
+              Text('Host star: ${item.hostStarName}'),
             const SizedBox(height: 10),
             Text(item.attribution),
             if (item.warnings.isNotEmpty) ...[
@@ -324,7 +326,7 @@ Future<void> _showDetails(BuildContext context, CelestialObject item) async {
       actions: [
         TextButton(
           onPressed: () => Navigator.pop(context),
-          child: const Text('Закрыть'),
+          child: const Text('Close'),
         ),
       ],
     ),
@@ -332,21 +334,21 @@ Future<void> _showDetails(BuildContext context, CelestialObject item) async {
 }
 
 String _typeLabel(String value) => switch (value) {
-      'star' => 'звезда',
-      'galaxy' => 'галактика',
-      'nebula' => 'туманность',
-      'cluster' => 'скопление',
-      'exoplanet' => 'экзопланета',
-      'comet' => 'комета',
-      'asteroid' => 'астероид',
-      'solar_system_body' => 'тело Солнечной системы',
+      'star' => 'star',
+      'galaxy' => 'galaxy',
+      'nebula' => 'nebula',
+      'cluster' => 'cluster',
+      'exoplanet' => 'exoplanet',
+      'comet' => 'comet',
+      'asteroid' => 'asteroid',
+      'solar_system_body' => 'Solar System body',
       _ => value,
     };
 
 String _modeLabel(String value) => switch (value) {
-      'naked_eye' => 'невооружённый глаз',
-      'binoculars' => 'бинокль',
-      'telescope' => 'телескоп',
-      'camera' => 'камера',
+      'naked_eye' => 'naked eye',
+      'binoculars' => 'binoculars',
+      'telescope' => 'telescope',
+      'camera' => 'camera',
       _ => value,
     };

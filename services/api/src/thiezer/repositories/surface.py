@@ -120,7 +120,7 @@ class SurfacePlaceRepository:
                 (
                     CandidatePlace(
                         id=(f"observer-location:{origin_key[0]:+d}:{origin_key[1]:+d}"),
-                        name="Текущая позиция",
+                        name="Current location",
                         country_code=country_code if scope == SearchScope.COUNTRY else None,
                         region=None,
                         point=user_location,

@@ -46,7 +46,7 @@ class ProceduralAccessPointProvider:
                 SurfaceSite(
                     id=f"surface:{cell.h3_index}:{coordinate_token}",
                     name=(
-                        f"Тёмная площадка {short_h3} · "
+                        f"Dark-sky site {short_h3} · "
                         f"{best.center.latitude_deg:.3f}, {best.center.longitude_deg:.3f}"
                     ),
                     point=best.center,
