@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from thiezer.domain.boundaries import CountryBoundaryProvider, StaticCountryBoundaryProvider
 from thiezer.domain.contracts import (
     CandidatePlace,
     GeoPoint,
@@ -10,6 +11,7 @@ from thiezer.domain.contracts import (
 )
 from thiezer.domain.geospatial import haversine_distance_km
 from thiezer.repositories.base import PlaceSearchBatch
+from thiezer.repositories.global_dark_sky import search_global_dark_sky_places
 from thiezer.services.progress import ProgressCallback
 from thiezer.services.surface_search import SurfaceSearchService
 
@@ -17,8 +19,13 @@ _RADIUS_TOLERANCE_KM = 0.5
 
 
 class SurfacePlaceRepository:
-    def __init__(self, search_service: SurfaceSearchService) -> None:
+    def __init__(
+        self,
+        search_service: SurfaceSearchService,
+        boundary_provider: CountryBoundaryProvider | None = None,
+    ) -> None:
         self._search = search_service
+        self._boundaries = boundary_provider or StaticCountryBoundaryProvider()
 
     async def search(
         self,
@@ -39,6 +46,14 @@ class SurfacePlaceRepository:
                 attributions=[],
                 warnings=[WarningCode.NO_CANDIDATE_PLACES],
             )
+        if scope == SearchScope.GLOBAL:
+            # The local surface provider is intentionally Armenia-only. Use real
+            # catalog destinations until calibrated global DEM/light-pollution
+            # layers are configured; never extrapolate the local proxy worldwide.
+            return search_global_dark_sky_places(
+                user_location=user_location,
+                limit=limit,
+            )
         result = await self._search.search(
             user_location=user_location,
             scope=scope,
@@ -54,11 +69,17 @@ class SurfacePlaceRepository:
             if (
                 scope == SearchScope.COUNTRY
                 and country_code
+                and not self._boundaries.contains(country_code, site.point)
+            ):
+                continue
+            if (
+                scope == SearchScope.COUNTRY
+                and country_code
                 and site.country_code not in {country_code, None}
             ):
                 continue
             distance = haversine_distance_km(user_location, site.point)
-            if distance > max_distance_km + _RADIUS_TOLERANCE_KM:
+            if scope != SearchScope.GLOBAL and distance > max_distance_km + _RADIUS_TOLERANCE_KM:
                 continue
             point_key = (
                 round(site.point.latitude_deg * 100_000),
@@ -103,12 +124,12 @@ class SurfacePlaceRepository:
             round(user_location.latitude_deg * 100_000),
             round(user_location.longitude_deg * 100_000),
         )
-        if origin_key not in seen_points:
+        if scope != SearchScope.GLOBAL and origin_key not in seen_points:
             matches.append(
                 (
                     CandidatePlace(
                         id=(f"observer-location:{origin_key[0]:+d}:{origin_key[1]:+d}"),
-                        name="Текущая позиция",
+                        name="Current location",
                         country_code=country_code if scope == SearchScope.COUNTRY else None,
                         region=None,
                         point=user_location,
@@ -131,7 +152,17 @@ class SurfacePlaceRepository:
                 )
             )
 
-        matches.sort(key=lambda item: (item[1], -item[0].darkness_score, item[0].id))
+        if scope == SearchScope.GLOBAL:
+            matches.sort(
+                key=lambda item: (
+                    -item[0].darkness_score,
+                    -item[0].horizon_openness_score,
+                    -item[0].accessibility_score,
+                    item[0].id,
+                )
+            )
+        else:
+            matches.sort(key=lambda item: (item[1], -item[0].darkness_score, item[0].id))
         warnings = [WarningCode.DARKNESS_IS_PROXY] if result.darkness_is_proxy else []
         coverage = sorted({place.country_code for place, _ in matches if place.country_code})
         if scope == SearchScope.COUNTRY and country_code and matches:

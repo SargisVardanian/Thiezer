@@ -3,7 +3,13 @@ from datetime import UTC, datetime
 import pytest
 from pydantic import ValidationError
 
-from thiezer.domain.contracts import BoundingBox, GeoPoint, HourlySkyCondition
+from thiezer.domain.contracts import (
+    AstronomicalPlanRequest,
+    BoundingBox,
+    GeoPoint,
+    HourlySkyCondition,
+    TargetKind,
+)
 
 
 def test_geo_point_rejects_invalid_latitude() -> None:
@@ -59,3 +65,12 @@ def test_hourly_condition_accepts_utc() -> None:
         attribution="test",
     )
     assert condition.timestamp_utc.tzinfo is UTC
+
+
+def test_best_night_sky_is_not_an_astronomical_plan_target() -> None:
+    with pytest.raises(ValidationError, match="near-term place search"):
+        AstronomicalPlanRequest(
+            user_location=GeoPoint(latitude_deg=40.18, longitude_deg=44.51),
+            target=TargetKind.BEST_NIGHT_SKY,
+            start_utc=datetime(2026, 7, 29, tzinfo=UTC),
+        )

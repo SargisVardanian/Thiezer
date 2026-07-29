@@ -66,11 +66,7 @@ class ObservationMode(StrEnum):
 
 
 class SearchScope(StrEnum):
-    """Boundary policy for a radius-based search.
-
-    ADAPTIVE and GLOBAL both allow crossing borders. COUNTRY restricts known country codes.
-    The engine never scans an entire large country; max_distance_km is always the hard spatial bound.
-    """
+    """Spatial policy: local radius, country boundary, or global discovery."""
 
     ADAPTIVE = "adaptive"
     COUNTRY = "country"
@@ -265,6 +261,19 @@ class RouteHandoff(BaseModel):
     note: str | None = None
 
 
+class RoadRouteRequest(BaseModel):
+    origin: GeoPoint
+    destination: GeoPoint
+
+
+class RoadRoute(BaseModel):
+    provider: str
+    distance_m: NonNegativeFloat
+    duration_s: NonNegativeFloat
+    geometry: list[GeoPoint] = Field(min_length=2, max_length=10_000)
+    attribution: str
+
+
 class RankedPlace(BaseModel):
     rank: Annotated[int, Field(ge=1)]
     place: CandidatePlace
@@ -284,7 +293,7 @@ class RecommendationSearchRequest(BaseModel):
     end_utc: datetime
     scope: SearchScope = SearchScope.ADAPTIVE
     country_code: CountryCode | None = None
-    max_distance_km: Annotated[float, Field(gt=0.0, le=1_000.0)] = 250.0
+    max_distance_km: Annotated[float, Field(gt=0.0, le=20_100.0)] = 250.0
     max_candidates: Annotated[int, Field(ge=1, le=40)] = 16
     max_results: Annotated[int, Field(ge=1, le=10)] = 5
     minimum_score: UnitScore = 0.35
@@ -342,6 +351,54 @@ class RecommendationSearchResponse(BaseModel):
     coverage_country_codes: list[str]
     discovery_sources: list[str]
     results: list[RankedPlace]
+    warnings: list[WarningCode]
+    provider_attributions: list[str]
+
+
+class AstronomicalPlanRequest(BaseModel):
+    """Long-range deterministic observation planning; weather is intentionally excluded."""
+
+    user_location: GeoPoint
+    target: TargetKind
+    start_utc: datetime
+    horizon_days: Annotated[int, Field(ge=1, le=730)] = 365
+    scope: SearchScope = SearchScope.ADAPTIVE
+    country_code: CountryCode | None = None
+    max_distance_km: Annotated[float, Field(gt=0.0, le=20_100.0)] = 250.0
+    max_candidates: Annotated[int, Field(ge=1, le=20)] = 12
+    max_results: Annotated[int, Field(ge=1, le=8)] = 6
+
+    @model_validator(mode="after")
+    def validate_request(self) -> AstronomicalPlanRequest:
+        _require_aware(self.start_utc, "start_utc")
+        if self.scope == SearchScope.COUNTRY and self.country_code is None:
+            raise ValueError("country_code is required for country scope")
+        if self.target == TargetKind.BEST_NIGHT_SKY:
+            raise ValueError("best_night_sky is a near-term place search, not an astronomical plan")
+        return self
+
+
+class AstronomicalPlanCandidate(BaseModel):
+    place: CandidatePlace
+    distance_km: NonNegativeFloat
+    best_time_utc: datetime
+    altitude_deg: float
+    azimuth_deg: float
+    sun_altitude_deg: float
+    moon_altitude_deg: float
+    moon_illumination_fraction: UnitScore
+    deterministic_score: UnitScore
+    weather_included: bool = False
+
+
+class AstronomicalPlanResponse(BaseModel):
+    generated_at_utc: datetime
+    target: TargetKind
+    scope: SearchScope
+    search_radius_km: NonNegativeFloat
+    planning_horizon_days: int
+    best_time_utc: datetime | None
+    candidates: list[AstronomicalPlanCandidate]
     warnings: list[WarningCode]
     provider_attributions: list[str]
 

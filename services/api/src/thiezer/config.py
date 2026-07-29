@@ -39,6 +39,11 @@ class Settings(BaseSettings):
     overpass_timeout_seconds: float = Field(default=25.0, ge=5.0, le=60.0)
     overpass_local_radius_km: float = Field(default=5.0, ge=2.0, le=10.0)
 
+    routing_base_url: AnyHttpUrl = Field(
+        default=AnyHttpUrl("https://router.project-osrm.org/route/v1")
+    )
+    routing_timeout_seconds: float = Field(default=20.0, ge=5.0, le=45.0)
+
     surface_provider: Literal["procedural", "cog"] = "procedural"
     dem_cog_url: str | None = None
     worldcover_cog_url: str | None = None

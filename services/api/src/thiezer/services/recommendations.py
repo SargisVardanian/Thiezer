@@ -5,9 +5,13 @@ from datetime import UTC, datetime, timedelta
 
 from thiezer.domain.celestial_objects import CelestialObject, CelestialTargetRef
 from thiezer.domain.contracts import (
+    AstronomicalPlanCandidate,
+    AstronomicalPlanRequest,
+    AstronomicalPlanResponse,
     AstronomySnapshot,
     CandidatePlace,
     ExplanationItem,
+    GeoPoint,
     HourlySkyCondition,
     MoonPhase,
     ObservationWindow,
@@ -21,7 +25,13 @@ from thiezer.domain.contracts import (
 )
 from thiezer.domain.ephemeris import AstronomyProvider
 from thiezer.domain.geospatial import build_route_handoffs
-from thiezer.domain.quality import build_score_inputs
+from thiezer.domain.quality import (
+    astronomical_darkness_score,
+    build_score_inputs,
+    minimum_target_altitude_deg,
+    moon_interference_score,
+    target_altitude_score,
+)
 from thiezer.domain.scoring import calculate_sky_score
 from thiezer.domain.target_profiles import (
     RecommendationProfile,
@@ -76,7 +86,11 @@ class RecommendationService:
             include_unverified=request.include_unverified,
             progress=progress,
         )
-        candidates = batch.matches
+        candidates = (
+            [item for item in batch.matches if item[0].source_provider != "user_origin"]
+            if scoring_target == TargetKind.BEST_NIGHT_SKY
+            else batch.matches
+        )
         generated_at = datetime.now(UTC)
         if not candidates:
             warnings = [*batch.warnings, WarningCode.NO_CANDIDATE_PLACES]
@@ -93,11 +107,23 @@ class RecommendationService:
             )
 
         await report_progress(progress, "fetching_weather")
-        forecast_by_point = await self._weather.get_hourly_forecasts(
-            points=[place.point for place, _ in candidates],
-            start_utc=request.start_utc,
-            end_utc=request.end_utc,
-        )
+        points = [place.point for place, _ in candidates]
+        # The production elevation-aware provider accepts explicit elevations. Keep
+        # injected test providers and third-party adapters that implement the
+        # original protocol compatible as well.
+        if any(place.source_provider == "darksky_catalog_v1" for place, _ in candidates):
+            forecast_by_point = await self._weather.get_hourly_forecasts(
+                points=points,
+                start_utc=request.start_utc,
+                end_utc=request.end_utc,
+                elevations_m=[place.elevation_m for place, _ in candidates],
+            )
+        else:
+            forecast_by_point = await self._weather.get_hourly_forecasts(
+                points=points,
+                start_utc=request.start_utc,
+                end_utc=request.end_utc,
+            )
         ranked: list[RankedPlace] = []
         attributions: set[str] = set(batch.attributions)
         places_with_weather = 0
@@ -120,9 +146,15 @@ class RecommendationService:
                 generated_at_utc=generated_at,
             )
             window = _best_window(samples, minimum_score=request.minimum_score)
+            forecast_fallback = False
+            if window is None and scoring_target == TargetKind.BEST_NIGHT_SKY:
+                window = _best_night_sky_fallback_window(samples)
+                forecast_fallback = window is not None
             if window is None:
                 continue
             warnings = list(window.score_breakdown.warnings)
+            if forecast_fallback:
+                warnings.append(WarningCode.LOW_CONFIDENCE)
             if place.verification_status in {
                 VerificationStatus.UNVERIFIED_SEED,
                 VerificationStatus.UNVERIFIED_DISCOVERED,
@@ -174,6 +206,82 @@ class RecommendationService:
             results=results,
             warnings=list(dict.fromkeys(response_warnings)),
             provider_attributions=sorted(attributions),
+        )
+
+    async def plan_astronomy(self, request: AstronomicalPlanRequest) -> AstronomicalPlanResponse:
+        """Find a long-range physical observing opportunity without making weather claims."""
+        batch = await self._places.search(
+            user_location=request.user_location,
+            scope=request.scope,
+            country_code=request.country_code,
+            max_distance_km=request.max_distance_km,
+            limit=request.max_candidates,
+            include_unverified=True,
+        )
+        # A long-range plan is a travel recommendation. Returning the observer's
+        # current city as a destination would be misleading, particularly when the
+        # caller chose a country or cross-border scope.
+        candidates = [item for item in batch.matches if item[0].source_provider != "user_origin"]
+        if not candidates:
+            return AstronomicalPlanResponse(
+                generated_at_utc=datetime.now(UTC),
+                target=request.target,
+                scope=request.scope,
+                search_radius_km=request.max_distance_km,
+                planning_horizon_days=request.horizon_days,
+                best_time_utc=None,
+                candidates=[],
+                warnings=list(dict.fromkeys([*batch.warnings, WarningCode.NO_CANDIDATE_PLACES])),
+                provider_attributions=batch.attributions,
+            )
+        best_time = _best_astronomical_time(
+            astronomy=self._astronomy,
+            target=request.target,
+            point=request.user_location,
+            start_utc=request.start_utc,
+            horizon_days=request.horizon_days,
+        )
+        if best_time is None:
+            return AstronomicalPlanResponse(
+                generated_at_utc=datetime.now(UTC),
+                target=request.target,
+                scope=request.scope,
+                search_radius_km=request.max_distance_km,
+                planning_horizon_days=request.horizon_days,
+                best_time_utc=None,
+                candidates=[],
+                warnings=[WarningCode.NO_OBSERVATION_WINDOW],
+                provider_attributions=batch.attributions,
+            )
+        planned: list[AstronomicalPlanCandidate] = []
+        for place, distance in candidates:
+            snapshot = self._astronomy.snapshot(
+                target=request.target, point=place.point, timestamp_utc=best_time
+            )
+            planned.append(
+                AstronomicalPlanCandidate(
+                    place=place,
+                    distance_km=distance,
+                    best_time_utc=best_time,
+                    altitude_deg=snapshot.altitude_deg,
+                    azimuth_deg=snapshot.azimuth_deg,
+                    sun_altitude_deg=snapshot.sun_altitude_deg,
+                    moon_altitude_deg=snapshot.moon_altitude_deg,
+                    moon_illumination_fraction=snapshot.moon_illumination_fraction,
+                    deterministic_score=_astronomical_plan_score(request.target, place, snapshot),
+                )
+            )
+        planned.sort(key=lambda item: (-item.deterministic_score, item.distance_km, item.place.id))
+        return AstronomicalPlanResponse(
+            generated_at_utc=datetime.now(UTC),
+            target=request.target,
+            scope=request.scope,
+            search_radius_km=request.max_distance_km,
+            planning_horizon_days=request.horizon_days,
+            best_time_utc=best_time,
+            candidates=planned[: request.max_results],
+            warnings=list(dict.fromkeys(batch.warnings)),
+            provider_attributions=batch.attributions,
         )
 
     async def _evaluate_place(
@@ -288,6 +396,37 @@ def _best_window(
     )
 
 
+def _best_night_sky_fallback_window(
+    samples: list[_EvaluatedSample],
+) -> ObservationWindow | None:
+    """Return the least-compromised dark-time sample when forecast scoring rejects all sites.
+
+    This keeps a general night-sky search useful: it returns travel destinations and makes the
+    forecast limitation explicit instead of pretending that no dark place exists.
+    """
+    nighttime = [sample for sample in samples if sample.astronomy.sun_altitude_deg <= -12.0]
+    if not nighttime:
+        return None
+    best = max(
+        nighttime,
+        key=lambda sample: (
+            sample.score.utility,
+            -sample.conditions.total_cloud_fraction,
+            -sample.conditions.wind_speed_mps,
+        ),
+    )
+    return ObservationWindow(
+        start_utc=best.conditions.timestamp_utc,
+        end_utc=best.conditions.timestamp_utc,
+        best_time_utc=best.conditions.timestamp_utc,
+        best_score=best.score.score,
+        mean_score=best.score.score,
+        best_astronomy=best.astronomy,
+        best_conditions=best.conditions,
+        score_breakdown=best.score,
+    )
+
+
 def _select_results(
     ranked: list[RankedPlace],
     *,
@@ -297,8 +436,13 @@ def _select_results(
 ) -> list[RankedPlace]:
     if not ranked:
         return []
+    travel_candidates = [item for item in ranked if item.place.source_provider != "user_origin"]
+    origin_candidates = [item for item in ranked if item.place.source_provider == "user_origin"]
+    # The observer location is an honest "you can stay here" fallback for bright targets,
+    # never the primary travel recommendation while a real destination is available.
+    primary_candidates = travel_candidates or origin_candidates
     utility_order = sorted(
-        ranked,
+        primary_candidates,
         key=lambda result: (
             -result.utility,
             -result.observation_window.best_score,
@@ -309,13 +453,15 @@ def _select_results(
     if not nearby_first:
         selected = utility_order[:max_results]
     else:
-        best_score = max(item.observation_window.best_score for item in ranked)
+        best_score = max(item.observation_window.best_score for item in primary_candidates)
         acceptable_floor = min(
             profile.acceptable_score,
             max(0.0, best_score - profile.meaningful_quality_gain),
         )
         acceptable = [
-            item for item in ranked if item.observation_window.best_score >= acceptable_floor
+            item
+            for item in primary_candidates
+            if item.observation_window.best_score >= acceptable_floor
         ]
         nearest = min(
             acceptable,
@@ -327,7 +473,7 @@ def _select_results(
         )
         balanced = utility_order[0]
         best_quality = min(
-            ranked,
+            primary_candidates,
             key=lambda item: (
                 -item.observation_window.best_score,
                 item.distance_km,
@@ -344,6 +490,8 @@ def _select_results(
             selected.append(item)
             if len(selected) >= max_results:
                 break
+    if travel_candidates and len(selected) < max_results:
+        selected.extend(origin_candidates[: max_results - len(selected)])
     return [result.model_copy(update={"rank": index}) for index, result in enumerate(selected, 1)]
 
 
@@ -378,6 +526,64 @@ def _explain(
             )
         )
     return explanations
+
+
+def _best_astronomical_time(
+    *,
+    astronomy: AstronomyProvider,
+    target: TargetKind,
+    point: GeoPoint,
+    start_utc: datetime,
+    horizon_days: int,
+) -> datetime | None:
+    # Two-hour sampling is explicit planning resolution, not weather data. It avoids
+    # claiming minute-level precision while remaining tractable over a full year.
+    end_utc = start_utc + timedelta(days=horizon_days)
+    step = timedelta(hours=2)
+    best: tuple[float, datetime] | None = None
+    timestamp = start_utc.replace(minute=0, second=0, microsecond=0)
+    while timestamp <= end_utc:
+        snapshot = astronomy.snapshot(target=target, point=point, timestamp_utc=timestamp)
+        if (
+            snapshot.sun_altitude_deg <= -12.0
+            and snapshot.altitude_deg >= minimum_target_altitude_deg(target)
+        ):
+            geometry = (
+                0.55 * target_altitude_score(target=target, altitude_deg=snapshot.altitude_deg)
+                + 0.25
+                * astronomical_darkness_score(
+                    target=target, sun_altitude_deg=snapshot.sun_altitude_deg
+                )
+                + 0.20 * moon_interference_score(target=target, astronomy=snapshot)
+            )
+            candidate = (geometry, timestamp)
+            if best is None or candidate > best:
+                best = candidate
+        timestamp += step
+    return best[1] if best is not None else None
+
+
+def _astronomical_plan_score(
+    target: TargetKind,
+    place: CandidatePlace,
+    snapshot: AstronomySnapshot,
+) -> float:
+    geometry = (
+        0.55 * target_altitude_score(target=target, altitude_deg=snapshot.altitude_deg)
+        + 0.25
+        * astronomical_darkness_score(target=target, sun_altitude_deg=snapshot.sun_altitude_deg)
+        + 0.20 * moon_interference_score(target=target, astronomy=snapshot)
+    )
+    return min(
+        1.0,
+        max(
+            0.0,
+            0.55 * geometry
+            + 0.30 * place.darkness_score
+            + 0.10 * place.horizon_openness_score
+            + 0.05 * place.accessibility_score,
+        ),
+    )
 
 
 def _scoring_target(

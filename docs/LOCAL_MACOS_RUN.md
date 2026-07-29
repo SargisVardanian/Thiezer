@@ -7,7 +7,7 @@ THIEZER_STORAGE_MODE=ephemeral THIEZER_DATABASE_ENABLED=false \
   uvicorn thiezer.main:app --host 127.0.0.1 --port 8000
 cd apps/mobile
 flutter pub get
-flutter run -d macos --dart-define=THIEZER_API_BASE_URL=http://127.0.0.1:8000
+env -u CC -u CXX flutter run -d macos --dart-define=THIEZER_API_BASE_URL=http://127.0.0.1:8000
 ```
 
 On this project, Flutter host projects are intentionally generated locally with
@@ -17,7 +17,7 @@ On this project, Flutter host projects are intentionally generated locally with
 If a shell has stale Homebrew compiler variables, run the build with Xcode's compiler explicitly:
 
 ```bash
-CC=/usr/bin/clang CXX=/usr/bin/clang++ flutter run -d macos
+env -u CC -u CXX flutter run -d macos
 ```
 
 The backend can be checked first at `/health/ready`, then catalogue search can be exercised with

@@ -95,6 +95,36 @@ async def test_alpha_centauri_returns_honest_no_result_for_armenia_geometry() ->
 
 
 @pytest.mark.asyncio
+async def test_best_night_sky_returns_destinations_when_forecast_rejects_every_window() -> None:
+    place = make_place(
+        place_id="dark-site",
+        name="Dark site",
+        latitude_deg=40.3,
+        longitude_deg=44.3,
+        darkness=0.9,
+    )
+    service = RecommendationService(
+        place_repository=SeedPlaceRepository([place]),
+        weather_provider=FakeWeatherProvider(cloud_by_longitude={44.3: 1.0}),
+        astronomy_provider=FakeAstronomyProvider(),
+    )
+    start = datetime(2026, 7, 29, 18, tzinfo=UTC)
+    response = await service.search(
+        RecommendationSearchRequest(
+            user_location=GeoPoint(latitude_deg=40.1772, longitude_deg=44.5035),
+            target=TargetKind.BEST_NIGHT_SKY,
+            start_utc=start,
+            end_utc=start + timedelta(hours=3),
+            max_distance_km=200.0,
+            minimum_score=0.35,
+        )
+    )
+
+    assert [item.place.id for item in response.results] == ["dark-site"]
+    assert WarningCode.LOW_CONFIDENCE in response.results[0].warnings
+
+
+@pytest.mark.asyncio
 async def test_catalog_target_uses_catalog_geometry_per_candidate_hour() -> None:
     place = make_place(
         place_id="m31-site", name="M31 site", latitude_deg=40.3, longitude_deg=44.3, darkness=0.9

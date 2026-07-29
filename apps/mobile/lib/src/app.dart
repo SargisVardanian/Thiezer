@@ -51,12 +51,12 @@ class DiscoveryScreen extends StatefulWidget {
 
 class _DiscoveryScreenState extends State<DiscoveryScreen> {
   static const _fallbackTargets = <TargetOption>[
-    TargetOption(id: 'milky_way', label: 'Млечный Путь'),
-    TargetOption(id: 'best_night_sky', label: 'Лучшее ночное небо'),
-    TargetOption(id: 'moon', label: 'Луна'),
-    TargetOption(id: 'jupiter', label: 'Юпитер'),
-    TargetOption(id: 'mars', label: 'Марс'),
-    TargetOption(id: 'alpha_centauri', label: 'Альфа Центавра'),
+    TargetOption(id: 'milky_way', label: 'Milky Way'),
+    TargetOption(id: 'best_night_sky', label: 'Best night sky'),
+    TargetOption(id: 'moon', label: 'Moon'),
+    TargetOption(id: 'jupiter', label: 'Jupiter'),
+    TargetOption(id: 'mars', label: 'Mars'),
+    TargetOption(id: 'alpha_centauri', label: 'Alpha Centauri'),
   ];
 
   late final ThiezerApiClient _api;
@@ -117,7 +117,7 @@ class _DiscoveryScreenState extends State<DiscoveryScreen> {
         longitude == null ||
         latitude.abs() > 90 ||
         longitude.abs() > 180) {
-      setState(() => _error = 'Проверьте широту и долготу.');
+      setState(() => _error = 'Check the latitude and longitude.');
       return false;
     }
     setState(() {
@@ -189,10 +189,11 @@ class _DiscoveryScreenState extends State<DiscoveryScreen> {
         });
       } else if (job.stage == 'cancelled') {
         setState(
-          () => _error = 'Поиск отменён. Можно изменить параметры и повторить.',
+          () => _error =
+              'Search cancelled. You can change the settings and try again.',
         );
       } else {
-        setState(() => _error = job.error ?? 'Поиск завершился с ошибкой.');
+        setState(() => _error = job.error ?? 'Search failed.');
       }
     } on ApiException catch (error) {
       if (!mounted || generation != _searchGeneration) return;
@@ -200,7 +201,7 @@ class _DiscoveryScreenState extends State<DiscoveryScreen> {
         setState(() {
           _queryExpired = true;
           _queryStage = 'expired';
-          _error = 'Результат истёк. Запустите поиск ещё раз.';
+          _error = 'The result expired. Run the search again.';
         });
       } else {
         setState(() => _error = error.toString());
@@ -229,7 +230,7 @@ class _DiscoveryScreenState extends State<DiscoveryScreen> {
       setState(() {
         _loading = false;
         _queryStage = 'cancelled';
-        _error = 'Поиск отменён. Можно изменить параметры и повторить.';
+        _error = 'Search cancelled. You can change the settings and try again.';
       });
     }
   }
@@ -251,7 +252,7 @@ class _DiscoveryScreenState extends State<DiscoveryScreen> {
       setState(() {
         _stores = results;
         if (results.isEmpty) {
-          _error = 'В выбранном радиусе не найдено размеченных магазинов.';
+          _error = 'No mapped stores were found within the selected radius.';
         }
       });
     } on Object catch (error) {
@@ -265,7 +266,7 @@ class _DiscoveryScreenState extends State<DiscoveryScreen> {
     final uri = Uri.tryParse(value);
     if (uri == null ||
         !await launchUrl(uri, mode: LaunchMode.externalApplication)) {
-      if (mounted) setState(() => _error = 'Не удалось открыть ссылку.');
+      if (mounted) setState(() => _error = 'Could not open the link.');
     }
   }
 
@@ -343,15 +344,15 @@ class _DiscoveryScreenState extends State<DiscoveryScreen> {
           destinations: const [
             NavigationDestination(
               icon: Icon(Icons.auto_awesome),
-              label: 'Небо',
+              label: 'Sky',
             ),
             NavigationDestination(
               icon: Icon(Icons.camera_alt_outlined),
-              label: 'Техника',
+              label: 'Equipment',
             ),
             NavigationDestination(
               icon: Icon(Icons.settings_outlined),
-              label: 'Настройки',
+              label: 'Settings',
             ),
           ],
         ),
@@ -531,13 +532,13 @@ class _SearchControls extends StatelessWidget {
       shrinkWrap: true,
       children: [
         Text(
-          'Что вы хотите увидеть?',
+          'What would you like to see?',
           style: Theme.of(context).textTheme.headlineSmall,
         ),
         const SizedBox(height: 12),
         DropdownButtonFormField<String>(
           initialValue: target,
-          decoration: const InputDecoration(labelText: 'Небесная цель'),
+          decoration: const InputDecoration(labelText: 'Celestial target'),
           items: targets
               .map(
                 (item) =>
@@ -560,17 +561,17 @@ class _SearchControls extends StatelessWidget {
           segments: const [
             ButtonSegment(
               value: 'adaptive',
-              label: Text('Рядом'),
+              label: Text('Nearby'),
               icon: Icon(Icons.radar),
             ),
             ButtonSegment(
               value: 'country',
-              label: Text('Страна'),
+              label: Text('Country'),
               icon: Icon(Icons.flag_outlined),
             ),
             ButtonSegment(
               value: 'global',
-              label: Text('Без границ'),
+              label: Text('Worldwide'),
               icon: Icon(Icons.public),
             ),
           ],
@@ -583,7 +584,7 @@ class _SearchControls extends StatelessWidget {
             controller: countryController,
             textCapitalization: TextCapitalization.characters,
             decoration: const InputDecoration(
-              labelText: 'ISO-код страны, например AM',
+              labelText: 'Country ISO code, e.g. AM',
             ),
           ),
         ],
@@ -597,7 +598,7 @@ class _SearchControls extends StatelessWidget {
                   decimal: true,
                   signed: true,
                 ),
-                decoration: const InputDecoration(labelText: 'Широта'),
+                decoration: const InputDecoration(labelText: 'Latitude'),
               ),
             ),
             const SizedBox(width: 8),
@@ -608,7 +609,7 @@ class _SearchControls extends StatelessWidget {
                   decimal: true,
                   signed: true,
                 ),
-                decoration: const InputDecoration(labelText: 'Долгота'),
+                decoration: const InputDecoration(labelText: 'Longitude'),
               ),
             ),
           ],
@@ -617,31 +618,31 @@ class _SearchControls extends StatelessWidget {
         OutlinedButton.icon(
           onPressed: loading ? null : onUseLocation,
           icon: const Icon(Icons.my_location),
-          label: const Text('Использовать мою геолокацию'),
+          label: const Text('Use my location'),
         ),
         const SizedBox(height: 14),
-        Text('Радиус: ${radiusKm.round()} км'),
+        Text('Radius: ${radiusKm.round()} km'),
         Slider(
           value: radiusKm,
           min: 25,
           max: 500,
           divisions: 19,
-          label: '${radiusKm.round()} км',
+          label: '${radiusKm.round()} km',
           onChanged: loading ? null : onRadiusChanged,
         ),
         const Text(
-          'Радиус ограничивает вычисления. В маленькой стране adaptive-поиск может перейти границу; '
-          'в большой стране он останется локальным.',
+          'The radius bounds calculations. In a small country, adaptive search may cross the border; '
+          'in a large country it remains local.',
           style: TextStyle(color: Colors.white70),
         ),
         const SizedBox(height: 14),
-        Text('Период поиска: $horizonDays ${_dayLabel(horizonDays)}'),
+        Text('Search horizon: $horizonDays ${_dayLabel(horizonDays)}'),
         SegmentedButton<int>(
           segments: const [
-            ButtonSegment(value: 1, label: Text('1 день')),
-            ButtonSegment(value: 3, label: Text('3 дня')),
-            ButtonSegment(value: 7, label: Text('7 дней')),
-            ButtonSegment(value: 14, label: Text('14 дней')),
+            ButtonSegment(value: 1, label: Text('1 day')),
+            ButtonSegment(value: 3, label: Text('3 days')),
+            ButtonSegment(value: 7, label: Text('7 days')),
+            ButtonSegment(value: 14, label: Text('14 days')),
           ],
           selected: {horizonDays},
           onSelectionChanged:
@@ -656,7 +657,7 @@ class _SearchControls extends StatelessWidget {
                   child: CircularProgressIndicator(strokeWidth: 2),
                 )
               : const Icon(Icons.travel_explore),
-          label: const Text('Найти лучшее небо'),
+          label: const Text('Find the best sky'),
         ),
         if (loading && queryStage != null) ...[
           const SizedBox(height: 10),
@@ -668,7 +669,7 @@ class _SearchControls extends StatelessWidget {
               TextButton.icon(
                 onPressed: onCancelSearch,
                 icon: const Icon(Icons.cancel_outlined),
-                label: const Text('Отменить'),
+                label: const Text('Cancel'),
               ),
             ],
           ),
@@ -683,13 +684,13 @@ class _SearchControls extends StatelessWidget {
           OutlinedButton.icon(
             onPressed: loading ? null : onSearch,
             icon: Icon(queryExpired ? Icons.refresh : Icons.replay),
-            label: Text(queryExpired ? 'Запустить заново' : 'Повторить'),
+            label: Text(queryExpired ? 'Start again' : 'Try again'),
           ),
         ],
         const SizedBox(height: 12),
         const Text(
-          'Динамические точки пока непроверенные: приложение не гарантирует законный доступ, '
-          'состояние дороги, парковку или безопасность ночью.',
+          'Dynamic locations are unverified: the app does not guarantee legal access, '
+          'road condition, parking, or nighttime safety.',
           style: TextStyle(fontSize: 12, color: Colors.white60),
         ),
       ],
@@ -715,7 +716,7 @@ class _ResultsPane extends StatelessWidget {
         child: Padding(
           padding: EdgeInsets.all(32),
           child: Text(
-            'Здесь появятся лучшие точки, временные окна, прогноз и маршруты.',
+            'The best locations, time windows, forecasts, and routes will appear here.',
             textAlign: TextAlign.center,
             style: TextStyle(fontSize: 18, color: Colors.white70),
           ),
@@ -830,7 +831,7 @@ class _RecommendationCard extends StatelessWidget {
                         style: Theme.of(context).textTheme.titleMedium,
                       ),
                       Text(
-                        '${item.distanceKm.toStringAsFixed(1)} км · $time · ${item.place.kind}',
+                        '${item.distanceKm.toStringAsFixed(1)} km · $time · ${item.place.kind}',
                         style: const TextStyle(color: Colors.white70),
                       ),
                     ],
@@ -852,19 +853,19 @@ class _RecommendationCard extends StatelessWidget {
                   value: '${(item.travelUtility * 100).round()}%',
                 ),
                 _Metric(
-                  label: 'Облака',
+                  label: 'Clouds',
                   value: '${(item.conditions.cloud * 100).round()}%',
                 ),
                 _Metric(
-                  label: 'Ветер',
-                  value: '${item.conditions.windMps.toStringAsFixed(1)} м/с',
+                  label: 'Wind',
+                  value: '${item.conditions.windMps.toStringAsFixed(1)} m/s',
                 ),
                 _Metric(
-                  label: 'Цель',
+                  label: 'Target',
                   value: '${item.astronomy.altitudeDeg.toStringAsFixed(0)}°',
                 ),
                 _Metric(
-                  label: 'Темнота',
+                  label: 'Darkness',
                   value: '${(item.place.darknessScore * 100).round()}%',
                 ),
               ],
@@ -919,18 +920,18 @@ class _StoresPage extends StatelessWidget {
       padding: const EdgeInsets.all(16),
       children: [
         Text(
-          'Техника поблизости',
+          'Equipment nearby',
           style: Theme.of(context).textTheme.headlineSmall,
         ),
         const SizedBox(height: 6),
         Text(
-          'Камеры, оптика, электроника и outdoor-магазины в радиусе ${radiusKm.round()} км.',
+          'Cameras, optics, electronics, and outdoor stores within ${radiusKm.round()} km.',
         ),
         const SizedBox(height: 12),
         FilledButton.icon(
           onPressed: loading ? null : onSearch,
           icon: const Icon(Icons.search),
-          label: const Text('Найти магазины'),
+          label: const Text('Find stores'),
         ),
         if (error != null) ...[
           const SizedBox(height: 10),
@@ -947,7 +948,7 @@ class _StoresPage extends StatelessWidget {
               subtitle: Text(
                 [
                   if (store.distanceKm != null)
-                    '${store.distanceKm!.toStringAsFixed(1)} км',
+                    '${store.distanceKm!.toStringAsFixed(1)} km',
                   ...store.categories.take(3),
                   if (store.address != null) store.address!,
                 ].join(' · '),
@@ -957,7 +958,7 @@ class _StoresPage extends StatelessWidget {
                 itemBuilder: (_) => [
                   PopupMenuItem(
                     value: store.website,
-                    child: const Text('Открыть сайт'),
+                    child: const Text('Open website'),
                   ),
                   ...store.routes.map(
                     (route) => PopupMenuItem(
@@ -991,7 +992,7 @@ class _SettingsPage extends StatelessWidget {
     return ListView(
       padding: const EdgeInsets.all(16),
       children: [
-        Text('Подключение', style: Theme.of(context).textTheme.headlineSmall),
+        Text('Connection', style: Theme.of(context).textTheme.headlineSmall),
         const SizedBox(height: 12),
         TextField(
           controller: apiController,
@@ -1001,20 +1002,20 @@ class _SettingsPage extends StatelessWidget {
         const SizedBox(height: 10),
         FilledButton(
           onPressed: onSave,
-          child: const Text('Сохранить и проверить'),
+          child: const Text('Save and test'),
         ),
         const SizedBox(height: 10),
-        Text('Текущий адрес: $currentApiUrl'),
+        Text('Current address: $currentApiUrl'),
         const SizedBox(height: 24),
         const Text(
-          'Для физического iPhone укажите LAN-адрес Mac, например '
-          'http://192.168.1.20:8000, и запустите backend с --host 0.0.0.0.',
+          'For a physical iPhone, enter the Mac LAN address, for example '
+          'http://192.168.1.20:8000, and run the backend with --host 0.0.0.0.',
           style: TextStyle(color: Colors.white70),
         ),
         const SizedBox(height: 24),
         const Text(
-          'Карта OpenStreetMap в этой сборке предназначена для локальной разработки. '
-          'Перед публичным релизом нужен собственный PMTiles или коммерческий tile provider.',
+          'The OpenStreetMap layer in this build is for local development. '
+          'Before a public release, use self-hosted PMTiles or a commercial tile provider.',
           style: TextStyle(color: Colors.white60),
         ),
       ],
@@ -1048,31 +1049,31 @@ String _routeLabel(String provider) => switch (provider) {
     };
 
 String _warningLabel(String warning) => switch (warning) {
-      'unverified_place' => 'точка не проверена',
-      'darkness_is_proxy' => 'темнота оценена приближённо',
-      'low_confidence' => 'низкая уверенность прогноза',
-      'high_dew_risk' => 'риск росы',
-      'strong_wind' => 'сильный ветер',
+      'unverified_place' => 'location is unverified',
+      'darkness_is_proxy' => 'darkness is estimated',
+      'low_confidence' => 'low forecast confidence',
+      'high_dew_risk' => 'dew risk',
+      'strong_wind' => 'strong wind',
       _ => warning.replaceAll('_', ' '),
     };
 
 String _humanWarnings(List<String> warnings) {
   if (warnings.contains('target_not_visible_in_scope')) {
-    return 'Эта цель не поднимается достаточно высоко в выбранной области и периоде.';
+    return 'This target does not rise high enough in the selected area and period.';
   }
   if (warnings.contains('weather_unavailable')) {
-    return 'Не удалось получить погоду для найденных точек.';
+    return 'Could not get weather data for the found locations.';
   }
   if (warnings.contains('no_candidate_places')) {
-    return 'В радиусе нет подходящих размеченных точек. Увеличьте радиус.';
+    return 'There are no suitable mapped locations in the radius. Increase the radius.';
   }
   if (warnings.contains('no_observation_window')) {
-    return 'В выбранные дни нет достаточно хорошего окна. Попробуйте другой период или цель.';
+    return 'There is no good enough window on the selected days. Try another period or target.';
   }
-  return warnings.isEmpty ? 'Результаты не найдены.' : warnings.join(', ');
+  return warnings.isEmpty ? 'No results found.' : warnings.join(', ');
 }
 
-String _dayLabel(int value) => value == 1 ? 'день' : 'дней';
+String _dayLabel(int value) => value == 1 ? 'day' : 'days';
 
 double _stageProgress(String stage) {
   const stages = <String>[
@@ -1093,19 +1094,19 @@ double _stageProgress(String stage) {
 }
 
 String _stageLabel(String stage) => switch (stage) {
-      'queued' => 'Поиск поставлен в очередь',
-      'resolving_target' => 'Разрешаю небесный объект',
-      'generating_cells' => 'Строю H3-кандидаты',
-      'fetching_elevation' => 'Получаю высоты',
-      'reading_surface_windows' => 'Проверяю поверхность',
-      'applying_static_filters' => 'Отсеиваю неподходящие точки',
-      'fetching_weather' => 'Получаю прогноз погоды',
-      'calculating_astronomy' => 'Рассчитываю видимость',
-      'checking_access' => 'Проверяю локальный доступ',
-      'ranking' => 'Ранжирую точки',
-      'completed' => 'Поиск завершён',
-      'cancelled' => 'Поиск отменён',
-      'expired' => 'Результат истёк',
-      'failed' => 'Поиск завершился с ошибкой',
+      'queued' => 'Search queued',
+      'resolving_target' => 'Resolving celestial target',
+      'generating_cells' => 'Generating H3 candidates',
+      'fetching_elevation' => 'Fetching elevation',
+      'reading_surface_windows' => 'Checking surface',
+      'applying_static_filters' => 'Filtering unsuitable locations',
+      'fetching_weather' => 'Fetching weather forecast',
+      'calculating_astronomy' => 'Calculating visibility',
+      'checking_access' => 'Checking local access',
+      'ranking' => 'Ranking locations',
+      'completed' => 'Search completed',
+      'cancelled' => 'Search cancelled',
+      'expired' => 'Result expired',
+      'failed' => 'Search failed',
       _ => stage.replaceAll('_', ' '),
     };

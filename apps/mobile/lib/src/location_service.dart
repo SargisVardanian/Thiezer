@@ -6,7 +6,7 @@ class LocationService {
   Future<GeoPoint> currentLocation() async {
     final enabled = await Geolocator.isLocationServiceEnabled();
     if (!enabled) {
-      throw StateError('Геолокация выключена в системных настройках.');
+      throw StateError('Location services are disabled in system settings.');
     }
 
     var permission = await Geolocator.checkPermission();
@@ -14,11 +14,11 @@ class LocationService {
       permission = await Geolocator.requestPermission();
     }
     if (permission == LocationPermission.denied) {
-      throw StateError('Доступ к геолокации отклонён.');
+      throw StateError('Location permission was denied.');
     }
     if (permission == LocationPermission.deniedForever) {
       throw StateError(
-        'Доступ к геолокации запрещён навсегда. Откройте настройки приложения.',
+        'Location permission is permanently denied. Open the app settings to allow it.',
       );
     }
 

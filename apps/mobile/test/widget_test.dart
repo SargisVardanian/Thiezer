@@ -13,7 +13,7 @@ void main() {
 
     expect(find.byType(MapFirstDiscoveryScreen), findsOneWidget);
     expect(find.byIcon(Icons.search), findsOneWidget);
-    expect(find.text('Найти'), findsOneWidget);
-    expect(find.text('Луна'), findsOneWidget);
+    expect(find.text('Search'), findsOneWidget);
+    expect(find.text('Moon'), findsOneWidget);
   });
 }

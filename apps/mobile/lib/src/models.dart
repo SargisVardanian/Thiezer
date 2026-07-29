@@ -180,6 +180,32 @@ class RouteHandoff {
       );
 }
 
+class RoadRoute {
+  const RoadRoute({
+    required this.provider,
+    required this.distanceM,
+    required this.durationS,
+    required this.geometry,
+    required this.attribution,
+  });
+
+  final String provider;
+  final double distanceM;
+  final double durationS;
+  final List<GeoPoint> geometry;
+  final String attribution;
+
+  factory RoadRoute.fromJson(Map<String, dynamic> json) => RoadRoute(
+        provider: json['provider'] as String,
+        distanceM: (json['distance_m'] as num).toDouble(),
+        durationS: (json['duration_s'] as num).toDouble(),
+        geometry: (json['geometry'] as List<dynamic>)
+            .map((item) => GeoPoint.fromJson(item as Map<String, dynamic>))
+            .toList(growable: false),
+        attribution: json['attribution'] as String,
+      );
+}
+
 class SkyConditions {
   const SkyConditions({
     required this.cloud,
@@ -232,6 +258,7 @@ class ObservationPlace {
     required this.kind,
     required this.verificationStatus,
     required this.darknessScore,
+    required this.horizonOpennessScore,
     required this.sourceProvider,
     this.countryCode,
     this.region,
@@ -243,6 +270,7 @@ class ObservationPlace {
   final String kind;
   final String verificationStatus;
   final double darknessScore;
+  final double horizonOpennessScore;
   final String sourceProvider;
   final String? countryCode;
   final String? region;
@@ -257,6 +285,8 @@ class ObservationPlace {
         kind: json['kind'] as String,
         verificationStatus: json['verification_status'] as String,
         darknessScore: (json['darkness_score'] as num).toDouble(),
+        horizonOpennessScore:
+            (json['horizon_openness_score'] as num?)?.toDouble() ?? 0.0,
         sourceProvider: (json['source_provider'] as String?) ?? 'unknown',
       );
 }
@@ -360,6 +390,61 @@ class RecommendationResponse {
             .map((dynamic item) => item as String)
             .toList(growable: false),
         radiusKm: (json['search_radius_km'] as num).toDouble(),
+      );
+}
+
+class AstronomicalPlanCandidate {
+  const AstronomicalPlanCandidate({
+    required this.place,
+    required this.distanceKm,
+    required this.bestTime,
+    required this.altitudeDeg,
+    required this.azimuthDeg,
+    required this.score,
+  });
+
+  final ObservationPlace place;
+  final double distanceKm;
+  final DateTime bestTime;
+  final double altitudeDeg;
+  final double azimuthDeg;
+  final double score;
+
+  factory AstronomicalPlanCandidate.fromJson(Map<String, dynamic> json) =>
+      AstronomicalPlanCandidate(
+        place: ObservationPlace.fromJson(json['place'] as Map<String, dynamic>),
+        distanceKm: (json['distance_km'] as num).toDouble(),
+        bestTime: DateTime.parse(json['best_time_utc'] as String).toLocal(),
+        altitudeDeg: (json['altitude_deg'] as num).toDouble(),
+        azimuthDeg: (json['azimuth_deg'] as num).toDouble(),
+        score: (json['deterministic_score'] as num).toDouble(),
+      );
+}
+
+class AstronomicalPlanResponse {
+  const AstronomicalPlanResponse({
+    required this.bestTime,
+    required this.horizonDays,
+    required this.candidates,
+    required this.warnings,
+  });
+
+  final DateTime? bestTime;
+  final int horizonDays;
+  final List<AstronomicalPlanCandidate> candidates;
+  final List<String> warnings;
+
+  factory AstronomicalPlanResponse.fromJson(Map<String, dynamic> json) =>
+      AstronomicalPlanResponse(
+        bestTime: _optionalDate(json['best_time_utc'])?.toLocal(),
+        horizonDays: json['planning_horizon_days'] as int,
+        candidates: (json['candidates'] as List<dynamic>)
+            .map((item) => AstronomicalPlanCandidate.fromJson(
+                item as Map<String, dynamic>))
+            .toList(growable: false),
+        warnings: (json['warnings'] as List<dynamic>? ?? const <dynamic>[])
+            .map((item) => item as String)
+            .toList(growable: false),
       );
 }
 

@@ -51,3 +51,27 @@ async def test_armenia_coarse_to_fine_matches_exhaustive_res7_oracle() -> None:
     assert result.diagnostics.weather_candidates <= 40
     assert oracle_best - production_best <= 0.02
     assert recalled / len(oracle_top) >= 0.95
+
+
+@pytest.mark.asyncio
+async def test_worldwide_search_uses_curated_global_destinations() -> None:
+    center = GeoPoint(latitude_deg=40.1772, longitude_deg=44.5035)
+    radius_km = 150.0
+    static = ProceduralSurfaceLayerProvider()
+    service = SurfaceSearchService(
+        static_layers=static,
+        access_provider=ProceduralAccessPointProvider(static),
+    )
+    from thiezer.repositories.surface import SurfacePlaceRepository
+
+    result = await SurfacePlaceRepository(service).search(
+        user_location=center,
+        scope=SearchScope.GLOBAL,
+        country_code=None,
+        max_distance_km=radius_km,
+        limit=12,
+    )
+
+    assert result.matches
+    assert all(place.source_provider == "darksky_catalog_v1" for place, _ in result.matches)
+    assert all(place.country_code != "AM" for place, _ in result.matches)
