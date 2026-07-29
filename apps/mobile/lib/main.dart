@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:intl/date_symbol_data_local.dart';
 
 import 'src/map_first_discovery.dart';
 
-void main() {
+Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await initializeDateFormatting('ru');
   final scheme = ColorScheme.fromSeed(
     seedColor: const Color(0xFF89B4FF),
     brightness: Brightness.dark,
