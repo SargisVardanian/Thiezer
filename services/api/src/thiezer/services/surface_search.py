@@ -97,6 +97,10 @@ class SurfaceSearchService:
             cells=selected_fine,
             maximum_sites=self._budget.materialized_site_limit,
         )
+        # An H3 cell may straddle a border and a sampled access point can land on the
+        # other side. Re-apply the requested country boundary before ranking or truncating.
+        if scope == SearchScope.COUNTRY and country_code is not None:
+            sites = [site for site in sites if self._boundaries.contains(country_code, site.point)]
         selected_sites = spatial_nms(
             sites,
             point=lambda site: site.point,
