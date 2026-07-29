@@ -363,6 +363,60 @@ class RecommendationResponse {
       );
 }
 
+class AstronomicalPlanCandidate {
+  const AstronomicalPlanCandidate({
+    required this.place,
+    required this.distanceKm,
+    required this.bestTime,
+    required this.altitudeDeg,
+    required this.azimuthDeg,
+    required this.score,
+  });
+
+  final ObservationPlace place;
+  final double distanceKm;
+  final DateTime bestTime;
+  final double altitudeDeg;
+  final double azimuthDeg;
+  final double score;
+
+  factory AstronomicalPlanCandidate.fromJson(Map<String, dynamic> json) =>
+      AstronomicalPlanCandidate(
+        place: ObservationPlace.fromJson(json['place'] as Map<String, dynamic>),
+        distanceKm: (json['distance_km'] as num).toDouble(),
+        bestTime: DateTime.parse(json['best_time_utc'] as String).toLocal(),
+        altitudeDeg: (json['altitude_deg'] as num).toDouble(),
+        azimuthDeg: (json['azimuth_deg'] as num).toDouble(),
+        score: (json['deterministic_score'] as num).toDouble(),
+      );
+}
+
+class AstronomicalPlanResponse {
+  const AstronomicalPlanResponse({
+    required this.bestTime,
+    required this.horizonDays,
+    required this.candidates,
+    required this.warnings,
+  });
+
+  final DateTime? bestTime;
+  final int horizonDays;
+  final List<AstronomicalPlanCandidate> candidates;
+  final List<String> warnings;
+
+  factory AstronomicalPlanResponse.fromJson(Map<String, dynamic> json) =>
+      AstronomicalPlanResponse(
+        bestTime: _optionalDate(json['best_time_utc'])?.toLocal(),
+        horizonDays: json['planning_horizon_days'] as int,
+        candidates: (json['candidates'] as List<dynamic>)
+            .map((item) => AstronomicalPlanCandidate.fromJson(item as Map<String, dynamic>))
+            .toList(growable: false),
+        warnings: (json['warnings'] as List<dynamic>? ?? const <dynamic>[])
+            .map((item) => item as String)
+            .toList(growable: false),
+      );
+}
+
 class QueryJobStatus {
   const QueryJobStatus({
     required this.queryId,

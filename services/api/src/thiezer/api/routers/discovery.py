@@ -12,6 +12,8 @@ from thiezer.api.dependencies import (
     get_visibility_service,
 )
 from thiezer.domain.contracts import (
+    AstronomicalPlanRequest,
+    AstronomicalPlanResponse,
     GeoPoint,
     RecommendationSearchRequest,
     RecommendationSearchResponse,
@@ -71,6 +73,14 @@ async def search_recommendations(
         return await service.search(request)
     except (httpx.HTTPError, ValueError) as exc:
         raise HTTPException(status_code=502, detail=f"external provider failure: {exc}") from exc
+
+
+@router.post("/astronomy/plan", response_model=AstronomicalPlanResponse)
+async def plan_astronomy(
+    request: AstronomicalPlanRequest,
+    service: Annotated[RecommendationService, Depends(get_recommendation_service)],
+) -> AstronomicalPlanResponse:
+    return await service.plan_astronomy(request)
 
 
 @router.post("/stores/search", response_model=StoreSearchResponse)

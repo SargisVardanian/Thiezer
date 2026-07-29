@@ -346,6 +346,52 @@ class RecommendationSearchResponse(BaseModel):
     provider_attributions: list[str]
 
 
+class AstronomicalPlanRequest(BaseModel):
+    """Long-range deterministic observation planning; weather is intentionally excluded."""
+
+    user_location: GeoPoint
+    target: TargetKind
+    start_utc: datetime
+    horizon_days: Annotated[int, Field(ge=1, le=730)] = 365
+    scope: SearchScope = SearchScope.ADAPTIVE
+    country_code: CountryCode | None = None
+    max_distance_km: Annotated[float, Field(gt=0.0, le=2_000.0)] = 250.0
+    max_candidates: Annotated[int, Field(ge=1, le=20)] = 12
+    max_results: Annotated[int, Field(ge=1, le=8)] = 6
+
+    @model_validator(mode="after")
+    def validate_request(self) -> AstronomicalPlanRequest:
+        _require_aware(self.start_utc, "start_utc")
+        if self.scope == SearchScope.COUNTRY and self.country_code is None:
+            raise ValueError("country_code is required for country scope")
+        return self
+
+
+class AstronomicalPlanCandidate(BaseModel):
+    place: CandidatePlace
+    distance_km: NonNegativeFloat
+    best_time_utc: datetime
+    altitude_deg: float
+    azimuth_deg: float
+    sun_altitude_deg: float
+    moon_altitude_deg: float
+    moon_illumination_fraction: UnitScore
+    deterministic_score: UnitScore
+    weather_included: bool = False
+
+
+class AstronomicalPlanResponse(BaseModel):
+    generated_at_utc: datetime
+    target: TargetKind
+    scope: SearchScope
+    search_radius_km: NonNegativeFloat
+    planning_horizon_days: int
+    best_time_utc: datetime | None
+    candidates: list[AstronomicalPlanCandidate]
+    warnings: list[WarningCode]
+    provider_attributions: list[str]
+
+
 class TargetVisibilityResponse(BaseModel):
     point: GeoPoint
     snapshot: AstronomySnapshot

@@ -106,6 +106,36 @@ class ThiezerApiClient {
     );
   }
 
+  Future<AstronomicalPlanResponse> planAstronomy({
+    required GeoPoint location,
+    required String target,
+    required double radiusKm,
+    required String scope,
+    required int horizonDays,
+    String? countryCode,
+  }) async {
+    final response = await _client
+        .post(
+          _uri('/v1/astronomy/plan'),
+          headers: const <String, String>{'content-type': 'application/json'},
+          body: jsonEncode(<String, dynamic>{
+            'user_location': location.toJson(),
+            'target': target,
+            'start_utc': DateTime.now().toUtc().toIso8601String(),
+            'horizon_days': horizonDays,
+            'scope': scope,
+            'country_code': scope == 'country' ? countryCode?.toUpperCase() : null,
+            'max_distance_km': radiusKm,
+            'max_candidates': 12,
+            'max_results': 6,
+          }),
+        )
+        .timeout(const Duration(seconds: 90));
+    return AstronomicalPlanResponse.fromJson(
+      _decode(response) as Map<String, dynamic>,
+    );
+  }
+
   Future<QueryJobStatus> fetchRecommendationJob(String queryId) async {
     final response = await _client
         .get(_uri('/v1/search-jobs/${Uri.encodeComponent(queryId)}'))

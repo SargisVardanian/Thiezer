@@ -5,9 +5,13 @@ from datetime import UTC, datetime, timedelta
 
 from thiezer.domain.celestial_objects import CelestialObject, CelestialTargetRef
 from thiezer.domain.contracts import (
+    AstronomicalPlanCandidate,
+    AstronomicalPlanRequest,
+    AstronomicalPlanResponse,
     AstronomySnapshot,
     CandidatePlace,
     ExplanationItem,
+    GeoPoint,
     HourlySkyCondition,
     MoonPhase,
     ObservationWindow,
@@ -21,7 +25,13 @@ from thiezer.domain.contracts import (
 )
 from thiezer.domain.ephemeris import AstronomyProvider
 from thiezer.domain.geospatial import build_route_handoffs
-from thiezer.domain.quality import build_score_inputs
+from thiezer.domain.quality import (
+    astronomical_darkness_score,
+    build_score_inputs,
+    minimum_target_altitude_deg,
+    moon_interference_score,
+    target_altitude_score,
+)
 from thiezer.domain.scoring import calculate_sky_score
 from thiezer.domain.target_profiles import (
     RecommendationProfile,
@@ -174,6 +184,68 @@ class RecommendationService:
             results=results,
             warnings=list(dict.fromkeys(response_warnings)),
             provider_attributions=sorted(attributions),
+        )
+
+    async def plan_astronomy(self, request: AstronomicalPlanRequest) -> AstronomicalPlanResponse:
+        """Find a long-range physical observing opportunity without making weather claims."""
+        batch = await self._places.search(
+            user_location=request.user_location,
+            scope=request.scope,
+            country_code=request.country_code,
+            max_distance_km=request.max_distance_km,
+            limit=request.max_candidates,
+            include_unverified=True,
+        )
+        travel = [item for item in batch.matches if item[0].source_provider != "user_origin"]
+        candidates = travel or batch.matches
+        best_time = _best_astronomical_time(
+            astronomy=self._astronomy,
+            target=request.target,
+            point=request.user_location,
+            start_utc=request.start_utc,
+            horizon_days=request.horizon_days,
+        )
+        if best_time is None:
+            return AstronomicalPlanResponse(
+                generated_at_utc=datetime.now(UTC),
+                target=request.target,
+                scope=request.scope,
+                search_radius_km=request.max_distance_km,
+                planning_horizon_days=request.horizon_days,
+                best_time_utc=None,
+                candidates=[],
+                warnings=[WarningCode.NO_OBSERVATION_WINDOW],
+                provider_attributions=batch.attributions,
+            )
+        planned: list[AstronomicalPlanCandidate] = []
+        for place, distance in candidates:
+            snapshot = self._astronomy.snapshot(
+                target=request.target, point=place.point, timestamp_utc=best_time
+            )
+            planned.append(
+                AstronomicalPlanCandidate(
+                    place=place,
+                    distance_km=distance,
+                    best_time_utc=best_time,
+                    altitude_deg=snapshot.altitude_deg,
+                    azimuth_deg=snapshot.azimuth_deg,
+                    sun_altitude_deg=snapshot.sun_altitude_deg,
+                    moon_altitude_deg=snapshot.moon_altitude_deg,
+                    moon_illumination_fraction=snapshot.moon_illumination_fraction,
+                    deterministic_score=_astronomical_plan_score(request.target, place, snapshot),
+                )
+            )
+        planned.sort(key=lambda item: (-item.deterministic_score, item.distance_km, item.place.id))
+        return AstronomicalPlanResponse(
+            generated_at_utc=datetime.now(UTC),
+            target=request.target,
+            scope=request.scope,
+            search_radius_km=request.max_distance_km,
+            planning_horizon_days=request.horizon_days,
+            best_time_utc=best_time,
+            candidates=planned[: request.max_results],
+            warnings=list(dict.fromkeys(batch.warnings)),
+            provider_attributions=batch.attributions,
         )
 
     async def _evaluate_place(
@@ -387,6 +459,64 @@ def _explain(
             )
         )
     return explanations
+
+
+def _best_astronomical_time(
+    *,
+    astronomy: AstronomyProvider,
+    target: TargetKind,
+    point: GeoPoint,
+    start_utc: datetime,
+    horizon_days: int,
+) -> datetime | None:
+    # Two-hour sampling is explicit planning resolution, not weather data. It avoids
+    # claiming minute-level precision while remaining tractable over a full year.
+    end_utc = start_utc + timedelta(days=horizon_days)
+    step = timedelta(hours=2)
+    best: tuple[float, datetime] | None = None
+    timestamp = start_utc.replace(minute=0, second=0, microsecond=0)
+    while timestamp <= end_utc:
+        snapshot = astronomy.snapshot(target=target, point=point, timestamp_utc=timestamp)
+        if (
+            snapshot.sun_altitude_deg <= -12.0
+            and snapshot.altitude_deg >= minimum_target_altitude_deg(target)
+        ):
+            geometry = (
+                0.55 * target_altitude_score(target=target, altitude_deg=snapshot.altitude_deg)
+                + 0.25
+                * astronomical_darkness_score(
+                    target=target, sun_altitude_deg=snapshot.sun_altitude_deg
+                )
+                + 0.20 * moon_interference_score(target=target, astronomy=snapshot)
+            )
+            candidate = (geometry, timestamp)
+            if best is None or candidate > best:
+                best = candidate
+        timestamp += step
+    return best[1] if best is not None else None
+
+
+def _astronomical_plan_score(
+    target: TargetKind,
+    place: CandidatePlace,
+    snapshot: AstronomySnapshot,
+) -> float:
+    geometry = (
+        0.55 * target_altitude_score(target=target, altitude_deg=snapshot.altitude_deg)
+        + 0.25
+        * astronomical_darkness_score(target=target, sun_altitude_deg=snapshot.sun_altitude_deg)
+        + 0.20 * moon_interference_score(target=target, astronomy=snapshot)
+    )
+    return min(
+        1.0,
+        max(
+            0.0,
+            0.55 * geometry
+            + 0.30 * place.darkness_score
+            + 0.10 * place.horizon_openness_score
+            + 0.05 * place.accessibility_score,
+        ),
+    )
 
 
 def _scoring_target(

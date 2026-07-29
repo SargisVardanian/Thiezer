@@ -41,11 +41,13 @@ class _MapFirstDiscoveryScreenState extends State<MapFirstDiscoveryScreen> {
   GeoPoint _location = const GeoPoint(40.1772, 44.5035);
   List<TargetOption> _targets = _fallbackTargets;
   List<RecommendationResult> _results = const [];
+  List<AstronomicalPlanCandidate> _planResults = const [];
   CelestialObject? _catalogObject;
   String _target = 'moon';
   String _scope = 'country';
   double _radiusKm = 150;
   int _horizonDays = 7;
+  bool _astronomicalPlan = false;
   int _selectedResult = 0;
   int _mapRevision = 0;
   String? _queryId;
@@ -106,9 +108,31 @@ class _MapFirstDiscoveryScreenState extends State<MapFirstDiscoveryScreen> {
       _stage = 'queued';
       _queryId = null;
       _results = const [];
+      _planResults = const [];
       _selectedResult = 0;
     });
     try {
+      if (_astronomicalPlan) {
+        final plan = await _api.planAstronomy(
+          location: _location,
+          target: _target,
+          radiusKm: _radiusKm,
+          scope: _scope,
+          countryCode: _countryController.text.trim(),
+          horizonDays: 365,
+        );
+        if (!mounted) return;
+        setState(() {
+          _planResults = plan.candidates;
+          _loading = false;
+          _stage = 'completed';
+          _error = plan.candidates.isEmpty
+              ? 'На выбранном горизонте нет астрономического окна для этой цели.'
+              : null;
+          _mapRevision++;
+        });
+        return;
+      }
       final initial = await _api.startRecommendationJob(
         location: _location,
         target: _target,
@@ -298,6 +322,7 @@ class _MapFirstDiscoveryScreenState extends State<MapFirstDiscoveryScreen> {
     var radius = _radiusKm;
     var scope = _scope;
     var days = _horizonDays;
+    var astronomicalPlan = _astronomicalPlan;
     await showModalBottomSheet<void>(
       context: context,
       backgroundColor: const Color(0xFF10192B),
@@ -347,6 +372,14 @@ class _MapFirstDiscoveryScreenState extends State<MapFirstDiscoveryScreen> {
                   selected: {days},
                   onSelectionChanged: (value) => setSheetState(() => days = value.first),
                 ),
+                const SizedBox(height: 14),
+                SwitchListTile(
+                  contentPadding: EdgeInsets.zero,
+                  title: const Text('Астрономический план на год'),
+                  subtitle: const Text('Без прогноза погоды: высота, азимут, Солнце и Луна.'),
+                  value: astronomicalPlan,
+                  onChanged: (value) => setSheetState(() => astronomicalPlan = value),
+                ),
                 const SizedBox(height: 18),
                 SizedBox(
                   width: double.infinity,
@@ -356,6 +389,7 @@ class _MapFirstDiscoveryScreenState extends State<MapFirstDiscoveryScreen> {
                         _radiusKm = radius;
                         _scope = scope;
                         _horizonDays = days;
+                        _astronomicalPlan = astronomicalPlan;
                       });
                       Navigator.pop(context);
                     },
@@ -506,7 +540,9 @@ class _MapFirstDiscoveryScreenState extends State<MapFirstDiscoveryScreen> {
           if (_loading) Positioned(left: 16, right: 16, top: 112, child: _progressCard()),
           if (!_loading && _error != null)
             Positioned(left: 16, right: 16, top: 112, child: _errorCard()),
-          if (selected != null)
+          if (_planResults.isNotEmpty)
+            Positioned(left: 16, right: 16, bottom: 18, child: _planCard(_planResults.first))
+          else if (selected != null)
             Positioned(left: 16, right: 16, bottom: 18, child: _resultCard(selected))
           else if (!_loading)
             Positioned(left: 16, right: 16, bottom: 18, child: _welcomeCard()),
@@ -541,6 +577,16 @@ class _MapFirstDiscoveryScreenState extends State<MapFirstDiscoveryScreen> {
             ),
           );
         }),
+        ..._planResults.asMap().entries.map((entry) => Marker(
+              point: LatLng(entry.value.place.point.latitude, entry.value.place.point.longitude),
+              width: 52,
+              height: 52,
+              child: CircleAvatar(
+                backgroundColor: const Color(0xFFB79CFF),
+                foregroundColor: Colors.black,
+                child: Text('${entry.key + 1}', style: const TextStyle(fontWeight: FontWeight.bold)),
+              ),
+            )),
       ];
 
   Widget _topBar() => Padding(
@@ -573,7 +619,7 @@ class _MapFirstDiscoveryScreenState extends State<MapFirstDiscoveryScreen> {
                               style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 17),
                             ),
                             Text(
-                              '${_radiusKm.round()} км · ${_scopeLabel(_scope)} · $_horizonDays дн.',
+                              '${_radiusKm.round()} км · ${_scopeLabel(_scope)} · ${_astronomicalPlan ? 'астроплан на год' : '$_horizonDays дн.'}',
                               style: const TextStyle(fontSize: 12, color: Colors.white70),
                             ),
                           ],
@@ -743,6 +789,37 @@ class _MapFirstDiscoveryScreenState extends State<MapFirstDiscoveryScreen> {
                     ),
                   ),
                 ],
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _planCard(AstronomicalPlanCandidate result) {
+    final time = DateFormat('EEEE, dd MMMM y, HH:mm', 'ru').format(result.bestTime);
+    return Center(
+      child: ConstrainedBox(
+        constraints: const BoxConstraints(maxWidth: 880),
+        child: Card(
+          color: const Color(0xF0111B2E),
+          child: Padding(
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text('Астрономический план — без прогноза погоды', style: Theme.of(context).textTheme.titleMedium),
+                const SizedBox(height: 8),
+                Text(result.place.name),
+                Text('${result.distanceKm.toStringAsFixed(1)} км · $time', style: const TextStyle(color: Colors.white70)),
+                const SizedBox(height: 12),
+                Wrap(spacing: 14, children: [
+                  _Metric('Высота цели', '${result.altitudeDeg.toStringAsFixed(0)}°'),
+                  _Metric('Азимут', '${result.azimuthDeg.toStringAsFixed(0)}°'),
+                  _Metric('Геометрия', '${(result.score * 100).round()}%'),
+                ]),
               ],
             ),
           ),
