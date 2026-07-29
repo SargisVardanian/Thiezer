@@ -4,6 +4,7 @@ from fastapi import Request
 
 from thiezer.api.resources import AppResources
 from thiezer.services.recommendations import RecommendationService
+from thiezer.services.routing import RoadRoutingService
 from thiezer.services.stores import StoreSearchService
 from thiezer.services.visibility import VisibilityService
 
@@ -17,6 +18,10 @@ def get_resources(request: Request) -> AppResources:
 
 def get_recommendation_service(request: Request) -> RecommendationService:
     return get_resources(request).recommendation_service
+
+
+def get_routing_service(request: Request) -> RoadRoutingService:
+    return get_resources(request).routing_service
 
 
 def get_store_service(request: Request) -> StoreSearchService:

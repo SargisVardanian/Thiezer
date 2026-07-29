@@ -137,6 +137,23 @@ class ThiezerApiClient {
     );
   }
 
+  Future<RoadRoute> drivingRoute({
+    required GeoPoint origin,
+    required GeoPoint destination,
+  }) async {
+    final response = await _client
+        .post(
+          _uri('/v1/routes/driving'),
+          headers: const <String, String>{'content-type': 'application/json'},
+          body: jsonEncode(<String, dynamic>{
+            'origin': origin.toJson(),
+            'destination': destination.toJson(),
+          }),
+        )
+        .timeout(const Duration(seconds: 30));
+    return RoadRoute.fromJson(_decode(response) as Map<String, dynamic>);
+  }
+
   Future<QueryJobStatus> fetchRecommendationJob(String queryId) async {
     final response = await _client
         .get(_uri('/v1/search-jobs/${Uri.encodeComponent(queryId)}'))

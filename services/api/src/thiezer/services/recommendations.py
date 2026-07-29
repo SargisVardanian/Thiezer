@@ -86,7 +86,11 @@ class RecommendationService:
             include_unverified=request.include_unverified,
             progress=progress,
         )
-        candidates = batch.matches
+        candidates = (
+            [item for item in batch.matches if item[0].source_provider != "user_origin"]
+            if scoring_target == TargetKind.BEST_NIGHT_SKY
+            else batch.matches
+        )
         generated_at = datetime.now(UTC)
         if not candidates:
             warnings = [*batch.warnings, WarningCode.NO_CANDIDATE_PLACES]
@@ -130,9 +134,15 @@ class RecommendationService:
                 generated_at_utc=generated_at,
             )
             window = _best_window(samples, minimum_score=request.minimum_score)
+            forecast_fallback = False
+            if window is None and scoring_target == TargetKind.BEST_NIGHT_SKY:
+                window = _best_night_sky_fallback_window(samples)
+                forecast_fallback = window is not None
             if window is None:
                 continue
             warnings = list(window.score_breakdown.warnings)
+            if forecast_fallback:
+                warnings.append(WarningCode.LOW_CONFIDENCE)
             if place.verification_status in {
                 VerificationStatus.UNVERIFIED_SEED,
                 VerificationStatus.UNVERIFIED_DISCOVERED,
@@ -371,6 +381,37 @@ def _best_window(
         best_astronomy=best_sample.astronomy,
         best_conditions=best_sample.conditions,
         score_breakdown=best_sample.score,
+    )
+
+
+def _best_night_sky_fallback_window(
+    samples: list[_EvaluatedSample],
+) -> ObservationWindow | None:
+    """Return the least-compromised dark-time sample when forecast scoring rejects all sites.
+
+    This keeps a general night-sky search useful: it returns travel destinations and makes the
+    forecast limitation explicit instead of pretending that no dark place exists.
+    """
+    nighttime = [sample for sample in samples if sample.astronomy.sun_altitude_deg <= -12.0]
+    if not nighttime:
+        return None
+    best = max(
+        nighttime,
+        key=lambda sample: (
+            sample.score.utility,
+            -sample.conditions.total_cloud_fraction,
+            -sample.conditions.wind_speed_mps,
+        ),
+    )
+    return ObservationWindow(
+        start_utc=best.conditions.timestamp_utc,
+        end_utc=best.conditions.timestamp_utc,
+        best_time_utc=best.conditions.timestamp_utc,
+        best_score=best.score.score,
+        mean_score=best.score.score,
+        best_astronomy=best.astronomy,
+        best_conditions=best.conditions,
+        score_breakdown=best.score,
     )
 
 

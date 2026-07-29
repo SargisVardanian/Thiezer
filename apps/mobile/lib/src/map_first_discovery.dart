@@ -51,7 +51,8 @@ class _MapFirstDiscoveryScreenState extends State<MapFirstDiscoveryScreen> {
   bool _astronomicalPlan = false;
   int _selectedResult = 0;
   int _selectedPlanResult = 0;
-  bool _showDirection = false;
+  RoadRoute? _roadRoute;
+  bool _routing = false;
   int _mapRevision = 0;
   String? _queryId;
   String? _stage;
@@ -114,7 +115,7 @@ class _MapFirstDiscoveryScreenState extends State<MapFirstDiscoveryScreen> {
       _planResults = const [];
       _selectedResult = 0;
       _selectedPlanResult = 0;
-      _showDirection = false;
+      _roadRoute = null;
     });
     try {
       if (_astronomicalPlan && _target != 'best_night_sky') {
@@ -267,6 +268,34 @@ class _MapFirstDiscoveryScreenState extends State<MapFirstDiscoveryScreen> {
           orElse: () => routes.isEmpty ? null : routes.first,
         );
     if (preferred != null) await _openUrl(preferred.url);
+  }
+
+  Future<void> _buildRoadRoute() async {
+    final destination = _selectedDestination;
+    if (destination == null || _routing) return;
+    setState(() {
+      _routing = true;
+      _error = null;
+    });
+    try {
+      final route = await _api.drivingRoute(
+        origin: _location,
+        destination: destination,
+      );
+      if (!mounted) return;
+      setState(() {
+        _roadRoute = route;
+        _routing = false;
+        _mapRevision++;
+      });
+    } on Object catch (error) {
+      if (mounted) {
+        setState(() {
+          _routing = false;
+          _error = 'Could not build a road route: $error';
+        });
+      }
+    }
   }
 
   void _selectPreset(String target) {
@@ -549,17 +578,14 @@ class _MapFirstDiscoveryScreenState extends State<MapFirstDiscoveryScreen> {
                   userAgentPackageName: 'com.thiezer.app',
                 ),
                 MarkerLayer(markers: _markers()),
-                if (_showDirection && _selectedDestination != null)
+                if (_roadRoute != null)
                   PolylineLayer(
                     polylines: [
                       Polyline(
-                        points: [
-                          LatLng(_location.latitude, _location.longitude),
-                          LatLng(
-                            _selectedDestination!.latitude,
-                            _selectedDestination!.longitude,
-                          ),
-                        ],
+                        points: _roadRoute!.geometry
+                            .map((point) =>
+                                LatLng(point.latitude, point.longitude))
+                            .toList(growable: false),
                         color: const Color(0xFFFFD166),
                         strokeWidth: 4,
                       ),
@@ -653,6 +679,7 @@ class _MapFirstDiscoveryScreenState extends State<MapFirstDiscoveryScreen> {
             child: GestureDetector(
               onTap: () => setState(() {
                 _selectedResult = entry.key;
+                _roadRoute = null;
                 _mapRevision++;
               }),
               child: CircleAvatar(
@@ -676,6 +703,7 @@ class _MapFirstDiscoveryScreenState extends State<MapFirstDiscoveryScreen> {
             child: GestureDetector(
               onTap: () => setState(() {
                 _selectedPlanResult = entry.key;
+                _roadRoute = null;
                 _mapRevision++;
               }),
               child: CircleAvatar(
@@ -885,19 +913,18 @@ class _MapFirstDiscoveryScreenState extends State<MapFirstDiscoveryScreen> {
                   ),
                 const SizedBox(height: 8),
                 OutlinedButton.icon(
-                  onPressed: () =>
-                      setState(() => _showDirection = !_showDirection),
-                  icon: Icon(
-                      _showDirection ? Icons.visibility_off : Icons.alt_route),
-                  label: Text(_showDirection
-                      ? 'Hide direction'
-                      : 'Show direction on map'),
+                  onPressed: _routing ? null : _buildRoadRoute,
+                  icon: _routing
+                      ? const SizedBox.square(
+                          dimension: 16,
+                          child: CircularProgressIndicator(strokeWidth: 2),
+                        )
+                      : const Icon(Icons.alt_route),
+                  label: Text(_roadRoute == null
+                      ? 'Build road route'
+                      : 'Refresh road route'),
                 ),
-                if (_showDirection)
-                  const Text(
-                    'The line shows a straight-line direction. Use Navigate for a road route.',
-                    style: TextStyle(fontSize: 12, color: Colors.white70),
-                  ),
+                if (_roadRoute != null) _RoadRouteSummary(route: _roadRoute!),
                 if (result.warnings.isNotEmpty) ...[
                   const SizedBox(height: 9),
                   Text(
@@ -923,6 +950,7 @@ class _MapFirstDiscoveryScreenState extends State<MapFirstDiscoveryScreen> {
                             ),
                             onSelected: (_) => setState(() {
                               _selectedResult = entry.key;
+                              _roadRoute = null;
                               _mapRevision++;
                             }),
                           ),
@@ -974,23 +1002,43 @@ class _MapFirstDiscoveryScreenState extends State<MapFirstDiscoveryScreen> {
                 ),
                 const SizedBox(height: 8),
                 OutlinedButton.icon(
-                  onPressed: () =>
-                      setState(() => _showDirection = !_showDirection),
-                  icon: Icon(
-                      _showDirection ? Icons.visibility_off : Icons.alt_route),
-                  label: Text(_showDirection
-                      ? 'Hide direction'
-                      : 'Show direction on map'),
+                  onPressed: _routing ? null : _buildRoadRoute,
+                  icon: _routing
+                      ? const SizedBox.square(
+                          dimension: 16,
+                          child: CircularProgressIndicator(strokeWidth: 2),
+                        )
+                      : const Icon(Icons.alt_route),
+                  label: Text(_roadRoute == null
+                      ? 'Build road route'
+                      : 'Refresh road route'),
                 ),
-                if (_showDirection)
-                  const Text(
-                    'The line shows a straight-line direction. Road routing is opened through Navigate for verified map providers.',
-                    style: TextStyle(fontSize: 12, color: Colors.white70),
-                  ),
+                if (_roadRoute != null) _RoadRouteSummary(route: _roadRoute!),
               ],
             ),
           ),
         ),
+      ),
+    );
+  }
+}
+
+class _RoadRouteSummary extends StatelessWidget {
+  const _RoadRouteSummary({required this.route});
+
+  final RoadRoute route;
+
+  @override
+  Widget build(BuildContext context) {
+    final duration = Duration(seconds: route.durationS.round());
+    final hours = duration.inHours;
+    final minutes = duration.inMinutes.remainder(60);
+    final time = hours == 0 ? '$minutes min' : '$hours h $minutes min';
+    return Padding(
+      padding: const EdgeInsets.only(top: 6),
+      child: Text(
+        'Road route: ${(route.distanceM / 1000).toStringAsFixed(1)} km · $time\n${route.attribution}',
+        style: const TextStyle(fontSize: 12, color: Colors.white70),
       ),
     );
   }

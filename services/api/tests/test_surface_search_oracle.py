@@ -51,3 +51,25 @@ async def test_armenia_coarse_to_fine_matches_exhaustive_res7_oracle() -> None:
     assert result.diagnostics.weather_candidates <= 40
     assert oracle_best - production_best <= 0.02
     assert recalled / len(oracle_top) >= 0.95
+
+
+@pytest.mark.asyncio
+async def test_cross_border_search_keeps_nearby_sites_before_candidate_truncation() -> None:
+    center = GeoPoint(latitude_deg=40.1772, longitude_deg=44.5035)
+    radius_km = 150.0
+    static = ProceduralSurfaceLayerProvider()
+    service = SurfaceSearchService(
+        static_layers=static,
+        access_provider=ProceduralAccessPointProvider(static),
+    )
+
+    result = await service.search(
+        user_location=center,
+        scope=SearchScope.GLOBAL,
+        country_code=None,
+        max_distance_km=radius_km,
+        limit=12,
+    )
+
+    assert result.sites
+    assert all(haversine_distance_km(center, site.point) <= radius_km for site in result.sites)

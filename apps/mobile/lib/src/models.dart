@@ -180,6 +180,32 @@ class RouteHandoff {
       );
 }
 
+class RoadRoute {
+  const RoadRoute({
+    required this.provider,
+    required this.distanceM,
+    required this.durationS,
+    required this.geometry,
+    required this.attribution,
+  });
+
+  final String provider;
+  final double distanceM;
+  final double durationS;
+  final List<GeoPoint> geometry;
+  final String attribution;
+
+  factory RoadRoute.fromJson(Map<String, dynamic> json) => RoadRoute(
+        provider: json['provider'] as String,
+        distanceM: (json['distance_m'] as num).toDouble(),
+        durationS: (json['duration_s'] as num).toDouble(),
+        geometry: (json['geometry'] as List<dynamic>)
+            .map((item) => GeoPoint.fromJson(item as Map<String, dynamic>))
+            .toList(growable: false),
+        attribution: json['attribution'] as String,
+      );
+}
+
 class SkyConditions {
   const SkyConditions({
     required this.cloud,

@@ -8,6 +8,7 @@ from fastapi import APIRouter, Depends, HTTPException, Query
 
 from thiezer.api.dependencies import (
     get_recommendation_service,
+    get_routing_service,
     get_store_service,
     get_visibility_service,
 )
@@ -17,12 +18,15 @@ from thiezer.domain.contracts import (
     GeoPoint,
     RecommendationSearchRequest,
     RecommendationSearchResponse,
+    RoadRoute,
+    RoadRouteRequest,
     StoreSearchRequest,
     StoreSearchResponse,
     TargetKind,
     TargetVisibilityResponse,
 )
 from thiezer.services.recommendations import RecommendationService
+from thiezer.services.routing import RoadRoutingService
 from thiezer.services.stores import StoreSearchService
 from thiezer.services.visibility import VisibilityService
 
@@ -81,6 +85,17 @@ async def plan_astronomy(
     service: Annotated[RecommendationService, Depends(get_recommendation_service)],
 ) -> AstronomicalPlanResponse:
     return await service.plan_astronomy(request)
+
+
+@router.post("/routes/driving", response_model=RoadRoute)
+async def build_driving_route(
+    request: RoadRouteRequest,
+    service: Annotated[RoadRoutingService, Depends(get_routing_service)],
+) -> RoadRoute:
+    try:
+        return await service.route(request)
+    except (httpx.HTTPError, ValueError) as exc:
+        raise HTTPException(status_code=502, detail=f"routing provider failure: {exc}") from exc
 
 
 @router.post("/stores/search", response_model=StoreSearchResponse)

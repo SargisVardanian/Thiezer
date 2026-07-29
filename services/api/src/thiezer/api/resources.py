@@ -25,6 +25,7 @@ from thiezer.providers.catalogs.tap import TapClient
 from thiezer.providers.catalogs.vizier import VizierCatalogProvider
 from thiezer.providers.ephemeris.horizons import HorizonsCatalogProvider, HorizonsClient
 from thiezer.providers.places.overpass import OverpassDiscoveryProvider
+from thiezer.providers.routing.osrm import OsrmRoadRoutingProvider
 from thiezer.providers.static_layers.base import StaticLayerProvider
 from thiezer.providers.static_layers.cog import CogLayerConfig, CogSurfaceLayerProvider
 from thiezer.providers.static_layers.procedural import ProceduralSurfaceLayerProvider
@@ -37,6 +38,7 @@ from thiezer.services.celestial_resolution import CelestialResolutionService
 from thiezer.services.celestial_visibility import CelestialVisibilityService
 from thiezer.services.query_jobs import EphemeralQueryJobs
 from thiezer.services.recommendations import RecommendationService
+from thiezer.services.routing import RoadRoutingService
 from thiezer.services.stores import StoreSearchService
 from thiezer.services.surface_search import SurfaceSearchService
 from thiezer.services.visibility import VisibilityService
@@ -49,6 +51,7 @@ class AppResources:
     access_provider: AccessPointProvider
     weather: OpenMeteoWeatherProvider
     recommendation_service: RecommendationService
+    routing_service: RoadRoutingService
     store_service: StoreSearchService
     visibility_service: VisibilityService
     celestial_resolution: CelestialResolutionService
@@ -118,6 +121,13 @@ def build_resources(settings: Settings) -> AppResources:
         celestial_resolution=celestial_resolution,
         celestial_visibility=celestial_visibility,
     )
+    routing_service = RoadRoutingService(
+        OsrmRoadRoutingProvider(
+            base_url=str(settings.routing_base_url),
+            client=client,
+            timeout_seconds=settings.routing_timeout_seconds,
+        )
+    )
     store_repository = AdaptiveStoreRepository(
         seed_repository=SeedStoreRepository(),
         discovery_provider=store_overpass,
@@ -128,6 +138,7 @@ def build_resources(settings: Settings) -> AppResources:
         access_provider=access_provider,
         weather=weather,
         recommendation_service=recommendation_service,
+        routing_service=routing_service,
         store_service=StoreSearchService(store_repository),
         visibility_service=VisibilityService(astronomy),
         celestial_resolution=celestial_resolution,

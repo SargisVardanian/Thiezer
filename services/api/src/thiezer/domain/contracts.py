@@ -265,6 +265,19 @@ class RouteHandoff(BaseModel):
     note: str | None = None
 
 
+class RoadRouteRequest(BaseModel):
+    origin: GeoPoint
+    destination: GeoPoint
+
+
+class RoadRoute(BaseModel):
+    provider: str
+    distance_m: NonNegativeFloat
+    duration_s: NonNegativeFloat
+    geometry: list[GeoPoint] = Field(min_length=2, max_length=10_000)
+    attribution: str
+
+
 class RankedPlace(BaseModel):
     rank: Annotated[int, Field(ge=1)]
     place: CandidatePlace

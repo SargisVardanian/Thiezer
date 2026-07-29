@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from thiezer.domain.boundaries import CountryBoundaryProvider, StaticCountryBoundaryProvider
 from thiezer.domain.contracts import GeoPoint, SearchScope
+from thiezer.domain.geospatial import haversine_distance_km
 from thiezer.domain.search_cells import choose_h3_search_plan, cover_circle, refine_cells
 from thiezer.domain.spatial_diversity import spatial_nms
 from thiezer.domain.static_scoring import (
@@ -97,6 +98,14 @@ class SurfaceSearchService:
             cells=selected_fine,
             maximum_sites=self._budget.materialized_site_limit,
         )
+        # Materialized access points are sampled inside H3 cells. Keep the hard radius
+        # before ranking/truncating; otherwise a cross-border search can spend every
+        # available slot on attractive but distant points and leave no local destination.
+        sites = [
+            site
+            for site in sites
+            if haversine_distance_km(user_location, site.point) <= max_distance_km
+        ]
         # An H3 cell may straddle a border and a sampled access point can land on the
         # other side. Re-apply the requested country boundary before ranking or truncating.
         if scope == SearchScope.COUNTRY and country_code is not None:
