@@ -44,4 +44,4 @@ flutter-check:
 	cd apps/mobile && flutter pub get && flutter analyze && flutter test
 
 demo-macos:
-	cd apps/mobile && flutter run -d macos --dart-define=THIEZER_API_BASE_URL=http://127.0.0.1:8000
+	cd apps/mobile && env -u CC -u CXX flutter run -d macos --dart-define=THIEZER_API_BASE_URL=http://127.0.0.1:8000

@@ -65,7 +65,9 @@ def build_score_inputs(
         ),
         severe_cloud=(conditions.total_cloud_fraction >= 0.92 or cloud_clearance < 0.08),
         precipitation=conditions.precipitation_mm >= 0.2,
-        place_accessible=place.accessibility_score >= 0.25,
+        # Surface-first candidates carry an access *estimate*, not a verified road/access denial.
+        # Keep that estimate in the score, but do not erase an otherwise useful destination.
+        place_accessible=True,
         normalized_drive_cost=min(1.0, max(0.0, distance_km / maximum_distance_km)),
         normalized_risk=place.risk_score,
         drive_weight=(

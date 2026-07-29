@@ -99,6 +99,31 @@ class _FakeSurfaceSearch:
         )
 
 
+class _CountrySurfaceSearch:
+    async def search(self, **_: object) -> SurfaceSearchResult:
+        inside = GeoPoint(latitude_deg=40.35, longitude_deg=44.65)
+        outside = GeoPoint(latitude_deg=40.60, longitude_deg=43.10)
+        return SurfaceSearchResult(
+            sites=[_site("armenia", inside), _site("across-border", outside)],
+            diagnostics=SurfaceSearchDiagnostics(
+                coarse_resolution=5,
+                fine_resolution=7,
+                coarse_cells=2,
+                coarse_after_filters=2,
+                selected_parents=2,
+                fine_cells=2,
+                fine_after_filters=2,
+                selected_fine_cells=2,
+                materialized_sites=2,
+                weather_candidates=2,
+                static_evaluations=4,
+                large_radius_overpass_calls=0,
+            ),
+            attributions=("test",),
+            darkness_is_proxy=True,
+        )
+
+
 @pytest.mark.asyncio
 async def test_final_surface_points_respect_radius_and_are_deduplicated() -> None:
     repository = SurfacePlaceRepository(_FakeSurfaceSearch())  # type: ignore[arg-type]
@@ -116,6 +141,22 @@ async def test_final_surface_points_respect_radius_and_are_deduplicated() -> Non
         (place.point.latitude_deg, place.point.longitude_deg) for place, _ in batch.matches
     }
     assert len(coordinates) == len(batch.matches)
+
+
+@pytest.mark.asyncio
+async def test_final_surface_points_respect_country_after_access_materialization() -> None:
+    repository = SurfacePlaceRepository(_CountrySurfaceSearch())  # type: ignore[arg-type]
+    batch = await repository.search(
+        user_location=GeoPoint(latitude_deg=40.1772, longitude_deg=44.5035),
+        scope=SearchScope.COUNTRY,
+        country_code="AM",
+        max_distance_km=250.0,
+        limit=10,
+    )
+
+    identifiers = {place.id for place, _ in batch.matches}
+    assert "armenia" in identifiers
+    assert "across-border" not in identifiers
 
 
 @pytest.mark.asyncio
@@ -155,3 +196,43 @@ async def test_moon_prefers_nearest_acceptable_place() -> None:
     )
     assert response.results[0].place.id == "near"
     assert response.results[0].distance_km < response.results[1].distance_km
+
+
+@pytest.mark.asyncio
+async def test_travel_destination_ranks_before_observer_location_for_bright_targets() -> None:
+    origin = GeoPoint(latitude_deg=40.1772, longitude_deg=44.5035)
+    observer = make_place(
+        place_id="observer",
+        name="Текущая позиция",
+        latitude_deg=origin.latitude_deg,
+        longitude_deg=origin.longitude_deg,
+        darkness=0.001,
+    ).model_copy(update={"source_provider": "user_origin"})
+    destination = make_place(
+        place_id="destination",
+        name="Тёмная площадка",
+        latitude_deg=40.5,
+        longitude_deg=44.2,
+        darkness=0.82,
+    ).model_copy(update={"accessibility_score": 0.08})
+    service = RecommendationService(
+        place_repository=SeedPlaceRepository([observer, destination]),
+        weather_provider=FakeWeatherProvider(),
+        astronomy_provider=FakeAstronomyProvider(),
+    )
+    start = datetime.now(UTC).replace(minute=0, second=0, microsecond=0) + timedelta(hours=1)
+    response = await service.search(
+        RecommendationSearchRequest(
+            user_location=origin,
+            target=TargetKind.MOON,
+            start_utc=start,
+            end_utc=start + timedelta(hours=3),
+            scope=SearchScope.COUNTRY,
+            country_code="AM",
+            max_distance_km=250.0,
+            max_results=2,
+            minimum_score=0.1,
+        )
+    )
+
+    assert [item.place.id for item in response.results] == ["destination", "observer"]

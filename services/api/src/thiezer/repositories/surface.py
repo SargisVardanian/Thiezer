@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from thiezer.domain.boundaries import CountryBoundaryProvider, StaticCountryBoundaryProvider
 from thiezer.domain.contracts import (
     CandidatePlace,
     GeoPoint,
@@ -17,8 +18,13 @@ _RADIUS_TOLERANCE_KM = 0.5
 
 
 class SurfacePlaceRepository:
-    def __init__(self, search_service: SurfaceSearchService) -> None:
+    def __init__(
+        self,
+        search_service: SurfaceSearchService,
+        boundary_provider: CountryBoundaryProvider | None = None,
+    ) -> None:
         self._search = search_service
+        self._boundaries = boundary_provider or StaticCountryBoundaryProvider()
 
     async def search(
         self,
@@ -51,6 +57,12 @@ class SurfacePlaceRepository:
         seen_ids: set[str] = set()
         seen_points: set[tuple[int, int]] = set()
         for site in result.sites:
+            if (
+                scope == SearchScope.COUNTRY
+                and country_code
+                and not self._boundaries.contains(country_code, site.point)
+            ):
+                continue
             if (
                 scope == SearchScope.COUNTRY
                 and country_code

@@ -20,6 +20,6 @@ flutter pub get
 
 echo
 echo "Apple platform hosts are ready."
-echo "macOS: flutter run -d macos --dart-define=THIEZER_API_BASE_URL=http://127.0.0.1:8000"
-echo "iOS Simulator: flutter run -d ios --dart-define=THIEZER_API_BASE_URL=http://127.0.0.1:8000"
+echo "macOS: env -u CC -u CXX flutter run -d macos --dart-define=THIEZER_API_BASE_URL=http://127.0.0.1:8000"
+echo "iOS Simulator: env -u CC -u CXX flutter run -d ios --dart-define=THIEZER_API_BASE_URL=http://127.0.0.1:8000"
 echo "Physical iPhone: use your Mac LAN IP and run uvicorn with --host 0.0.0.0"

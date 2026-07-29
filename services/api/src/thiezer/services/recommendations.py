@@ -297,8 +297,13 @@ def _select_results(
 ) -> list[RankedPlace]:
     if not ranked:
         return []
+    travel_candidates = [item for item in ranked if item.place.source_provider != "user_origin"]
+    origin_candidates = [item for item in ranked if item.place.source_provider == "user_origin"]
+    # The observer location is an honest "you can stay here" fallback for bright targets,
+    # never the primary travel recommendation while a real destination is available.
+    primary_candidates = travel_candidates or origin_candidates
     utility_order = sorted(
-        ranked,
+        primary_candidates,
         key=lambda result: (
             -result.utility,
             -result.observation_window.best_score,
@@ -309,13 +314,15 @@ def _select_results(
     if not nearby_first:
         selected = utility_order[:max_results]
     else:
-        best_score = max(item.observation_window.best_score for item in ranked)
+        best_score = max(item.observation_window.best_score for item in primary_candidates)
         acceptable_floor = min(
             profile.acceptable_score,
             max(0.0, best_score - profile.meaningful_quality_gain),
         )
         acceptable = [
-            item for item in ranked if item.observation_window.best_score >= acceptable_floor
+            item
+            for item in primary_candidates
+            if item.observation_window.best_score >= acceptable_floor
         ]
         nearest = min(
             acceptable,
@@ -327,7 +334,7 @@ def _select_results(
         )
         balanced = utility_order[0]
         best_quality = min(
-            ranked,
+            primary_candidates,
             key=lambda item: (
                 -item.observation_window.best_score,
                 item.distance_km,
@@ -344,6 +351,8 @@ def _select_results(
             selected.append(item)
             if len(selected) >= max_results:
                 break
+    if travel_candidates and len(selected) < max_results:
+        selected.extend(origin_candidates[: max_results - len(selected)])
     return [result.model_copy(update={"rank": index}) for index, result in enumerate(selected, 1)]
 
 

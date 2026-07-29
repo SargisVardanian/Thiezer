@@ -43,8 +43,8 @@ class _MapFirstDiscoveryScreenState extends State<MapFirstDiscoveryScreen> {
   List<RecommendationResult> _results = const [];
   CelestialObject? _catalogObject;
   String _target = 'moon';
-  String _scope = 'adaptive';
-  double _radiusKm = 100;
+  String _scope = 'country';
+  double _radiusKm = 150;
   int _horizonDays = 7;
   int _selectedResult = 0;
   int _mapRevision = 0;
@@ -53,6 +53,7 @@ class _MapFirstDiscoveryScreenState extends State<MapFirstDiscoveryScreen> {
   String? _error;
   bool _loading = false;
   bool _locating = false;
+  bool _didAutoExpandHorizon = false;
 
   @override
   void initState() {
@@ -96,8 +97,9 @@ class _MapFirstDiscoveryScreenState extends State<MapFirstDiscoveryScreen> {
     }
   }
 
-  Future<void> _startSearch() async {
+  Future<void> _startSearch({bool resetAutoExpansion = true}) async {
     if (_loading) return;
+    if (resetAutoExpansion) _didAutoExpandHorizon = false;
     setState(() {
       _loading = true;
       _error = null;
@@ -137,6 +139,16 @@ class _MapFirstDiscoveryScreenState extends State<MapFirstDiscoveryScreen> {
       if (status.stage == 'completed') {
         final response = status.result;
         final results = response?.results ?? const <RecommendationResult>[];
+        if (results.isEmpty && _horizonDays < 14 && !_didAutoExpandHorizon) {
+          setState(() {
+            _didAutoExpandHorizon = true;
+            _horizonDays = 14;
+            _loading = false;
+            _stage = 'expanding_horizon';
+          });
+          await _startSearch(resetAutoExpansion: false);
+          return;
+        }
         setState(() {
           _results = results;
           _selectedResult = 0;
@@ -309,9 +321,9 @@ class _MapFirstDiscoveryScreenState extends State<MapFirstDiscoveryScreen> {
                 ),
                 SegmentedButton<String>(
                   segments: const [
-                    ButtonSegment(value: 'adaptive', label: Text('Рядом')),
-                    ButtonSegment(value: 'country', label: Text('Страна')),
-                    ButtonSegment(value: 'global', label: Text('Без границ')),
+                    ButtonSegment(value: 'country', label: Text('В моей стране')),
+                    ButtonSegment(value: 'adaptive', label: Text('В радиусе')),
+                    ButtonSegment(value: 'global', label: Text('По всему миру')),
                   ],
                   selected: {scope},
                   onSelectionChanged: (value) => setSheetState(() => scope = value.first),
@@ -788,9 +800,9 @@ String _targetLabel(String value) => switch (value) {
     };
 
 String _scopeLabel(String value) => switch (value) {
-      'adaptive' => 'рядом',
-      'country' => 'в стране',
-      'global' => 'без границ',
+      'adaptive' => 'в заданном радиусе',
+      'country' => 'только в моей стране',
+      'global' => 'по всему миру',
       _ => value,
     };
 
@@ -805,6 +817,7 @@ String _stageLabel(String value) => switch (value) {
       'calculating_astronomy' => 'Рассчитываем видимость…',
       'checking_access' => 'Проверяем подъезд…',
       'ranking' => 'Выбираем ближайший хороший вариант…',
+      'expanding_horizon' => 'В ближайшие дни окна нет — проверяем две недели…',
       _ => 'Выполняем расчёт…',
     };
 
@@ -825,7 +838,7 @@ String _warningsMessage(List<String> warnings) {
     return 'В этом радиусе не найдено подходящей поверхности. Увеличьте радиус.';
   }
   if (warnings.contains('no_observation_window')) {
-    return 'В выбранные дни нет хорошего окна: мешают горизонт, Солнце, Луна или облачность.';
+    return 'За две недели нет подтверждённого погодой окна: мешают горизонт, Солнце, Луна или облачность. Для более дальней даты нужен астрономический план без прогноза погоды.';
   }
   return warnings.isEmpty ? 'Подходящий результат не найден.' : warnings.join(' · ');
 }
