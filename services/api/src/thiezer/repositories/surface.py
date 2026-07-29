@@ -11,6 +11,7 @@ from thiezer.domain.contracts import (
 )
 from thiezer.domain.geospatial import haversine_distance_km
 from thiezer.repositories.base import PlaceSearchBatch
+from thiezer.repositories.global_dark_sky import search_global_dark_sky_places
 from thiezer.services.progress import ProgressCallback
 from thiezer.services.surface_search import SurfaceSearchService
 
@@ -44,6 +45,14 @@ class SurfacePlaceRepository:
                 discovery_sources=["h3_surface_search"],
                 attributions=[],
                 warnings=[WarningCode.NO_CANDIDATE_PLACES],
+            )
+        if scope == SearchScope.GLOBAL:
+            # The local surface provider is intentionally Armenia-only. Use real
+            # catalog destinations until calibrated global DEM/light-pollution
+            # layers are configured; never extrapolate the local proxy worldwide.
+            return search_global_dark_sky_places(
+                user_location=user_location,
+                limit=limit,
             )
         result = await self._search.search(
             user_location=user_location,

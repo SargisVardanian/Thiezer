@@ -107,11 +107,23 @@ class RecommendationService:
             )
 
         await report_progress(progress, "fetching_weather")
-        forecast_by_point = await self._weather.get_hourly_forecasts(
-            points=[place.point for place, _ in candidates],
-            start_utc=request.start_utc,
-            end_utc=request.end_utc,
-        )
+        points = [place.point for place, _ in candidates]
+        # The production elevation-aware provider accepts explicit elevations. Keep
+        # injected test providers and third-party adapters that implement the
+        # original protocol compatible as well.
+        if any(place.source_provider == "darksky_catalog_v1" for place, _ in candidates):
+            forecast_by_point = await self._weather.get_hourly_forecasts(
+                points=points,
+                start_utc=request.start_utc,
+                end_utc=request.end_utc,
+                elevations_m=[place.elevation_m for place, _ in candidates],
+            )
+        else:
+            forecast_by_point = await self._weather.get_hourly_forecasts(
+                points=points,
+                start_utc=request.start_utc,
+                end_utc=request.end_utc,
+            )
         ranked: list[RankedPlace] = []
         attributions: set[str] = set(batch.attributions)
         places_with_weather = 0

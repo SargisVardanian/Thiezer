@@ -57,14 +57,6 @@ class SurfaceSearchService:
             country_code is None or not self._boundaries.supports(country_code)
         ):
             return self._empty_result(max_distance_km)
-        if (
-            scope == SearchScope.GLOBAL
-            and getattr(self._static, "source_name", "") == "procedural_surface_v1"
-        ):
-            # The development provider models only Armenia and would fabricate global rankings.
-            # Worldwide discovery requires calibrated global COG layers.
-            return self._empty_result(max_distance_km)
-
         await report_progress(progress, "generating_cells")
         worldwide = scope == SearchScope.GLOBAL
         plan = H3SearchPlan(1, 3) if worldwide else choose_h3_search_plan(max_distance_km)
