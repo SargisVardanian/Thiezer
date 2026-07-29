@@ -20,6 +20,22 @@ Future<void> main() async {
         colorScheme: scheme,
         scaffoldBackgroundColor: const Color(0xFF071020),
         useMaterial3: true,
+        cardTheme: CardThemeData(
+          color: const Color(0xF0121D32),
+          elevation: 14,
+          shadowColor: Colors.black54,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(24),
+            side: const BorderSide(color: Color(0xFF263B5C)),
+          ),
+        ),
+        filledButtonTheme: FilledButtonThemeData(
+          style: FilledButton.styleFrom(
+            backgroundColor: const Color(0xFF9FC1FF),
+            foregroundColor: const Color(0xFF10233D),
+            textStyle: const TextStyle(fontWeight: FontWeight.w700),
+          ),
+        ),
         inputDecorationTheme: const InputDecorationTheme(
           filled: true,
           border: OutlineInputBorder(),

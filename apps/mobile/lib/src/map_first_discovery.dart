@@ -615,7 +615,12 @@ class _MapFirstDiscoveryScreenState extends State<MapFirstDiscoveryScreen> {
               ),
             ),
           ),
-          SafeArea(child: _topBar()),
+          Positioned(
+            top: 0,
+            left: 0,
+            right: 0,
+            child: SafeArea(child: _topBar()),
+          ),
           Positioned(
             right: 16,
             top: MediaQuery.paddingOf(context).top + 88,
@@ -720,45 +725,69 @@ class _MapFirstDiscoveryScreenState extends State<MapFirstDiscoveryScreen> {
       ];
 
   Widget _topBar() => Padding(
-        padding: const EdgeInsets.fromLTRB(16, 10, 16, 0),
+        padding: const EdgeInsets.fromLTRB(20, 12, 20, 0),
         child: Center(
           child: ConstrainedBox(
-            constraints: const BoxConstraints(maxWidth: 760),
+            constraints: const BoxConstraints(maxWidth: 920),
             child: Material(
-              elevation: 12,
-              color: const Color(0xEE111B2E),
-              borderRadius: BorderRadius.circular(20),
+              elevation: 16,
+              shadowColor: Colors.black54,
+              color: const Color(0xF0121D32),
+              borderRadius: BorderRadius.circular(24),
               child: InkWell(
-                borderRadius: BorderRadius.circular(20),
+                borderRadius: BorderRadius.circular(24),
                 onTap: _showTargetPicker,
                 child: Padding(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 16, vertical: 13),
+                  padding: const EdgeInsets.all(14),
                   child: Row(
                     children: [
+                      const _BrandMark(),
+                      const SizedBox(width: 14),
                       const Icon(Icons.search, color: Color(0xFF9FC1FF)),
-                      const SizedBox(width: 12),
+                      const SizedBox(width: 10),
                       Expanded(
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           mainAxisSize: MainAxisSize.min,
                           children: [
+                            const Text(
+                              'THIEZER',
+                              style: TextStyle(
+                                color: Color(0xFF9FC1FF),
+                                fontSize: 11,
+                                fontWeight: FontWeight.w800,
+                                letterSpacing: 1.4,
+                              ),
+                            ),
+                            const SizedBox(height: 2),
                             Text(
                               _catalogObject?.name ?? _targetLabel(_target),
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
                               style: const TextStyle(
-                                  fontWeight: FontWeight.w700, fontSize: 17),
+                                fontWeight: FontWeight.w800,
+                                fontSize: 20,
+                              ),
                             ),
+                            const SizedBox(height: 3),
                             Text(
-                              '${_radiusKm.round()} km · ${_scopeLabel(_scope)} · ${_astronomicalPlan ? 'one-year plan' : '$_horizonDays days'}',
+                              '${_radiusKm.round()} km · ${_scopeLabel(_scope)} · ${_astronomicalPlan ? 'one-year plan' : '$_horizonDays-day forecast'}',
                               style: const TextStyle(
-                                  fontSize: 12, color: Colors.white70),
+                                fontSize: 12,
+                                color: Colors.white70,
+                              ),
                             ),
                           ],
                         ),
                       ),
+                      const SizedBox(width: 10),
                       FilledButton.icon(
+                        style: FilledButton.styleFrom(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 18,
+                            vertical: 15,
+                          ),
+                        ),
                         onPressed: _loading ? null : _startSearch,
                         icon: const Icon(Icons.travel_explore),
                         label: const Text('Search'),
@@ -1044,6 +1073,25 @@ class _RoadRouteSummary extends StatelessWidget {
   }
 }
 
+class _BrandMark extends StatelessWidget {
+  const _BrandMark();
+
+  @override
+  Widget build(BuildContext context) => Container(
+        width: 48,
+        height: 48,
+        decoration: const BoxDecoration(
+          shape: BoxShape.circle,
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [Color(0xFF9FC1FF), Color(0xFF7967E8)],
+          ),
+        ),
+        child: const Icon(Icons.auto_awesome_rounded, color: Color(0xFF10192B)),
+      );
+}
+
 class _MapAction extends StatelessWidget {
   const _MapAction({
     required this.tooltip,
@@ -1072,14 +1120,24 @@ class _Metric extends StatelessWidget {
   final String value;
 
   @override
-  Widget build(BuildContext context) => Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Text(label,
-              style: const TextStyle(fontSize: 11, color: Colors.white60)),
-          Text(value, style: const TextStyle(fontWeight: FontWeight.w600)),
-        ],
+  Widget build(BuildContext context) => Container(
+        constraints: const BoxConstraints(minWidth: 74),
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+        decoration: BoxDecoration(
+          color: const Color(0xFF0C1729),
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(color: const Color(0xFF263B5C)),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(label,
+                style: const TextStyle(fontSize: 11, color: Colors.white60)),
+            const SizedBox(height: 2),
+            Text(value, style: const TextStyle(fontWeight: FontWeight.w700)),
+          ],
+        ),
       );
 }
 
