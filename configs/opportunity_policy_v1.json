@@ -1,0 +1,17 @@
+{
+  "version": "opportunity-policy-v1",
+  "strict_moonless": true,
+  "max_sun_altitude_deg": -18.0,
+  "min_target_clearance_deg": 5.0,
+  "min_duration_minutes": 60.0,
+  "max_drive_minutes": 180.0,
+  "min_darkness_index": 0.7,
+  "max_cloud_fraction": 0.35,
+  "max_precipitation_mm_per_hour": 0.1,
+  "max_wind_mps": 8.0,
+  "max_aod550": 0.2,
+  "max_pm25_ug_m3": 15.0,
+  "max_forecast_age_hours": 36.0,
+  "small_country_area_km2": 250000.0,
+  "small_country_extent_km": 700.0
+}
